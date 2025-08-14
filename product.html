@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Detail</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <a href="index.html" class="logo">
+      <img src="logo.png" alt="Shop Logo">
+      <span>My Shop</span>
+    </a>
+  </header>
+
+  <!-- Product Detail -->
+  <main class="product-detail">
+    <!-- Gallery -->
+    <div class="gallery">
+      <button class="gallery-btn left" onclick="prevImage()">&#10094;</button>
+      <img id="main-image" src="" alt="Product Image">
+      <button class="gallery-btn right" onclick="nextImage()">&#10095;</button>
+    </div>
+
+    <!-- Details -->
+    <div class="details">
+      <h1 id="product-name">Product Name</h1>
+      <p id="product-price">$0.00</p>
+      <p id="product-description">Product description goes here...</p>
+      <a id="buy-link" href="#" target="_blank" class="buy-btn">Buy Now</a>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>Contact us: support@myshop.com | 123-456-7890</p>
+  </footer>
+
+  <!-- External product data -->
+  <script src="products.js"></script>
+
+  <script>
+    let currentIndex = 0;
+    let currentProduct = null;
+
+    // Get product ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = parseInt(urlParams.get("id"));
+
+    // Load product details
+    function loadProduct() {
+      currentProduct = products.find(p => p.id === productId);
+      if (!currentProduct) {
+        document.querySelector(".product-detail").innerHTML = "<p>Product not found.</p>";
+        return;
+      }
+      document.getElementById("product-name").textContent = currentProduct.name;
+      document.getElementById("product-price").textContent = `$${currentProduct.price.toFixed(2)}`;
+      document.getElementById("product-description").textContent = currentProduct.description;
+      document.getElementById("buy-link").href = currentProduct.link;
+      document.getElementById("main-image").src = currentProduct.images[0];
+      currentIndex = 0;
+    }
+
+    // Slide gallery
+    function prevImage() {
+      if (!currentProduct) return;
+      currentIndex = (currentIndex - 1 + currentProduct.images.length) % currentProduct.images.length;
+      document.getElementById("main-image").src = currentProduct.images[currentIndex];
+    }
+    function nextImage() {
+      if (!currentProduct) return;
+      currentIndex = (currentIndex + 1) % currentProduct.images.length;
+      document.getElementById("main-image").src = currentProduct.images[currentIndex];
+    }
+
+    document.addEventListener("DOMContentLoaded", loadProduct);
+  </script>
+</body>
+</html>

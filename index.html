@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Shop</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Top Bar -->
+  <header class="header">
+    <a href="index.html" class="logo">
+      <img src="logo.png" alt="Shop Logo">
+      <span>My Shop</span>
+    </a>
+  </header>
+
+  <!-- Categories & Search -->
+  <nav class="nav-bar">
+    <div class="categories">
+      <button onclick="filterProducts('All', this)">All</button>
+      <button onclick="filterProducts('Electronics', this)">Electronics</button>
+      <button onclick="filterProducts('Clothing', this)">Clothing</button>
+      <button onclick="filterProducts('Home', this)">Home</button>
+      <button onclick="filterProducts('Books', this)">Books</button>
+    </div>
+    
+    <div class="search-cart">
+      <input type="text" id="search" placeholder="Search products..." oninput="searchProducts()">
+    </div>
+  </nav>
+
+  <!-- Product Grid -->
+  <main class="product-grid" id="product-grid"></main>
+
+  <!-- Footer -->
+  <footer>
+    <p>Contact us: support@myshop.com | 123-456-7890</p>
+    <p>© 2025 My Shop. All Rights Reserved.</p>
+  </footer>
+
+  <script src="script.js"></script>
+  <script src="products.js"></script>
+</body>
+</html>
