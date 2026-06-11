@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout — AutoParts Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-mark">⚙</span>
+        <span>AutoParts Hub<small>Genuine car parts</small></span>
+      </a>
+      <nav class="main-tabs" id="main-tabs">
+        <a href="index.html">Catalog</a>
+        <a href="about.html">Company Info</a>
+      </nav>
+      <div class="header-actions">
+        <a href="cart.html" class="cart-link" aria-label="View cart">🛒<span class="cart-count">0</span></a>
+        <button class="menu-toggle" aria-label="Toggle menu" onclick="document.getElementById('main-tabs').classList.toggle('open')">&#9776;</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" id="checkout-root">
+    <div class="section-head" style="margin-top:32px;">
+      <h2>Checkout</h2>
+      <p>Enter your details and choose a payment method.</p>
+    </div>
+
+    <form id="checkout-form" class="checkout-layout" novalidate>
+      <div>
+        <!-- Shipping details -->
+        <div class="form-card">
+          <h3>Shipping details</h3>
+          <div class="field-grid">
+            <div class="field"><label>Full name *</label><input name="name" required placeholder="Ahmad bin Ali"></div>
+            <div class="field"><label>Phone *</label><input name="phone" required placeholder="012-345 6789"></div>
+            <div class="field full"><label>Email *</label><input type="email" name="email" required placeholder="you@email.com"></div>
+            <div class="field full"><label>Address *</label><input name="address" required placeholder="Street address"></div>
+            <div class="field"><label>City *</label><input name="city" required placeholder="Kuala Lumpur"></div>
+            <div class="field"><label>Postcode *</label><input name="postcode" required placeholder="50000"></div>
+            <div class="field full">
+              <label>State *</label>
+              <select name="state" required>
+                <option value="">Select state</option>
+                <option>Johor</option><option>Kedah</option><option>Kelantan</option>
+                <option>Melaka</option><option>Negeri Sembilan</option><option>Pahang</option>
+                <option>Perak</option><option>Perlis</option><option>Pulau Pinang</option>
+                <option>Sabah</option><option>Sarawak</option><option>Selangor</option>
+                <option>Terengganu</option><option>Kuala Lumpur</option><option>Labuan</option><option>Putrajaya</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment -->
+        <div class="form-card">
+          <h3>Payment method</h3>
+          <div class="pay-methods">
+            <label class="pay-option selected">
+              <input type="radio" name="payment" value="fpx" checked onchange="selectPayment(this)">
+              <span class="pay-ico">🏦</span>
+              <span class="pay-text"><strong>FPX Online Banking</strong><span>Pay directly from your Malaysian bank account</span></span>
+            </label>
+            <label class="pay-option">
+              <input type="radio" name="payment" value="card" onchange="selectPayment(this)">
+              <span class="pay-ico">💳</span>
+              <span class="pay-text"><strong>Credit / Debit Card</strong><span>Visa, Mastercard, AMEX</span></span>
+            </label>
+            <label class="pay-option">
+              <input type="radio" name="payment" value="ewallet" onchange="selectPayment(this)">
+              <span class="pay-ico">📱</span>
+              <span class="pay-text"><strong>E-Wallet</strong><span>Touch 'n Go, GrabPay, Boost, ShopeePay</span></span>
+            </label>
+            <label class="pay-option">
+              <input type="radio" name="payment" value="cod" onchange="selectPayment(this)">
+              <span class="pay-ico">💵</span>
+              <span class="pay-text"><strong>Cash on Delivery</strong><span>Pay when your order arrives</span></span>
+            </label>
+          </div>
+
+          <!-- Card fields (shown only for card) -->
+          <div class="card-fields field-grid" id="card-fields" style="display:none">
+            <div class="field full"><label>Card number</label><input name="cardNumber" placeholder="1234 5678 9012 3456" inputmode="numeric"></div>
+            <div class="field"><label>Expiry (MM/YY)</label><input name="cardExpiry" placeholder="08/28"></div>
+            <div class="field"><label>CVV</label><input name="cardCvv" placeholder="123" inputmode="numeric"></div>
+            <div class="field full"><label>Name on card</label><input name="cardName" placeholder="AHMAD BIN ALI"></div>
+          </div>
+
+          <!-- FPX bank select -->
+          <div class="field full" id="fpx-fields" style="margin-top:14px">
+            <label>Select bank</label>
+            <select name="bank">
+              <option>Maybank2u</option><option>CIMB Clicks</option><option>Public Bank</option>
+              <option>RHB Now</option><option>Hong Leong Connect</option><option>Bank Islam</option><option>AmBank</option>
+            </select>
+          </div>
+
+          <p class="error-msg" id="form-error" style="color:var(--danger);font-size:0.88rem;margin-top:14px;display:none"></p>
+        </div>
+      </div>
+
+      <!-- Order summary -->
+      <aside class="summary checkout-summary">
+        <h3>Your order</h3>
+        <div id="summary-items"></div>
+        <div class="summary-row"><span>Subtotal</span><span id="sum-subtotal">RM 0.00</span></div>
+        <div class="summary-row"><span>Shipping</span><span id="sum-shipping">RM 0.00</span></div>
+        <div class="summary-row total"><span>Total</span><span id="sum-total">RM 0.00</span></div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg" id="pay-btn">Place order</button>
+        <p class="muted-note">🔒 Demo checkout — no real payment is processed.</p>
+      </aside>
+    </form>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>
+        <a href="index.html" class="logo"><span class="logo-mark">⚙</span><span style="color:#fff">AutoParts Hub</span></a>
+        <p>Quality car parts by brand, delivered with care across Malaysia.</p>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="index.html">Catalog</a></li>
+          <li><a href="cart.html">Cart</a></li>
+          <li><a href="about.html">Company Info</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:sales@autopartshub.my">sales@autopartshub.my</a></li>
+          <li><a href="tel:60312345678">+60 3-1234 5678</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2025 AutoParts Hub. All Rights Reserved.</div>
+  </footer>
+
+  <script src="products.js"></script>
+  <script src="cart.js"></script>
+  <script>
+    const SHIPPING_FLAT = 12.00;
+    const FREE_SHIP_OVER = 300.00;
+
+    function getTotals() {
+      const subtotal = cartTotal();
+      const shipping = subtotal >= FREE_SHIP_OVER ? 0 : SHIPPING_FLAT;
+      return { subtotal, shipping, total: subtotal + shipping };
+    }
+
+    function renderSummary() {
+      const cart = getCart();
+      const root = document.getElementById("checkout-root");
+      if (cart.length === 0) {
+        root.innerHTML = `<div class="empty-state" style="padding-top:60px">
+          <p>Your cart is empty.</p>
+          <a class="btn btn-primary" href="index.html">Browse parts</a></div>`;
+        return false;
+      }
+      document.getElementById("summary-items").innerHTML = cart.map(i =>
+        `<div class="summary-item"><span>${i.qty} × ${i.name}</span><span>${formatPrice(i.price * i.qty)}</span></div>`
+      ).join("");
+      const t = getTotals();
+      document.getElementById("sum-subtotal").textContent = formatPrice(t.subtotal);
+      document.getElementById("sum-shipping").textContent = t.shipping === 0 ? "FREE" : formatPrice(t.shipping);
+      document.getElementById("sum-total").textContent = formatPrice(t.total);
+      return true;
+    }
+
+    function selectPayment(input) {
+      document.querySelectorAll(".pay-option").forEach(o => o.classList.remove("selected"));
+      input.closest(".pay-option").classList.add("selected");
+      document.getElementById("card-fields").style.display = input.value === "card" ? "grid" : "none";
+      document.getElementById("fpx-fields").style.display = input.value === "fpx" ? "flex" : "none";
+    }
+
+    function showError(msg) {
+      const el = document.getElementById("form-error");
+      el.textContent = msg;
+      el.style.display = "block";
+    }
+
+    function placeOrder(e) {
+      e.preventDefault();
+      const form = e.target;
+      const required = ["name", "phone", "email", "address", "city", "postcode", "state"];
+      for (const f of required) {
+        if (!form[f].value.trim()) { showError("Please complete all required shipping fields."); form[f].focus(); return; }
+      }
+      const method = form.payment.value;
+      if (method === "card") {
+        if (!form.cardNumber.value.trim() || !form.cardExpiry.value.trim() || !form.cardCvv.value.trim()) {
+          showError("Please enter your card details."); return;
+        }
+      }
+      document.getElementById("form-error").style.display = "none";
+
+      const t = getTotals();
+      const orderId = "AP" + Date.now().toString().slice(-8);
+      const payLabels = { fpx: "FPX Online Banking", card: "Credit / Debit Card", ewallet: "E-Wallet", cod: "Cash on Delivery" };
+
+      // In a real store this is where you'd call your payment gateway / backend.
+      const root = document.getElementById("checkout-root");
+      root.innerHTML = `
+        <div class="confirm">
+          <div class="check">✓</div>
+          <h1>Order confirmed!</h1>
+          <p>Thank you, ${form.name.value.split(" ")[0]}. We've received your order and emailed a confirmation to <strong>${form.email.value}</strong>.</p>
+          <div class="order-box">
+            <div class="summary-row"><span>Order number</span><span><strong>${orderId}</strong></span></div>
+            <div class="summary-row"><span>Payment method</span><span>${payLabels[method]}</span></div>
+            <div class="summary-row"><span>Ship to</span><span>${form.city.value}, ${form.state.value}</span></div>
+            <div class="summary-row total"><span>Total paid</span><span>${formatPrice(t.total)}</span></div>
+          </div>
+          <a class="btn btn-primary btn-lg" href="index.html">Continue shopping</a>
+        </div>`;
+      clearCart();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      if (renderSummary()) {
+        document.getElementById("checkout-form").addEventListener("submit", placeOrder);
+      }
+    });
+  </script>
+</body>
+</html>

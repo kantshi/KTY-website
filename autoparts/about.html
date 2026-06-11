@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Company Info — AutoParts Hub</title>
+  <meta name="description" content="About AutoParts Hub — your trusted source for genuine and OEM-grade car parts in Malaysia.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-mark">⚙</span>
+        <span>AutoParts Hub<small>Genuine car parts</small></span>
+      </a>
+      <nav class="main-tabs" id="main-tabs">
+        <a href="index.html">Catalog</a>
+        <a href="about.html" class="active">Company Info</a>
+      </nav>
+      <div class="header-actions">
+        <a href="cart.html" class="cart-link" aria-label="View cart">🛒<span class="cart-count">0</span></a>
+        <button class="menu-toggle" aria-label="Toggle menu" onclick="document.getElementById('main-tabs').classList.toggle('open')">&#9776;</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <div class="container">
+      <h1>About AutoParts Hub</h1>
+      <p>We supply genuine and OEM-grade car parts for Malaysia's most popular makes — helping workshops and car owners find the right part, fast.</p>
+    </div>
+  </section>
+
+  <section class="container section">
+    <div class="section-head center">
+      <h2>Why choose us</h2>
+      <p>Reliable parts, fair prices, and a smooth buying experience.</p>
+    </div>
+    <div class="info-grid">
+      <div class="info-card"><div class="ico">✅</div><h3>Genuine Quality</h3><p>Every part is sourced to OEM specification and quality-checked before dispatch.</p></div>
+      <div class="info-card"><div class="ico">🚚</div><h3>Fast Delivery</h3><p>Nationwide shipping across Malaysia with reliable tracking.</p></div>
+      <div class="info-card"><div class="ico">🔧</div><h3>Expert Fitment</h3><p>Clear brand and model fitment so you order the correct part the first time.</p></div>
+      <div class="info-card"><div class="ico">🛡️</div><h3>Warranty</h3><p>Parts are backed by manufacturer warranty for your peace of mind.</p></div>
+    </div>
+  </section>
+
+  <section class="container section" style="padding-top:0">
+    <div class="info-grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));text-align:center">
+      <div class="info-card"><div style="font-size:2.2rem;font-weight:800;color:var(--brand)">9</div><div style="color:var(--ink-soft)">Brands supported</div></div>
+      <div class="info-card"><div style="font-size:2.2rem;font-weight:800;color:var(--brand)">5K+</div><div style="color:var(--ink-soft)">Parts delivered</div></div>
+      <div class="info-card"><div style="font-size:2.2rem;font-weight:800;color:var(--brand)">4.9★</div><div style="color:var(--ink-soft)">Customer rating</div></div>
+      <div class="info-card"><div style="font-size:2.2rem;font-weight:800;color:var(--brand)">24/7</div><div style="color:var(--ink-soft)">Online ordering</div></div>
+    </div>
+  </section>
+
+  <section class="container section" style="padding-top:0">
+    <div class="info-grid" style="grid-template-columns:1.3fr 0.7fr">
+      <div class="info-card">
+        <h3>Our story</h3>
+        <p style="margin-bottom:12px">AutoParts Hub started with a simple goal: make it easy for Malaysian drivers and workshops to find the right car parts without the guesswork. We organise our catalog by brand — Toyota, Mazda, Isuzu, Honda, Mitsubishi, Nissan, Suzuki, Chevrolet and Hino — so you can go straight to what fits your vehicle.</p>
+        <p>Buy directly on our site with secure checkout, or shop us on Shopee and TikTok Shop — whichever you prefer.</p>
+      </div>
+      <div class="info-card">
+        <h3>Get in touch</h3>
+        <ul style="list-style:none;padding:0;margin:0;display:grid;gap:12px">
+          <li>✉️ <a href="mailto:sales@autopartshub.my">sales@autopartshub.my</a></li>
+          <li>📞 <a href="tel:60312345678">+60 3-1234 5678</a></li>
+          <li>📍 Kuala Lumpur, Malaysia</li>
+          <li>🕒 Mon–Sat, 9am–6pm</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>
+        <a href="index.html" class="logo"><span class="logo-mark">⚙</span><span style="color:#fff">AutoParts Hub</span></a>
+        <p>Quality car parts by brand, delivered with care across Malaysia.</p>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="index.html">Catalog</a></li>
+          <li><a href="cart.html">Cart</a></li>
+          <li><a href="about.html">Company Info</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:sales@autopartshub.my">sales@autopartshub.my</a></li>
+          <li><a href="tel:60312345678">+60 3-1234 5678</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2025 AutoParts Hub. All Rights Reserved.</div>
+  </footer>
+
+  <script src="cart.js"></script>
+</body>
+</html>
