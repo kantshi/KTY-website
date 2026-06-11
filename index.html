@@ -3,43 +3,220 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Shop</title>
+  <meta name="description" content="AutoPro Parts sells quality auto parts with fitment support, QR payment, Shopee links, and TikTok Shop links.">
+  <title>AutoPro Parts | Quality Auto Parts Online</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <!-- Top Bar -->
+<body data-page="home">
   <header class="header">
-    <a href="index.html" class="logo">
-      <img src="logo.png" alt="Shop Logo">
-      <span>My Shop</span>
+    <a href="index.html" class="logo" aria-label="AutoPro Parts home">
+      <span class="logo-mark">AP</span>
+      <span>AutoPro Parts</span>
     </a>
+    <nav class="header-links" aria-label="Primary navigation">
+      <a href="#catalog">Catalog</a>
+      <a href="#fitment">Fitment</a>
+      <a href="#payment">QR Pay</a>
+      <a href="#marketplaces">Marketplaces</a>
+    </nav>
+    <button class="quote-button" type="button" onclick="toggleQuoteDrawer()">
+      Quote List <span id="quote-count">0</span>
+    </button>
   </header>
 
-  <!-- Categories & Search -->
-  <nav class="nav-bar">
-    <div class="categories">
-      <button onclick="filterProducts('All', this)">All</button>
-      <button onclick="filterProducts('Electronics', this)">Electronics</button>
-      <button onclick="filterProducts('Clothing', this)">Clothing</button>
-      <button onclick="filterProducts('Home', this)">Home</button>
-      <button onclick="filterProducts('Books', this)">Books</button>
-    </div>
-    
-    <div class="search-cart">
-      <input type="text" id="search" placeholder="Search products..." oninput="searchProducts()">
-    </div>
-  </nav>
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Fast-moving parts for daily drivers and workshop jobs</p>
+        <h1>Sell auto parts online with fitment help, QR payment, Shopee, and TikTok Shop.</h1>
+        <p>
+          This storefront is built for brake parts, filters, engine service items, lighting, batteries,
+          accessories, and other high-demand components. Customers can search by part name, category,
+          or vehicle compatibility before paying or buying on marketplace channels.
+        </p>
+        <div class="hero-actions">
+          <a class="primary-btn" href="#catalog">Shop parts</a>
+          <a class="secondary-btn" href="#improvements">How to improve</a>
+        </div>
+        <div class="trust-row" aria-label="Store benefits">
+          <span>Fitment check</span>
+          <span>Warranty ready</span>
+          <span>QR payment</span>
+          <span>Same-day dispatch guide</span>
+        </div>
+      </div>
+      <div class="hero-media">
+        <img
+          src="https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=1000&q=80"
+          alt="Mechanic choosing auto parts in a workshop"
+        >
+        <div class="hero-card">
+          <strong>Need help?</strong>
+          <span>Send VIN, model, year, and engine size for confirmation.</span>
+        </div>
+      </div>
+    </section>
 
-  <!-- Product Grid -->
-  <main class="product-grid" id="product-grid"></main>
+    <section class="feature-strip" aria-label="Important store features">
+      <article>
+        <h2>Compatibility first</h2>
+        <p>Make/year/model filters reduce wrong orders and returns.</p>
+      </article>
+      <article>
+        <h2>Marketplace ready</h2>
+        <p>Each product can link directly to Shopee and TikTok Shop listings.</p>
+      </article>
+      <article>
+        <h2>QR payment</h2>
+        <p>Customers can scan a product QR and send proof for manual confirmation.</p>
+      </article>
+      <article>
+        <h2>Trust content</h2>
+        <p>Warranty, returns, shipping, and genuine/OEM labels are visible.</p>
+      </article>
+    </section>
 
-  <!-- Footer -->
+    <section class="controls-panel" id="catalog">
+      <div class="section-heading">
+        <p class="eyebrow">Parts catalog</p>
+        <h2>Find the right auto part</h2>
+        <p>Use category, keyword, and vehicle fitment filters together.</p>
+      </div>
+
+      <div class="nav-bar">
+        <div class="categories" id="category-buttons" aria-label="Product categories"></div>
+        <div class="search-cart">
+          <label class="sr-only" for="search">Search products</label>
+          <input type="search" id="search" placeholder="Search brake pads, oil filter, headlamp..." oninput="searchProducts()">
+        </div>
+      </div>
+
+      <form class="fitment-form" id="fitment" aria-label="Vehicle fitment filter">
+        <div>
+          <label for="year-filter">Year</label>
+          <select id="year-filter" onchange="applyFilters()">
+            <option value="">Any year</option>
+          </select>
+        </div>
+        <div>
+          <label for="make-filter">Make</label>
+          <select id="make-filter" onchange="applyFilters()">
+            <option value="">Any make</option>
+          </select>
+        </div>
+        <div>
+          <label for="model-filter">Model</label>
+          <select id="model-filter" onchange="applyFilters()">
+            <option value="">Any model</option>
+          </select>
+        </div>
+        <button type="button" class="secondary-btn compact" onclick="clearFitment()">Clear filters</button>
+      </form>
+    </section>
+
+    <section class="catalog-results">
+      <div class="results-summary" id="results-summary"></div>
+      <div class="product-grid" id="product-grid" aria-live="polite"></div>
+    </section>
+
+    <section class="payment-section" id="payment">
+      <div>
+        <p class="eyebrow">Payment flow</p>
+        <h2>Pay by QR code</h2>
+        <p>
+          For this static website, QR payment is shown as a manual payment flow:
+          the buyer scans the product QR, pays through your bank/e-wallet, then sends proof
+          with the product SKU. For production, connect a real payment gateway that generates
+          secure dynamic QR codes and confirms payment automatically.
+        </p>
+      </div>
+      <div class="payment-steps">
+        <span>1. Choose product</span>
+        <span>2. Scan QR</span>
+        <span>3. Send payment proof</span>
+        <span>4. Dispatch order</span>
+      </div>
+    </section>
+
+    <section class="marketplace-section" id="marketplaces">
+      <div class="section-heading">
+        <p class="eyebrow">Sales channels</p>
+        <h2>Connect Shopee and TikTok Shop</h2>
+        <p>Use marketplace links for customers who prefer buyer protection, vouchers, or livestream purchases.</p>
+      </div>
+      <div class="marketplace-grid">
+        <a class="marketplace-card shopee" href="https://shopee.com.my/" target="_blank" rel="noopener">
+          <span>Shopee</span>
+          <strong>Open official store</strong>
+        </a>
+        <a class="marketplace-card tiktok" href="https://shop.tiktok.com/" target="_blank" rel="noopener">
+          <span>TikTok Shop</span>
+          <strong>Open social shop</strong>
+        </a>
+        <article class="marketplace-card">
+          <span>WhatsApp / phone</span>
+          <strong>Use for fitment confirmation and bulk workshop quotes.</strong>
+        </article>
+      </div>
+    </section>
+
+    <section class="improvement-section" id="improvements">
+      <div class="section-heading">
+        <p class="eyebrow">Detailed improvement plan</p>
+        <h2>How to improve this auto-parts website</h2>
+      </div>
+      <div class="improvement-grid">
+        <article>
+          <h3>1. Product data quality</h3>
+          <p>Add SKU, OEM number, brand, warranty period, vehicle fitment, dimensions, stock, and high-resolution photos for every part.</p>
+        </article>
+        <article>
+          <h3>2. Real payment integration</h3>
+          <p>Replace the demo QR image with DuitNow, PromptPay, PayNow, Stripe, or another payment provider that confirms successful payment automatically.</p>
+        </article>
+        <article>
+          <h3>3. Checkout and order tracking</h3>
+          <p>Add cart, customer address forms, shipping rates, invoice generation, order status, and email/WhatsApp notifications.</p>
+        </article>
+        <article>
+          <h3>4. SEO and content</h3>
+          <p>Create pages for each category and vehicle model, publish fitment guides, and use product schema markup for rich search results.</p>
+        </article>
+        <article>
+          <h3>5. Trust and conversion</h3>
+          <p>Show real reviews, return policy, warranty claims process, genuine/OEM labels, shop location, and responsive customer support channels.</p>
+        </article>
+        <article>
+          <h3>6. Operations</h3>
+          <p>Sync stock with Shopee, TikTok Shop, and your POS system so inventory, price, and promotions remain consistent everywhere.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <aside class="quote-drawer" id="quote-drawer" aria-label="Quote list" aria-hidden="true">
+    <div class="quote-drawer-header">
+      <h2>Quote List</h2>
+      <button type="button" onclick="toggleQuoteDrawer(false)" aria-label="Close quote list">&times;</button>
+    </div>
+    <div id="quote-items"></div>
+    <a class="primary-btn full-width" id="quote-whatsapp" href="#" target="_blank" rel="noopener">Send quote request</a>
+  </aside>
+
+  <div class="modal" id="qr-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="qr-modal-title">
+    <div class="modal-card">
+      <button class="modal-close" type="button" onclick="closeQrModal()" aria-label="Close QR payment">&times;</button>
+      <h2 id="qr-modal-title">Pay by QR code</h2>
+      <div id="qr-modal-body"></div>
+    </div>
+  </div>
+
   <footer>
-    <p>Contact us: support@myshop.com | 123-456-7890</p>
-    <p>© 2025 My Shop. All Rights Reserved.</p>
+    <p>Contact: sales@autoproparts.example | +60 12-345 6789 | Mon-Sat, 9:00 AM-6:00 PM</p>
+    <p>© 2026 AutoPro Parts. Replace demo contact details and marketplace links with your real business information.</p>
   </footer>
 
-  <script src="script.js"></script>
   <script src="products.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
