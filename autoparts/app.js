@@ -11,25 +11,6 @@ function renderBrandFilters() {
   ).join("");
 }
 
-function renderHomeBrands() {
-  const wrap = document.getElementById("home-brands");
-  if (!wrap) return;
-  wrap.innerHTML = BRANDS.map(b => {
-    const count = products.filter(p => p.brand === b).length;
-    return `<a class="brand-chip" href="#catalog" onclick="filterBrandByName('${b}')">
-      <span class="b-ico">${b.charAt(0)}</span>
-      <div>${b}</div>
-      <small style="color:var(--ink-soft);font-weight:500">${count} part${count === 1 ? "" : "s"}</small>
-    </a>`;
-  }).join("");
-}
-
-function filterBrandByName(brand) {
-  selectedBrand = brand;
-  renderBrandFilters();
-  applyFilters();
-}
-
 function renderProducts(items) {
   const grid = document.getElementById("product-grid");
   const count = document.getElementById("result-count");
@@ -101,7 +82,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (brandParam && BRANDS.includes(brandParam)) {
     selectedBrand = brandParam;
   }
-  renderHomeBrands();
   renderBrandFilters();
   applyFilters();
 });

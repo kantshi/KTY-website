@@ -76,7 +76,7 @@ img { display: block; max-width: 100%; }
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  height: 72px;
+  height: 76px;
 }
 
 .logo { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1.2rem; letter-spacing: -0.02em; }
@@ -84,43 +84,57 @@ img { display: block; max-width: 100%; }
 .logo-mark {
   display: grid;
   place-items: center;
-  height: 42px;
-  width: 42px;
-  border-radius: 12px;
+  height: 44px;
+  width: 44px;
+  border-radius: 13px;
   background: linear-gradient(135deg, var(--brand), #ffa257);
   color: #fff;
-  font-size: 1.3rem;
+  font-size: 1.35rem;
+  box-shadow: 0 6px 16px rgba(255, 106, 0, 0.28);
 }
 
 .logo small { display: block; font-size: 0.62rem; font-weight: 500; color: var(--ink-soft); letter-spacing: 0.12em; text-transform: uppercase; }
 
-.main-tabs { display: flex; align-items: center; gap: 4px; }
+/* Right-side cluster keeps nav + cart visually unified */
+.nav-cluster { display: flex; align-items: center; gap: 12px; }
 
-.main-tabs a {
-  padding: 9px 15px;
+/* Segmented-control style tabs that echo the brand colour */
+.main-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  padding: 5px;
   border-radius: 999px;
-  font-weight: 500;
-  color: var(--ink-soft);
-  transition: background 0.2s, color 0.2s;
 }
 
-.main-tabs a:hover { background: var(--brand-soft); color: var(--brand-dark); }
-.main-tabs a.active { background: var(--navy); color: #fff; }
+.main-tabs a {
+  padding: 9px 18px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
 
-.header-actions { display: flex; align-items: center; gap: 8px; }
+.main-tabs a:hover { color: var(--brand-dark); }
+.main-tabs a.active { background: var(--brand); color: #fff; box-shadow: 0 6px 16px rgba(255, 106, 0, 0.3); }
 
 .cart-link {
   position: relative;
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
   background: var(--brand-soft);
+  color: var(--brand-dark);
   font-size: 1.2rem;
-  transition: background 0.2s;
+  border: 1px solid transparent;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
 }
-.cart-link:hover { background: #ffe2cc; }
+.cart-link:hover { background: #ffe2cc; border-color: var(--brand); transform: translateY(-1px); }
 
 .cart-count {
   position: absolute;
@@ -479,13 +493,13 @@ img { display: block; max-width: 100%; }
 @media (max-width: 600px) {
   .menu-toggle { display: block; }
   .main-tabs {
-    position: absolute; top: 72px; left: 0; right: 0;
-    flex-direction: column; align-items: stretch; gap: 4px;
-    background: #fff; border-bottom: 1px solid var(--line);
+    position: absolute; top: 76px; left: 0; right: 0;
+    flex-direction: column; align-items: stretch; gap: 6px;
+    background: #fff; border: none; border-bottom: 1px solid var(--line); border-radius: 0;
     padding: 12px var(--space); box-shadow: var(--shadow-md); display: none;
   }
   .main-tabs.open { display: flex; }
-  .main-tabs a { text-align: center; }
+  .main-tabs a { text-align: center; padding: 12px 18px; }
   .field-grid { grid-template-columns: 1fr; }
   .footer-inner { grid-template-columns: 1fr; }
   .cart-item { grid-template-columns: 64px 1fr; }
