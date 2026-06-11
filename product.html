@@ -3,39 +3,80 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Product Detail</title>
+  <title>Product Detail — My Shop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Header -->
+  <!-- Top tabs / header -->
   <header class="header">
-    <a href="index.html" class="logo">
-      <img src="logo.png" alt="Shop Logo">
-      <span>My Shop</span>
-    </a>
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-mark">MS</span>
+        <span>My Shop</span>
+      </a>
+      <nav class="main-tabs" id="main-tabs">
+        <a href="index.html">Catalog</a>
+        <a href="about.html">Company Info</a>
+      </nav>
+      <button class="menu-toggle" aria-label="Toggle menu" onclick="document.getElementById('main-tabs').classList.toggle('open')">&#9776;</button>
+    </div>
   </header>
 
+  <div class="container">
+    <nav class="breadcrumb">
+      <a href="index.html">Catalog</a>
+      <span>/</span>
+      <span id="crumb-name">Product</span>
+    </nav>
+  </div>
+
   <!-- Product Detail -->
-  <main class="product-detail">
-    <!-- Gallery -->
+  <main class="container product-detail">
     <div class="gallery">
-      <button class="gallery-btn left" onclick="prevImage()">&#10094;</button>
-      <img id="main-image" src="" alt="Product Image">
-      <button class="gallery-btn right" onclick="nextImage()">&#10095;</button>
+      <button class="gallery-btn left" onclick="prevImage()" aria-label="Previous image">&#10094;</button>
+      <img id="main-image" src="" alt="Product Image" onerror="this.style.opacity=0">
+      <button class="gallery-btn right" onclick="nextImage()" aria-label="Next image">&#10095;</button>
     </div>
 
-    <!-- Details -->
     <div class="details">
       <h1 id="product-name">Product Name</h1>
-      <p id="product-price">$0.00</p>
-      <p id="product-description">Product description goes here...</p>
-      <a id="buy-link" href="#" target="_blank" class="buy-btn">Buy Now</a>
+      <p id="product-price" class="product-price">$0.00</p>
+      <p id="product-description" class="desc">Product description goes here...</p>
+
+      <p class="buy-label">Buy this product on</p>
+      <div class="shop-links" id="shop-links"></div>
     </div>
   </main>
 
   <!-- Footer -->
-  <footer>
-    <p>Contact us: support@myshop.com | 123-456-7890</p>
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>
+        <a href="index.html" class="logo">
+          <span class="logo-mark">MS</span>
+          <span>My Shop</span>
+        </a>
+        <p>Quality products, delivered with care. Shop with us on your favourite platforms.</p>
+      </div>
+      <div>
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="index.html">Catalog</a></li>
+          <li><a href="about.html">Company Info</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:support@myshop.com">support@myshop.com</a></li>
+          <li><a href="tel:1234567890">123-456-7890</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2025 My Shop. All Rights Reserved.</div>
   </footer>
 
   <!-- External product data -->
@@ -45,26 +86,59 @@
     let currentIndex = 0;
     let currentProduct = null;
 
-    // Get product ID from URL
     const urlParams = new URLSearchParams(window.location.search);
     const productId = parseInt(urlParams.get("id"));
 
-    // Load product details
+    function renderShopLinks(product) {
+      const wrap = document.getElementById("shop-links");
+      const links = [
+        {
+          key: "shopee",
+          label: "Buy on Shopee",
+          icon: "🛒",
+          url: product.shopee
+        },
+        {
+          key: "tiktok",
+          label: "Buy on TikTok Shop",
+          icon: "🎵",
+          url: product.tiktok
+        }
+      ];
+
+      wrap.innerHTML = links.map(l => {
+        if (l.url) {
+          return `<a class="shop-btn ${l.key}" href="${l.url}" target="_blank" rel="noopener">
+            <span class="shop-icon">${l.icon}</span>
+            <span>${l.label}</span>
+            <span class="shop-arrow">&rarr;</span>
+          </a>`;
+        }
+        return `<span class="shop-btn disabled">
+          <span class="shop-icon">${l.icon}</span>
+          <span>${l.label} — coming soon</span>
+        </span>`;
+      }).join("");
+    }
+
     function loadProduct() {
       currentProduct = products.find(p => p.id === productId);
       if (!currentProduct) {
-        document.querySelector(".product-detail").innerHTML = "<p>Product not found.</p>";
+        document.querySelector(".product-detail").innerHTML =
+          '<p class="empty-state">Product not found. <a href="index.html">Back to catalog</a></p>';
         return;
       }
+      document.title = `${currentProduct.name} — My Shop`;
+      document.getElementById("crumb-name").textContent = currentProduct.name;
       document.getElementById("product-name").textContent = currentProduct.name;
       document.getElementById("product-price").textContent = `$${currentProduct.price.toFixed(2)}`;
       document.getElementById("product-description").textContent = currentProduct.description;
-      document.getElementById("buy-link").href = currentProduct.link;
       document.getElementById("main-image").src = currentProduct.images[0];
+      document.getElementById("main-image").style.opacity = 1;
       currentIndex = 0;
+      renderShopLinks(currentProduct);
     }
 
-    // Slide gallery
     function prevImage() {
       if (!currentProduct) return;
       currentIndex = (currentIndex - 1 + currentProduct.images.length) % currentProduct.images.length;
