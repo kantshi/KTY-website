@@ -1,10 +1,10 @@
 // cart.js — shared shopping cart (localStorage based)
 
 const CART_KEY = "autoparts_cart";
-const CURRENCY = "RM";
+const CURRENCY = "฿"; // Thai Baht
 
 function formatPrice(value) {
-  return CURRENCY + " " + Number(value).toFixed(2);
+  return CURRENCY + Number(value).toFixed(2);
 }
 
 function getCart() {
