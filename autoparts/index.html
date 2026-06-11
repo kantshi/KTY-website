@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoParts Hub — Genuine Car Parts by Brand</title>
+  <meta name="description" content="Shop quality car parts by brand: Toyota, Mazda, Isuzu, Honda, Mitsubishi, Nissan, Suzuki, Chevrolet and Hino. Add to cart, pay online, or buy on Shopee & TikTok Shop.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-mark">⚙</span>
+        <span>AutoParts Hub<small>Genuine car parts</small></span>
+      </a>
+      <nav class="main-tabs" id="main-tabs">
+        <a href="index.html" class="active">Catalog</a>
+        <a href="about.html">Company Info</a>
+      </nav>
+      <div class="header-actions">
+        <a href="cart.html" class="cart-link" aria-label="View cart">
+          🛒<span class="cart-count">0</span>
+        </a>
+        <button class="menu-toggle" aria-label="Toggle menu" onclick="document.getElementById('main-tabs').classList.toggle('open')">&#9776;</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <span class="eyebrow">⚙ Parts for 9 major brands</span>
+      <h1>The right part for your <span>ride</span>.</h1>
+      <p>Genuine and OEM-grade car parts for Toyota, Mazda, Isuzu, Honda, Mitsubishi, Nissan, Suzuki, Chevrolet and Hino — add to cart and pay online, or buy on Shopee & TikTok Shop.</p>
+      <div class="hero-actions">
+        <a href="#catalog" class="btn btn-primary btn-lg">Shop by brand</a>
+        <a href="about.html" class="btn btn-ghost btn-lg" style="background:transparent;color:#fff;border-color:rgba(255,255,255,0.35)">About us</a>
+      </div>
+      <div class="hero-trust">
+        <div>✓ Quality guaranteed</div>
+        <div>🚚 Fast nationwide delivery</div>
+        <div>🔒 Secure checkout</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Shop by brand -->
+  <section class="container section" style="padding-bottom:0;">
+    <div class="section-head center">
+      <h2>Shop by Brand</h2>
+      <p>Pick your vehicle's make to see compatible parts.</p>
+    </div>
+    <div class="brand-grid" id="home-brands"></div>
+  </section>
+
+  <!-- Catalog -->
+  <main id="catalog" class="container section">
+    <div class="section-head">
+      <h2>Browse Parts</h2>
+      <p>Filter by brand or search for a specific part.</p>
+    </div>
+
+    <div class="catalog-head">
+      <div class="search-box">
+        <input type="text" id="search" placeholder="Search parts, e.g. brake pads, Honda..." oninput="searchProducts()">
+      </div>
+      <span class="result-count" id="result-count"></span>
+    </div>
+
+    <div class="brand-filters" id="brand-filters"></div>
+    <div class="product-grid" id="product-grid"></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>
+        <a href="index.html" class="logo">
+          <span class="logo-mark">⚙</span>
+          <span style="color:#fff">AutoParts Hub</span>
+        </a>
+        <p>Quality car parts by brand, delivered with care across Malaysia. Shop online or on your favourite marketplaces.</p>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="index.html">Catalog</a></li>
+          <li><a href="cart.html">Cart</a></li>
+          <li><a href="about.html">Company Info</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:sales@autopartshub.my">sales@autopartshub.my</a></li>
+          <li><a href="tel:60312345678">+60 3-1234 5678</a></li>
+          <li>Kuala Lumpur, Malaysia</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2025 AutoParts Hub. All Rights Reserved.</div>
+  </footer>
+
+  <script src="products.js"></script>
+  <script src="cart.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
