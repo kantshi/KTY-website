@@ -194,8 +194,15 @@
         stockEl.textContent = `In stock (${p.stock} available)`;
       }
 
-      document.getElementById("product-specs").innerHTML = Object.entries(p.specs)
-        .map(([k, v]) => `<tr><th>${k}</th><td>${v}</td></tr>`).join("");
+      const specsTable = document.getElementById("product-specs");
+      if (p.specs && Object.keys(p.specs).length) {
+        specsTable.style.display = "";
+        specsTable.innerHTML = Object.entries(p.specs)
+          .map(([k, v]) => `<tr><th>${k}</th><td>${v}</td></tr>`).join("");
+      } else {
+        specsTable.style.display = "none";
+        specsTable.innerHTML = "";
+      }
 
       document.getElementById("thumbs").innerHTML = p.images
         .map((src, i) => `<img src="${src}" alt="View ${i + 1}" onclick="showImage(${i})" onerror="this.style.display='none'">`).join("");
