@@ -3,132 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="View auto part details, vehicle compatibility, QR payment, Shopee link, and TikTok Shop link.">
-  <title>AutoPro Parts | Product Detail</title>
+  <meta http-equiv="refresh" content="0; url=index.html#catalog">
+  <title>AutoPro Parts | Catalog</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body data-page="product">
-  <header class="header">
-    <a href="index.html" class="logo" aria-label="AutoPro Parts home">
-      <span class="logo-mark">AP</span>
-      <span>AutoPro Parts</span>
-    </a>
-    <nav class="header-links" aria-label="Primary navigation">
-      <a href="index.html#catalog">Catalog</a>
-      <a href="index.html#payment">QR Pay</a>
-      <a href="index.html#marketplaces">Marketplaces</a>
-    </nav>
-    <button class="quote-button" type="button" onclick="toggleQuoteDrawer()">
-      Quote List <span id="quote-count">0</span>
-    </button>
-  </header>
-
-  <main>
-    <nav class="breadcrumb" aria-label="Breadcrumb">
-      <a href="index.html">Home</a>
-      <span>/</span>
-      <a href="index.html#catalog">Catalog</a>
-      <span>/</span>
-      <span id="breadcrumb-product">Product</span>
-    </nav>
-
-    <section class="product-detail" id="product-detail" aria-live="polite">
-      <div class="gallery">
-        <button class="gallery-btn left" type="button" onclick="prevImage()" aria-label="Previous image">&#10094;</button>
-        <img id="main-image" src="" alt="Product image">
-        <button class="gallery-btn right" type="button" onclick="nextImage()" aria-label="Next image">&#10095;</button>
-        <div class="thumbnail-row" id="thumbnail-row"></div>
-      </div>
-
-      <div class="details">
-        <p class="eyebrow" id="product-category">Auto part</p>
-        <h1 id="product-name">Product Name</h1>
-        <p class="sku" id="product-sku">SKU</p>
-        <p class="price" id="product-price">RM0.00</p>
-        <p id="product-description">Product description goes here.</p>
-
-        <div class="stock-line" id="product-stock"></div>
-
-        <div class="action-row">
-          <button class="primary-btn" type="button" id="detail-quote-button">Add to quote list</button>
-          <button class="secondary-btn" type="button" id="detail-qr-button">Pay by QR</button>
-        </div>
-
-        <div class="marketplace-buttons">
-          <a id="shopee-link" class="marketplace-btn shopee" href="#" target="_blank" rel="noopener">Buy on Shopee</a>
-          <a id="tiktok-link" class="marketplace-btn tiktok" href="#" target="_blank" rel="noopener">Buy on TikTok Shop</a>
-        </div>
-
-        <div class="detail-panels">
-          <section>
-            <h2>Vehicle compatibility</h2>
-            <ul id="vehicle-list"></ul>
-          </section>
-          <section>
-            <h2>Key specifications</h2>
-            <dl id="spec-list"></dl>
-          </section>
-        </div>
-      </div>
-    </section>
-
-    <section class="payment-section detail-payment" id="qr-payment-panel">
-      <div>
-        <p class="eyebrow">Manual QR payment</p>
-        <h2>Scan and send proof</h2>
-        <p>
-          This demo QR contains product reference data. Replace it with your official bank or e-wallet
-          merchant QR before accepting real payments.
-        </p>
-      </div>
-      <div id="detail-qr-code"></div>
-    </section>
-
-    <section class="improvement-section compact-section">
-      <div class="section-heading">
-        <p class="eyebrow">Next business improvements</p>
-        <h2>Make product pages convert better</h2>
-      </div>
-      <div class="improvement-grid">
-        <article>
-          <h3>Better images</h3>
-          <p>Show the actual packaging, close-up label, part number, and installed location to reduce buyer doubt.</p>
-        </article>
-        <article>
-          <h3>Fitment proof</h3>
-          <p>Add OEM cross-reference numbers and exact engine codes for each vehicle.</p>
-        </article>
-        <article>
-          <h3>Clear fulfilment</h3>
-          <p>Display delivery cutoff time, pickup option, warranty period, and return conditions above the fold.</p>
-        </article>
-      </div>
-    </section>
+<body>
+  <main class="intro">
+    <div>
+      <p class="eyebrow">Catalog moved</p>
+      <h1>Product details are now shown in the catalog.</h1>
+      <p><a href="index.html#catalog">Go to Catalog</a></p>
+    </div>
   </main>
-
-  <aside class="quote-drawer" id="quote-drawer" aria-label="Quote list" aria-hidden="true">
-    <div class="quote-drawer-header">
-      <h2>Quote List</h2>
-      <button type="button" onclick="toggleQuoteDrawer(false)" aria-label="Close quote list">&times;</button>
-    </div>
-    <div id="quote-items"></div>
-    <a class="primary-btn full-width" id="quote-whatsapp" href="#" target="_blank" rel="noopener">Send quote request</a>
-  </aside>
-
-  <div class="modal" id="qr-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="qr-modal-title">
-    <div class="modal-card">
-      <button class="modal-close" type="button" onclick="closeQrModal()" aria-label="Close QR payment">&times;</button>
-      <h2 id="qr-modal-title">Pay by QR code</h2>
-      <div id="qr-modal-body"></div>
-    </div>
-  </div>
-
-  <footer>
-    <p>Contact: sales@autoproparts.example | +60 12-345 6789 | Mon-Sat, 9:00 AM-6:00 PM</p>
-    <p>© 2026 AutoPro Parts. Always confirm part fitment before dispatch.</p>
-  </footer>
-
-  <script src="products.js"></script>
-  <script src="script.js"></script>
 </body>
 </html>

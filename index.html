@@ -3,298 +3,160 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="AutoPro Parts sells quality auto parts with fitment support, QR payment, Shopee links, and TikTok Shop links.">
-  <title>AutoPro Parts | Quality Auto Parts Online</title>
+  <meta name="description" content="Simple auto parts catalog with brand filters, product galleries, Shopee and TikTok Shop links, cart, and payment confirmation design.">
+  <title>AutoPro Parts | Simple Auto Parts Catalog</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body data-page="home">
-  <header class="header">
-    <a href="index.html" class="logo" aria-label="AutoPro Parts home">
-      <span class="logo-mark">AP</span>
-      <span>AutoPro Parts</span>
+<body>
+  <header class="site-header">
+    <a class="logo" href="#catalog" aria-label="AutoPro Parts home">
+      <span>AP</span>
+      AutoPro Parts
     </a>
-    <nav class="header-links" aria-label="Primary navigation">
+
+    <nav class="main-nav" aria-label="Main menu">
       <a href="#catalog">Catalog</a>
-      <a href="#fitment">Fitment</a>
-      <a href="#payment">QR Pay</a>
-      <a href="#order-system">Order System</a>
-      <a href="#marketplaces">Marketplaces</a>
+      <a href="#company-info">Company Info</a>
     </nav>
-    <button class="quote-button" type="button" onclick="toggleQuoteDrawer()">
-      Quote List <span id="quote-count">0</span>
+
+    <button class="cart-toggle" type="button" onclick="toggleCart(true)">
+      Cart <span id="cart-count">0</span>
     </button>
   </header>
 
   <main>
-    <section class="hero">
-      <div class="hero-copy">
-        <p class="eyebrow">Fast-moving parts for daily drivers and workshop jobs</p>
-        <h1>Sell auto parts online with fitment help, QR payment, Shopee, and TikTok Shop.</h1>
+    <section class="intro">
+      <div>
+        <p class="eyebrow">Simple first version</p>
+        <h1>Auto parts catalog by car brand</h1>
         <p>
-          This storefront is built for brake parts, filters, engine service items, lighting, batteries,
-          accessories, and other high-demand components. Customers can search by brand, part name,
-          or vehicle compatibility before paying or buying on marketplace channels.
+          Choose a vehicle brand, view product images, compare prices, open Shopee or TikTok Shop,
+          and add parts to the shopping cart.
         </p>
-        <div class="hero-actions">
-          <a class="primary-btn" href="#catalog">Shop parts</a>
-          <a class="secondary-btn" href="#improvements">How to improve</a>
-        </div>
-        <div class="trust-row" aria-label="Store benefits">
-          <span>Fitment check</span>
-          <span>Warranty ready</span>
-          <span>QR payment</span>
-          <span>Same-day dispatch guide</span>
-        </div>
-      </div>
-      <div class="hero-media">
-        <img
-          src="https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=1000&q=80"
-          alt="Mechanic choosing auto parts in a workshop"
-        >
-        <div class="hero-card">
-          <strong>Need help?</strong>
-          <span>Send VIN, model, year, and engine size for confirmation.</span>
-        </div>
       </div>
     </section>
 
-    <section class="feature-strip" aria-label="Important store features">
-      <article>
-        <h2>Compatibility first</h2>
-        <p>Make/year/model filters reduce wrong orders and returns.</p>
-      </article>
-      <article>
-        <h2>Marketplace ready</h2>
-        <p>Each product can link directly to Shopee and TikTok Shop listings.</p>
-      </article>
-      <article>
-        <h2>QR payment</h2>
-        <p>Customers can scan a product QR and send proof for manual confirmation.</p>
-      </article>
-      <article>
-        <h2>Trust content</h2>
-        <p>Warranty, returns, shipping, and genuine/OEM labels are visible.</p>
-      </article>
-    </section>
-
-    <section class="controls-panel" id="catalog">
-      <div class="section-heading">
-        <p class="eyebrow">Parts catalog</p>
-        <h2>Shop by vehicle brand</h2>
-        <p>Start with Toyota, Nissan, Mazda, Isuzu, Mitsubishi, Hino, Suzuki, Ford, Chevrolet, or Honda.</p>
+    <section class="catalog" id="catalog">
+      <div class="section-title">
+        <p class="eyebrow">Catalog</p>
+        <h2>Select brand</h2>
       </div>
 
-      <div class="brand-grid" id="brand-grid" aria-label="Vehicle brand catalog"></div>
+      <div class="brand-buttons" id="brand-buttons" aria-label="Brand filters"></div>
 
-      <div class="nav-bar">
-        <div class="categories" id="brand-buttons" aria-label="Vehicle brand filters"></div>
-        <div class="search-cart">
-          <label class="sr-only" for="search">Search products</label>
-          <input type="search" id="search" placeholder="Search Toyota brake pads, Honda filter, Ford belt..." oninput="searchProducts()">
-        </div>
+      <div class="catalog-toolbar">
+        <p id="catalog-summary">Showing all products</p>
+        <label>
+          <span>Search</span>
+          <input id="search" type="search" placeholder="Search part name or model..." oninput="renderCatalog()">
+        </label>
       </div>
 
-      <form class="fitment-form" id="fitment" aria-label="Vehicle fitment filter">
-        <div>
-          <label for="year-filter">Year</label>
-          <select id="year-filter" onchange="applyFilters()">
-            <option value="">Any year</option>
-          </select>
-        </div>
-        <div>
-          <label for="make-filter">Make</label>
-          <select id="make-filter" onchange="applyFilters()">
-            <option value="">Any make</option>
-          </select>
-        </div>
-        <div>
-          <label for="model-filter">Model</label>
-          <select id="model-filter" onchange="applyFilters()">
-            <option value="">Any model</option>
-          </select>
-        </div>
-        <button type="button" class="secondary-btn compact" onclick="clearFitment()">Clear filters</button>
-      </form>
-    </section>
-
-    <section class="catalog-results">
-      <div class="results-summary" id="results-summary"></div>
       <div class="product-grid" id="product-grid" aria-live="polite"></div>
     </section>
 
-    <section class="payment-section" id="payment">
-      <div>
-        <p class="eyebrow">Payment flow</p>
-        <h2>Pay by QR code and track order status</h2>
-        <p>
-          For this static website, QR payment is shown as a demo. For a real shop, every order should
-          generate a unique order number and a unique QR payment reference. The payment gateway then
-          sends your website a webhook when the payment is successful, so the order status changes
-          automatically from "Pending Payment" to "Paid".
-        </p>
-      </div>
-      <div class="payment-steps">
-        <span>1. Customer places order</span>
-        <span>2. Website creates order ID</span>
-        <span>3. Customer pays unique QR</span>
-        <span>4. Gateway webhook marks order paid</span>
-      </div>
-    </section>
-
-    <section class="order-system-section" id="order-system">
-      <div class="section-heading">
-        <p class="eyebrow">How you know they ordered and paid</p>
-        <h2>Recommended payment and order confirmation design</h2>
-        <p>
-          The safest design is to use a backend order system plus a payment gateway webhook.
-          Do not rely only on screenshots, because screenshots can be late, duplicated, or fake.
-        </p>
-      </div>
-      <div class="order-flow-grid">
-        <article>
-          <span class="step-number">01</span>
-          <h3>Order created</h3>
-          <p>Customer fills name, phone, delivery address, vehicle details, and selected parts. Website saves an order with status <strong>Pending Payment</strong>.</p>
-        </article>
-        <article>
-          <span class="step-number">02</span>
-          <h3>Unique QR generated</h3>
-          <p>The payment gateway creates a QR code containing the exact amount and order ID, for example <strong>AP-2026-10025</strong>.</p>
-        </article>
-        <article>
-          <span class="step-number">03</span>
-          <h3>Payment verified</h3>
-          <p>When payment succeeds, the gateway calls your webhook. Your database marks the order as <strong>Paid</strong> and records transaction ID, amount, and time.</p>
-        </article>
-        <article>
-          <span class="step-number">04</span>
-          <h3>Seller notified</h3>
-          <p>You receive email, WhatsApp, or dashboard notification. Staff can pack the item, update to <strong>Processing</strong>, then add tracking.</p>
-        </article>
+    <section class="company-info" id="company-info">
+      <div class="section-title">
+        <p class="eyebrow">Company Info</p>
+        <h2>AutoPro Parts</h2>
       </div>
 
-      <div class="status-dashboard">
-        <div>
-          <p class="eyebrow">Admin dashboard example</p>
-          <h3>Orders you can monitor</h3>
-          <p>In production, this table comes from your database and updates when the payment gateway webhook confirms payment.</p>
-        </div>
-        <div class="dashboard-table" role="table" aria-label="Example order dashboard">
-          <div class="dashboard-row dashboard-head" role="row">
-            <span>Order</span>
-            <span>Customer</span>
-            <span>Amount</span>
-            <span>Status</span>
+      <div class="info-grid">
+        <article>
+          <h3>About the shop</h3>
+          <p>
+            AutoPro Parts sells service parts for Toyota, Nissan, Mazda, Isuzu, Mitsubishi,
+            Hino, Suzuki, Ford, Chevrolet, and Honda vehicles.
+          </p>
+          <p>
+            Replace this text with your real company address, registration number, phone,
+            WhatsApp, email, warranty terms, and return policy.
+          </p>
+        </article>
+
+        <article>
+          <h3>How to know the user ordered and paid</h3>
+          <p>
+            A static website can show a cart and QR payment instructions, but it cannot reliably
+            confirm payment by itself. For real confirmation, build this flow:
+          </p>
+          <ol>
+            <li>Customer submits checkout form.</li>
+            <li>Website backend saves an order with status <strong>Pending Payment</strong>.</li>
+            <li>Payment gateway creates a unique QR code for that exact order ID and amount.</li>
+            <li>Customer pays by QR.</li>
+            <li>Gateway sends a webhook to your website after successful payment.</li>
+            <li>Website updates order status to <strong>Paid</strong> and notifies you.</li>
+          </ol>
+        </article>
+
+        <article>
+          <h3>Recommended order statuses</h3>
+          <div class="status-list">
+            <span>Pending Payment</span>
+            <span>Paid</span>
+            <span>Processing</span>
+            <span>Shipped</span>
+            <span>Cancelled</span>
+            <span>Refunded</span>
           </div>
-          <div class="dashboard-row" role="row">
-            <span>AP-2026-10025</span>
-            <span>Toyota Vios owner</span>
-            <span>RM128.00</span>
-            <strong class="status paid">Paid</strong>
-          </div>
-          <div class="dashboard-row" role="row">
-            <span>AP-2026-10026</span>
-            <span>Ford Ranger owner</span>
-            <span>RM96.00</span>
-            <strong class="status pending">Pending Payment</strong>
-          </div>
-          <div class="dashboard-row" role="row">
-            <span>AP-2026-10027</span>
-            <span>Honda City owner</span>
-            <span>RM42.00</span>
-            <strong class="status processing">Processing</strong>
-          </div>
-        </div>
-      </div>
+        </article>
 
-      <div class="implementation-notes">
-        <h3>What to build for real payment confirmation</h3>
-        <ul>
-          <li><strong>Database:</strong> orders, order_items, payments, customers, shipments.</li>
-          <li><strong>Payment gateway:</strong> DuitNow QR, Stripe, Billplz, ToyyibPay, iPay88, PayPal, or local bank/e-wallet provider.</li>
-          <li><strong>Webhook endpoint:</strong> receives payment success/failure from the gateway and updates order status automatically.</li>
-          <li><strong>Admin dashboard:</strong> shows Pending Payment, Paid, Processing, Shipped, Cancelled, and Refunded orders.</li>
-          <li><strong>Notifications:</strong> send email/WhatsApp to you and the customer when order status changes.</li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="marketplace-section" id="marketplaces">
-      <div class="section-heading">
-        <p class="eyebrow">Sales channels</p>
-        <h2>Connect Shopee and TikTok Shop</h2>
-        <p>Use marketplace links for customers who prefer buyer protection, vouchers, or livestream purchases.</p>
-      </div>
-      <div class="marketplace-grid">
-        <a class="marketplace-card shopee" href="https://shopee.com.my/" target="_blank" rel="noopener">
-          <span>Shopee</span>
-          <strong>Open official store</strong>
-        </a>
-        <a class="marketplace-card tiktok" href="https://shop.tiktok.com/" target="_blank" rel="noopener">
-          <span>TikTok Shop</span>
-          <strong>Open social shop</strong>
-        </a>
-        <article class="marketplace-card">
-          <span>WhatsApp / phone</span>
-          <strong>Use for fitment confirmation and bulk workshop quotes.</strong>
-        </article>
-      </div>
-    </section>
-
-    <section class="improvement-section" id="improvements">
-      <div class="section-heading">
-        <p class="eyebrow">Detailed improvement plan</p>
-        <h2>How to improve this auto-parts website</h2>
-      </div>
-      <div class="improvement-grid">
         <article>
-          <h3>1. Product data quality</h3>
-          <p>Add SKU, OEM number, brand, warranty period, vehicle fitment, dimensions, stock, and high-resolution photos for every part.</p>
-        </article>
-        <article>
-          <h3>2. Real payment integration</h3>
-          <p>Replace the demo QR image with a payment gateway that creates unique QR references and sends payment webhooks to your order system.</p>
-        </article>
-        <article>
-          <h3>3. Checkout and order tracking</h3>
-          <p>Add cart, customer address forms, shipping rates, invoice generation, order status, and email/WhatsApp notifications.</p>
-        </article>
-        <article>
-          <h3>4. SEO and content</h3>
-          <p>Create pages for each category and vehicle model, publish fitment guides, and use product schema markup for rich search results.</p>
-        </article>
-        <article>
-          <h3>5. Trust and conversion</h3>
-          <p>Show real reviews, return policy, warranty claims process, genuine/OEM labels, shop location, and responsive customer support channels.</p>
-        </article>
-        <article>
-          <h3>6. Operations</h3>
-          <p>Sync stock with Shopee, TikTok Shop, and your POS system so inventory, price, and promotions remain consistent everywhere.</p>
+          <h3>Backend needed for production</h3>
+          <ul>
+            <li>Orders database</li>
+            <li>Cart and checkout API</li>
+            <li>Payment gateway webhook</li>
+            <li>Admin dashboard</li>
+            <li>Email or WhatsApp notifications</li>
+          </ul>
         </article>
       </div>
     </section>
   </main>
 
-  <aside class="quote-drawer" id="quote-drawer" aria-label="Quote list" aria-hidden="true">
-    <div class="quote-drawer-header">
-      <h2>Quote List</h2>
-      <button type="button" onclick="toggleQuoteDrawer(false)" aria-label="Close quote list">&times;</button>
+  <aside class="cart-drawer" id="cart-drawer" aria-label="Shopping cart" aria-hidden="true">
+    <div class="cart-header">
+      <div>
+        <p class="eyebrow">Shopping Cart</p>
+        <h2>Your order</h2>
+      </div>
+      <button type="button" onclick="toggleCart(false)" aria-label="Close cart">&times;</button>
     </div>
-    <div id="quote-items"></div>
-    <a class="primary-btn full-width" id="quote-whatsapp" href="#" target="_blank" rel="noopener">Send quote request</a>
+
+    <div id="cart-items"></div>
+
+    <div class="cart-total">
+      <span>Total</span>
+      <strong id="cart-total">RM0.00</strong>
+    </div>
+
+    <form class="checkout-form" onsubmit="createDemoOrder(event)">
+      <h3>Checkout demo</h3>
+      <label>
+        Name
+        <input id="customer-name" type="text" placeholder="Customer name" required>
+      </label>
+      <label>
+        Phone
+        <input id="customer-phone" type="tel" placeholder="Phone / WhatsApp" required>
+      </label>
+      <label>
+        Vehicle details
+        <input id="vehicle-details" type="text" placeholder="Brand, model, year, engine">
+      </label>
+      <button class="primary-button" type="submit">Create order</button>
+    </form>
+
+    <div class="order-result" id="order-result" hidden></div>
   </aside>
 
-  <div class="modal" id="qr-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="qr-modal-title">
-    <div class="modal-card">
-      <button class="modal-close" type="button" onclick="closeQrModal()" aria-label="Close QR payment">&times;</button>
-      <h2 id="qr-modal-title">Pay by QR code</h2>
-      <div id="qr-modal-body"></div>
-    </div>
-  </div>
+  <div class="overlay" id="overlay" onclick="toggleCart(false)"></div>
 
   <footer>
-    <p>Contact: sales@autoproparts.example | +60 12-345 6789 | Mon-Sat, 9:00 AM-6:00 PM</p>
-    <p>© 2026 AutoPro Parts. Replace demo contact details and marketplace links with your real business information.</p>
+    <p>Contact: sales@autoproparts.example | +60 12-345 6789</p>
+    <p>Replace all demo product, payment, and company details before launch.</p>
   </footer>
 
   <script src="products.js"></script>
