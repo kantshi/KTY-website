@@ -3,17 +3,100 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="refresh" content="0; url=index.html#catalog">
-  <title>AutoPro Parts | Catalog</title>
+  <meta name="description" content="Auto part details with image gallery, price, compatibility, Shopee link, TikTok Shop link, and cart.">
+  <title>Product Detail | AutoPro Parts</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <main class="intro">
-    <div>
-      <p class="eyebrow">Catalog moved</p>
-      <h1>Product details are now shown in the catalog.</h1>
-      <p><a href="index.html#catalog">Go to Catalog</a></p>
+<body data-page="product">
+  <header class="header">
+    <a href="index.html" class="logo">
+      <span class="logo-mark">AP</span>
+      <span>AutoPro Parts</span>
+    </a>
+
+    <nav class="menu-tabs" aria-label="Main menu">
+      <a href="index.html#catalog">Catalog</a>
+      <a href="index.html#company-info">Company Info</a>
+    </nav>
+
+    <button class="cart-btn" type="button" onclick="toggleCart(true)">
+      Cart <span id="cart-count">0</span>
+    </button>
+  </header>
+
+  <main class="product-detail" id="product-detail">
+    <div class="gallery">
+      <button class="gallery-btn left" type="button" onclick="prevImage()" aria-label="Previous image">&#10094;</button>
+      <img id="main-image" src="" alt="Product image">
+      <button class="gallery-btn right" type="button" onclick="nextImage()" aria-label="Next image">&#10095;</button>
+      <div class="thumbnail-row" id="thumbnail-row"></div>
+    </div>
+
+    <div class="details">
+      <p class="eyebrow" id="product-category">Auto Part</p>
+      <h1 id="product-name">Product Name</h1>
+      <p class="sku" id="product-sku">SKU</p>
+      <p class="price" id="product-price">RM0.00</p>
+      <p id="product-description"></p>
+
+      <div class="detail-actions">
+        <button class="buy-btn" type="button" id="add-cart-button">Add to Cart</button>
+        <a class="marketplace-link shopee" id="shopee-link" href="#" target="_blank" rel="noopener">Shopee</a>
+        <a class="marketplace-link tiktok" id="tiktok-link" href="#" target="_blank" rel="noopener">TikTok Shop</a>
+      </div>
+
+      <section class="detail-panel">
+        <h2>Compatible vehicles</h2>
+        <ul id="vehicle-list"></ul>
+      </section>
+
+      <section class="detail-panel">
+        <h2>Specifications</h2>
+        <dl id="spec-list"></dl>
+      </section>
     </div>
   </main>
+
+  <aside class="cart-drawer" id="cart-drawer" aria-label="Shopping cart" aria-hidden="true">
+    <div class="cart-header">
+      <h2>Shopping Cart</h2>
+      <button type="button" onclick="toggleCart(false)" aria-label="Close cart">&times;</button>
+    </div>
+
+    <div id="cart-items"></div>
+
+    <div class="cart-total">
+      <span>Total</span>
+      <strong id="cart-total">RM0.00</strong>
+    </div>
+
+    <form class="checkout-form" onsubmit="createDemoOrder(event)">
+      <h3>Create demo order</h3>
+      <label>
+        Name
+        <input id="customer-name" type="text" required>
+      </label>
+      <label>
+        Phone
+        <input id="customer-phone" type="tel" required>
+      </label>
+      <label>
+        Vehicle
+        <input id="vehicle-details" type="text" placeholder="Toyota Vios 2018 1.5L">
+      </label>
+      <button class="buy-btn full-width" type="submit">Create Order / QR Pay</button>
+    </form>
+
+    <div class="order-result" id="order-result" hidden></div>
+  </aside>
+
+  <div class="overlay" id="overlay" onclick="toggleCart(false)"></div>
+
+  <footer>
+    <p>Contact: sales@autoproparts.example | +60 12-345 6789</p>
+  </footer>
+
+  <script src="products.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
