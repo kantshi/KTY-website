@@ -74,8 +74,7 @@ img { display: block; max-width: 100%; }
 .header-inner {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  gap: clamp(14px, 3vw, 30px);
   height: 76px;
 }
 
@@ -95,31 +94,37 @@ img { display: block; max-width: 100%; }
 
 .logo small { display: block; font-size: 0.62rem; font-weight: 500; color: var(--ink-soft); letter-spacing: 0.12em; text-transform: uppercase; }
 
-/* Right-side cluster keeps nav + cart visually unified */
-.nav-cluster { display: flex; align-items: center; gap: 12px; }
+/* Right-side group: cart + mobile menu toggle */
+.header-right { display: flex; align-items: center; gap: 12px; margin-left: auto; }
 
-/* Segmented-control style tabs that echo the brand colour */
+/* Left-aligned segmented tab control that echoes the brand colour */
 .main-tabs {
   display: flex;
   align-items: center;
   gap: 4px;
-  background: var(--bg);
+  background: #fff;
   border: 1px solid var(--line);
   padding: 5px;
   border-radius: 999px;
+  box-shadow: var(--shadow-sm);
 }
 
 .main-tabs a {
-  padding: 9px 18px;
+  position: relative;
+  padding: 9px 20px;
   border-radius: 999px;
   font-weight: 600;
   font-size: 0.9rem;
   color: var(--ink-soft);
-  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.15s;
 }
 
-.main-tabs a:hover { color: var(--brand-dark); }
-.main-tabs a.active { background: var(--brand); color: #fff; box-shadow: 0 6px 16px rgba(255, 106, 0, 0.3); }
+.main-tabs a:hover { color: var(--brand-dark); background: var(--brand-soft); }
+.main-tabs a.active {
+  background: linear-gradient(135deg, var(--brand), #ff9a4d);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(255, 106, 0, 0.32);
+}
 
 .cart-link {
   position: relative;
