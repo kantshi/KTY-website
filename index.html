@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="AutoPro Parts catalog with brand filters, product detail galleries, Shopee and TikTok Shop links, and shopping cart.">
+  <meta name="description" content="Modern AutoPro Parts catalog with brand filters, product detail galleries, and shopping cart.">
   <title>AutoPro Parts</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -15,8 +15,8 @@
     </a>
 
     <nav class="menu-tabs" aria-label="Main menu">
-      <a href="index.html#catalog">Catalog</a>
-      <a href="index.html#company-info">Company Info</a>
+      <a class="active" href="index.html">Catalog</a>
+      <a href="company.html">Company Information</a>
     </nav>
 
     <button class="cart-btn" type="button" onclick="toggleCart(true)">
@@ -27,14 +27,17 @@
   <section class="shop-intro">
     <p class="eyebrow">Auto parts catalog</p>
     <h1>Find parts by vehicle brand</h1>
-    <p>Choose a brand, view product details, open Shopee or TikTok Shop, and add parts to your cart.</p>
+    <p>Choose a brand, compare parts, and open the product page to view gallery images, marketplace links, and full specifications.</p>
   </section>
 
   <nav class="nav-bar" id="catalog">
-    <div class="categories" id="brand-buttons" aria-label="Brand filters"></div>
+    <div>
+      <p class="filter-label">Filter by brand</p>
+      <div class="categories" id="brand-buttons" aria-label="Brand filters"></div>
+    </div>
     <div class="search-cart">
-      <label for="search" class="sr-only">Search products</label>
-      <input type="search" id="search" placeholder="Search products..." oninput="searchProducts()">
+      <label for="search">Search catalog</label>
+      <input type="search" id="search" placeholder="Search products, model, SKU..." oninput="searchProducts()">
     </div>
   </nav>
 
@@ -42,36 +45,6 @@
     <p class="results-summary" id="catalog-summary"></p>
     <section class="product-grid" id="product-grid" aria-live="polite"></section>
 
-    <section class="company-info" id="company-info">
-      <div>
-        <p class="eyebrow">Company Info</p>
-        <h2>AutoPro Parts</h2>
-        <p>
-          We sell replacement and service parts for Toyota, Nissan, Mazda, Isuzu, Mitsubishi,
-          Hino, Suzuki, Ford, Chevrolet, and Honda vehicles.
-        </p>
-        <p>
-          Replace this demo information with your real shop address, phone, WhatsApp,
-          email, business registration, warranty policy, and return policy.
-        </p>
-      </div>
-
-      <div class="payment-design">
-        <h2>How to know the user ordered and paid</h2>
-        <ol>
-          <li>Customer adds products to cart and submits checkout.</li>
-          <li>Your backend creates an order with status <strong>Pending Payment</strong>.</li>
-          <li>Payment gateway creates a unique QR for that order ID and exact amount.</li>
-          <li>Customer pays by QR.</li>
-          <li>Gateway sends a webhook to your website.</li>
-          <li>Your order status changes to <strong>Paid</strong> automatically.</li>
-        </ol>
-        <p class="note">
-          Important: screenshots are not reliable proof. A real paid-order system needs a backend,
-          database, payment gateway, webhook, and admin dashboard.
-        </p>
-      </div>
-    </section>
   </main>
 
   <aside class="cart-drawer" id="cart-drawer" aria-label="Shopping cart" aria-hidden="true">

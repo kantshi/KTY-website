@@ -1,16 +1,17 @@
 # AutoPro Parts Website
 
-Static auto-parts catalog using the original shop setup:
+Modern static auto-parts catalog:
 
-- Header with Catalog and Company Info menu tabs
-- Brand/search filter bar above the product grid
+- Top navigation tabs for Catalog and Company Information
+- Separate `company.html` page for company details and payment-confirmation design
+- Brand/search filter bar above the product grid with more whitespace
 - Vehicle brand catalog for Toyota, Nissan, Mazda, Isuzu, Mitsubishi, Hino, Suzuki, Ford, Chevrolet, and Honda
 - Brand and keyword filtering
-- Product grid cards with image, price, compatible vehicles, Shopee link, TikTok Shop link, and cart button
-- Separate product detail page with image gallery, compatibility, and specifications
+- Modern product grid cards with image, price, stock, compatible vehicles, View Details button, and cart button
+- Separate product detail page with image gallery, compatibility, specifications, Shopee link, and TikTok Shop link
 - Shopping cart with quantity controls
 - Demo checkout that creates an order ID and QR payment reference
-- Company Info section explaining how real paid-order confirmation should work
+- Company Information page explaining how real paid-order confirmation should work
 
 ## Customize before launch
 

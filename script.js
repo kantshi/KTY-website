@@ -94,20 +94,21 @@ function applyFilters() {
 
   grid.innerHTML = visibleProducts.map(product => `
     <article class="product-card">
-      <a href="product.html?id=${product.id}">
+      <a class="product-image-link" href="product.html?id=${product.id}" aria-label="View ${escapeHtml(product.name)}">
         <img src="${product.images[0]}" alt="${escapeHtml(product.name)}" loading="lazy">
       </a>
-      <h3><a href="product.html?id=${product.id}">${escapeHtml(product.name)}</a></h3>
-      <p class="card-meta">${escapeHtml(product.brand)} | ${escapeHtml(product.category)} | ${escapeHtml(product.sku)}</p>
-      <p class="fitment">${escapeHtml(getVehicleText(product))}</p>
-      <p class="product-price">${formatMoney(product.price)}</p>
-      <div class="card-actions">
-        <a href="product.html?id=${product.id}" class="buy-btn">Details</a>
-        <button type="button" class="buy-btn secondary" onclick="addToCart(${product.id})">Add Cart</button>
+      <div class="product-card-content">
+        <p class="card-meta">${escapeHtml(product.brand)} | ${escapeHtml(product.category)}</p>
+        <h3><a href="product.html?id=${product.id}">${escapeHtml(product.name)}</a></h3>
+        <p class="fitment">${escapeHtml(getVehicleText(product))}</p>
+        <div class="product-card-footer">
+          <p class="product-price">${formatMoney(product.price)}</p>
+          <span>${product.stock} in stock</span>
+        </div>
       </div>
-      <div class="marketplace-row">
-        <a class="marketplace-link shopee" href="${product.links.shopee}" target="_blank" rel="noopener">Shopee</a>
-        <a class="marketplace-link tiktok" href="${product.links.tiktok}" target="_blank" rel="noopener">TikTok Shop</a>
+      <div class="card-actions">
+        <a href="product.html?id=${product.id}" class="buy-btn details-btn">View Details</a>
+        <button type="button" class="buy-btn secondary cart-action-btn" onclick="addToCart(${product.id})">Add to Cart</button>
       </div>
     </article>
   `).join("");
