@@ -1,5 +1,5 @@
 // products.js — Auto parts catalog data
-// Currency: Malaysian Ringgit (RM)
+// Currency: Thai Baht
 // Each product is categorised by car BRAND and includes a gallery of images,
 // price, and direct links to Shopee and TikTok Shop.
 
@@ -16,14 +16,13 @@ const products = [
     name: "Toyota Ceramic Brake Pads (Front)",
     brand: "Toyota",
     part: "Brake Pads",
-    price: 129.90,
-    sku: "TY-BP-001",
-    stock: 24,
-    description: "Low-dust ceramic front brake pads engineered for Toyota models. Quiet operation, consistent stopping power and longer rotor life.",
-    specs: { Position: "Front axle", Material: "Ceramic", Warranty: "12 months", Fitment: "Vios, Altis, Camry" },
-    images: [IMG + "brake-pads.jpg", IMG + "brake-disc.jpg", IMG + "packaging.jpg"],
-    shopee: "https://shopee.com.my/autoparts/toyota-brake-pads",
-    tiktok: "https://www.tiktok.com/@autoparts/toyota-brake-pads"
+    price: 225.00,
+    sku: "TT-601",
+    stock: 50,
+    description: "***สินค้าที่ได้รับ จะเป็นของใหม่ทั้งหมด*** ท่อยางอากาศ Toyota MIGHTY-X (LN85) / โตโยต้า ไมตี้เอ็กซ์ แอลเอ็น85 (รหัส : TT-601) -  ท่ออากาศรถยนต์ ใช้ต่อเข้าไอดี  -  สินค้าทำจากยางคุณภาพดี ผลิตในประเทศไทย",
+    images: [IMG + "TT-601.png", IMG + "TT-601_m.png"],
+    shopee: "https://shopee.co.th/%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A2%E0%B8%B2%E0%B8%87%E0%B8%AD%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A8-Toyota-MIGHTY-X-(LN85)-%E0%B9%82%E0%B8%95%E0%B9%82%E0%B8%A2%E0%B8%95%E0%B9%89%E0%B8%B2-%E0%B9%84%E0%B8%A1%E0%B8%95%E0%B8%B5%E0%B9%89%E0%B9%80%E0%B8%AD%E0%B9%87%E0%B8%81%E0%B8%8B%E0%B9%8C-%E0%B9%81%E0%B8%AD%E0%B8%A5%E0%B9%80%E0%B8%AD%E0%B9%87%E0%B8%9985-i.1501857.7440695772?extraParams=%7B%22display_model_id%22%3A40176048895%2C%22model_selection_logic%22%3A3%7D&sp_atk=f42bb182-1310-40ba-a627-33a5bcbbb686&xptdk=f42bb182-1310-40ba-a627-33a5bcbbb686",
+    tiktok: "https://vt.tiktok.com/ZS9jNHRaDcSfa-u147Q/"
   },
   {
     id: 2,
