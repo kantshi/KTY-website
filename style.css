@@ -3,6 +3,11 @@ body {
   background: #f4f4f4;
   color: #333;
   font-family: Arial, sans-serif;
+  line-height: 1.45;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 a {
@@ -38,6 +43,7 @@ img {
 
 .header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 18px;
@@ -50,8 +56,13 @@ img {
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
   font-size: 20px;
   font-weight: bold;
+}
+
+.logo span:last-child {
+  overflow-wrap: break-word;
 }
 
 .logo-mark {
@@ -68,6 +79,7 @@ img {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  min-width: 0;
 }
 
 .menu-tabs a {
@@ -82,6 +94,7 @@ img {
 }
 
 .cart-btn {
+  flex-shrink: 0;
   border: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: 999px;
   padding: 8px 12px;
@@ -129,6 +142,8 @@ img {
 
 .nav-bar {
   display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
   justify-content: space-between;
   gap: 15px;
   background: #ddd;
@@ -137,8 +152,10 @@ img {
 
 .categories {
   display: flex;
+  flex: 1 1 520px;
   flex-wrap: wrap;
   gap: 8px;
+  min-width: 0;
 }
 
 .categories button {
@@ -157,6 +174,7 @@ img {
 
 .search-cart {
   display: flex;
+  flex: 0 1 280px;
   align-items: center;
   min-width: min(100%, 260px);
 }
@@ -184,6 +202,8 @@ img {
 .product-card {
   display: flex;
   flex-direction: column;
+  gap: 8px;
+  min-width: 0;
   background: white;
   border-radius: 8px;
   padding: 15px;
@@ -205,6 +225,8 @@ img {
 
 .product-card h3 {
   margin: 8px 0;
+  line-height: 1.25;
+  overflow-wrap: break-word;
 }
 
 .product-card h3 a:hover {
@@ -215,6 +237,8 @@ img {
 .fitment {
   color: #666;
   font-size: 13px;
+  line-height: 1.35;
+  overflow-wrap: break-word;
 }
 
 .product-price,
@@ -222,6 +246,7 @@ img {
   color: #cc5200;
   font-size: 24px;
   font-weight: bold;
+  line-height: 1.2;
 }
 
 .card-actions,
@@ -231,6 +256,7 @@ img {
   flex-wrap: wrap;
   justify-content: center;
   gap: 8px;
+  margin-top: 4px;
 }
 
 .buy-btn,
@@ -238,10 +264,15 @@ img {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  min-width: 0;
   border: none;
   border-radius: 5px;
   padding: 8px 12px;
   font-weight: bold;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  text-align: center;
+  white-space: normal;
 }
 
 .buy-btn {
@@ -294,7 +325,7 @@ img {
 
 .gallery-btn {
   position: absolute;
-  top: 210px;
+  top: 50%;
   border: none;
   border-radius: 50%;
   padding: 8px 12px;
@@ -347,6 +378,8 @@ img {
 
 .details h1 {
   margin-top: 0;
+  line-height: 1.2;
+  overflow-wrap: break-word;
 }
 
 .sku {
@@ -367,6 +400,8 @@ img {
 
 .detail-panel dl div {
   display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
   border-bottom: 1px solid #eee;
@@ -385,6 +420,7 @@ img {
 .detail-panel dd {
   margin: 0;
   text-align: right;
+  overflow-wrap: anywhere;
 }
 
 .company-info {
@@ -395,9 +431,17 @@ img {
 }
 
 .company-info > div {
+  min-width: 0;
   border-radius: 8px;
   padding: 20px;
   background: white;
+}
+
+.company-info h2,
+.company-info p,
+.company-info li,
+.payment-design li {
+  overflow-wrap: break-word;
 }
 
 .note {
@@ -440,7 +484,7 @@ img {
 
 .cart-item {
   display: grid;
-  grid-template-columns: 70px 1fr auto;
+  grid-template-columns: 70px minmax(0, 1fr) auto;
   gap: 10px;
   align-items: start;
   border-bottom: 1px solid #eee;
@@ -457,6 +501,7 @@ img {
 .cart-item strong,
 .cart-item span {
   display: block;
+  overflow-wrap: break-word;
 }
 
 .cart-item span {
@@ -585,8 +630,12 @@ footer p {
     grid-template-columns: 1fr;
   }
 
+  .product-detail {
+    flex-direction: column;
+  }
+
   .gallery-btn {
-    top: 180px;
+    top: 50%;
   }
 
   .gallery > img {
