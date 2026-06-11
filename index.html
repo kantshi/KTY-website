@@ -3,43 +3,101 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Shop</title>
+  <title>My Shop — Catalog</title>
+  <meta name="description" content="Browse our modern catalog and shop your favourites on Shopee and TikTok Shop.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Top Bar -->
+  <!-- Top tabs / header -->
   <header class="header">
-    <a href="index.html" class="logo">
-      <img src="logo.png" alt="Shop Logo">
-      <span>My Shop</span>
-    </a>
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-mark">MS</span>
+        <span>My Shop</span>
+      </a>
+      <nav class="main-tabs" id="main-tabs">
+        <a href="index.html" class="active">Catalog</a>
+        <a href="about.html">Company Info</a>
+      </nav>
+      <button class="menu-toggle" aria-label="Toggle menu" onclick="document.getElementById('main-tabs').classList.toggle('open')">&#9776;</button>
+    </div>
   </header>
 
-  <!-- Categories & Search -->
-  <nav class="nav-bar">
-    <div class="categories">
-      <button onclick="filterProducts('All', this)">All</button>
-      <button onclick="filterProducts('Electronics', this)">Electronics</button>
-      <button onclick="filterProducts('Clothing', this)">Clothing</button>
-      <button onclick="filterProducts('Home', this)">Home</button>
-      <button onclick="filterProducts('Books', this)">Books</button>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-copy">
+        <h1>Discover products you'll <span>love</span>.</h1>
+        <p>A curated collection of everyday essentials. Explore the catalog, then check out securely on Shopee or TikTok Shop.</p>
+        <div class="hero-actions">
+          <a href="#catalog" class="btn btn-primary">Shop the catalog</a>
+          <a href="about.html" class="btn btn-ghost">About our company</a>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <span class="badge one">⭐ Top rated</span>
+        <span class="emoji">🛍️</span>
+        <span class="badge two">🚚 Fast shipping</span>
+      </div>
     </div>
-    
-    <div class="search-cart">
-      <input type="text" id="search" placeholder="Search products..." oninput="searchProducts()">
-    </div>
-  </nav>
+  </section>
 
-  <!-- Product Grid -->
-  <main class="product-grid" id="product-grid"></main>
+  <!-- Catalog -->
+  <main id="catalog" class="container section">
+    <div class="section-head">
+      <h2>Our Catalog</h2>
+      <p>Filter by category or search to find exactly what you need.</p>
+    </div>
+
+    <div class="catalog-bar">
+      <div class="categories">
+        <button class="active" onclick="filterProducts('All', this)">All</button>
+        <button onclick="filterProducts('Electronics', this)">Electronics</button>
+        <button onclick="filterProducts('Clothing', this)">Clothing</button>
+        <button onclick="filterProducts('Home', this)">Home</button>
+        <button onclick="filterProducts('Books', this)">Books</button>
+      </div>
+
+      <div class="search-box">
+        <input type="text" id="search" placeholder="Search products..." oninput="searchProducts()">
+      </div>
+    </div>
+
+    <div class="product-grid" id="product-grid"></div>
+  </main>
 
   <!-- Footer -->
-  <footer>
-    <p>Contact us: support@myshop.com | 123-456-7890</p>
-    <p>© 2025 My Shop. All Rights Reserved.</p>
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>
+        <a href="index.html" class="logo">
+          <span class="logo-mark">MS</span>
+          <span>My Shop</span>
+        </a>
+        <p>Quality products, delivered with care. Shop with us on your favourite platforms.</p>
+      </div>
+      <div>
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="index.html">Catalog</a></li>
+          <li><a href="about.html">Company Info</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:support@myshop.com">support@myshop.com</a></li>
+          <li><a href="tel:1234567890">123-456-7890</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2025 My Shop. All Rights Reserved.</div>
   </footer>
 
-  <script src="script.js"></script>
   <script src="products.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
