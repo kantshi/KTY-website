@@ -275,7 +275,9 @@ main {
 
 .feature-strip,
 .marketplace-grid,
-.improvement-grid {
+.improvement-grid,
+.brand-grid,
+.order-flow-grid {
   display: grid;
   gap: 18px;
 }
@@ -288,7 +290,10 @@ main {
 
 .feature-strip article,
 .improvement-grid article,
-.marketplace-card {
+.marketplace-card,
+.order-flow-grid article,
+.status-dashboard,
+.implementation-notes {
   border: 1px solid var(--line);
   border-radius: 20px;
   padding: 22px;
@@ -297,7 +302,10 @@ main {
 
 .feature-strip h2,
 .improvement-grid h3,
-.detail-panels h2 {
+.detail-panels h2,
+.order-flow-grid h3,
+.status-dashboard h3,
+.implementation-notes h3 {
   margin: 0 0 8px;
   font-size: 18px;
 }
@@ -306,6 +314,8 @@ main {
 .improvement-grid p,
 .section-heading p,
 .payment-section p,
+.order-flow-grid p,
+.status-dashboard p,
 .card-description,
 .fitment-preview {
   margin: 0;
@@ -316,6 +326,7 @@ main {
 .catalog-results,
 .marketplace-section,
 .improvement-section,
+.order-system-section,
 .payment-section,
 .breadcrumb,
 .product-detail {
@@ -327,7 +338,8 @@ main {
 
 .controls-panel,
 .marketplace-section,
-.improvement-section {
+.improvement-section,
+.order-system-section {
   padding-top: 64px;
 }
 
@@ -338,8 +350,60 @@ main {
 
 .section-heading h2,
 .payment-section h2,
-.improvement-section h2 {
+.improvement-section h2,
+.order-system-section h2 {
   font-size: clamp(30px, 5vw, 48px);
+}
+
+.brand-grid {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  margin-bottom: 18px;
+}
+
+.brand-card {
+  min-height: 142px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 18px;
+  background:
+    linear-gradient(135deg, rgba(249, 115, 22, 0.08), transparent),
+    #fff;
+  color: var(--text);
+  text-align: left;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.brand-card:hover,
+.brand-card.active {
+  border-color: var(--primary);
+  box-shadow: 0 18px 36px rgba(249, 115, 22, 0.14);
+  transform: translateY(-2px);
+}
+
+.brand-card span {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 14px;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--surface-dark);
+  color: #fff;
+  font-weight: 900;
+}
+
+.brand-card strong,
+.brand-card small {
+  display: block;
+}
+
+.brand-card strong {
+  font-size: 20px;
+}
+
+.brand-card small {
+  color: var(--muted);
 }
 
 .nav-bar,
@@ -573,6 +637,91 @@ main {
   padding: 12px 14px;
   background: rgba(255, 255, 255, 0.08);
   font-weight: 800;
+}
+
+.order-flow-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.step-number {
+  display: inline-flex;
+  margin-bottom: 16px;
+  border-radius: 999px;
+  padding: 7px 11px;
+  background: #ffedd5;
+  color: #9a3412;
+  font-weight: 900;
+}
+
+.status-dashboard {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 22px;
+  align-items: start;
+  margin-top: 22px;
+}
+
+.dashboard-table {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+}
+
+.dashboard-row {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 0.8fr 1fr;
+  gap: 12px;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  padding: 12px 14px;
+  background: #fff;
+  font-size: 14px;
+}
+
+.dashboard-row:last-child {
+  border-bottom: 0;
+}
+
+.dashboard-head {
+  background: #f9fafb;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.status {
+  justify-self: start;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+.status.paid {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status.processing {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.implementation-notes {
+  margin-top: 22px;
+}
+
+.implementation-notes ul {
+  margin: 12px 0 0;
+  padding-left: 20px;
+  color: var(--muted);
+}
+
+.implementation-notes li + li {
+  margin-top: 8px;
 }
 
 .marketplace-grid {
@@ -921,7 +1070,9 @@ footer p {
 
   .feature-strip,
   .marketplace-grid,
-  .improvement-grid {
+  .improvement-grid,
+  .order-flow-grid,
+  .status-dashboard {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -961,9 +1112,15 @@ footer p {
   .feature-strip,
   .marketplace-grid,
   .improvement-grid,
+  .order-flow-grid,
+  .status-dashboard,
   .product-actions,
   .compact-links,
   .qr-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-row {
     grid-template-columns: 1fr;
   }
 

@@ -1,4 +1,4 @@
-let selectedCategory = "All";
+let selectedBrand = "All";
 let currentProduct = null;
 let currentIndex = 0;
 
@@ -58,18 +58,46 @@ function getQrCodeUrl(product) {
   return `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(payload)}`;
 }
 
-function renderCategoryButtons() {
-  const wrapper = document.getElementById("category-buttons");
+function productSupportsBrand(product, brand) {
+  return product.vehicles.some(vehicle => vehicle.make === brand);
+}
+
+function getBrandProductCount(brand) {
+  return products.filter(product => productSupportsBrand(product, brand)).length;
+}
+
+function renderBrandGrid() {
+  const wrapper = document.getElementById("brand-grid");
   if (!wrapper) return;
 
-  const categories = ["All", ...new Set(products.map(product => product.category))];
-  wrapper.innerHTML = categories.map(category => `
+  wrapper.innerHTML = vehicleBrands.map(brand => {
+    const count = getBrandProductCount(brand);
+    return `
+      <button
+        type="button"
+        class="brand-card ${brand === selectedBrand ? "active" : ""}"
+        onclick="filterProducts('${escapeHtml(brand)}')"
+      >
+        <span>${escapeHtml(brand.slice(0, 2).toUpperCase())}</span>
+        <strong>${escapeHtml(brand)}</strong>
+        <small>${count} matching part${count === 1 ? "" : "s"}</small>
+      </button>
+    `;
+  }).join("");
+}
+
+function renderBrandButtons() {
+  const wrapper = document.getElementById("brand-buttons");
+  if (!wrapper) return;
+
+  const brands = ["All", ...vehicleBrands];
+  wrapper.innerHTML = brands.map(brand => `
     <button
       type="button"
-      class="${category === selectedCategory ? "active" : ""}"
-      onclick="filterProducts('${escapeHtml(category)}')"
+      class="${brand === selectedBrand ? "active" : ""}"
+      onclick="filterProducts('${escapeHtml(brand)}')"
     >
-      ${escapeHtml(category)}
+      ${escapeHtml(brand)}
     </button>
   `).join("");
 }
@@ -84,9 +112,10 @@ function populateFitmentSelectors() {
   const makes = new Set();
   const models = new Set();
 
+  vehicleBrands.forEach(make => makes.add(make));
+
   products.forEach(product => {
     product.vehicles.forEach(vehicle => {
-      makes.add(vehicle.make);
       models.add(vehicle.model);
       for (let year = vehicle.yearStart; year <= vehicle.yearEnd; year += 1) {
         years.add(year);
@@ -122,13 +151,18 @@ function productMatchesFitment(product) {
   });
 }
 
+function productMatchesSelectedBrand(product) {
+  return selectedBrand === "All" || productSupportsBrand(product, selectedBrand);
+}
+
 function renderProducts(items) {
   const grid = document.getElementById("product-grid");
   const summary = document.getElementById("results-summary");
   if (!grid) return;
 
   if (summary) {
-    summary.textContent = `${items.length} part${items.length === 1 ? "" : "s"} found`;
+    const brandLabel = selectedBrand === "All" ? "all brands" : selectedBrand;
+    summary.textContent = `${items.length} part${items.length === 1 ? "" : "s"} found for ${brandLabel}`;
   }
 
   if (items.length === 0) {
@@ -169,9 +203,14 @@ function renderProducts(items) {
   `).join("");
 }
 
-function filterProducts(category) {
-  selectedCategory = category;
-  renderCategoryButtons();
+function filterProducts(brand) {
+  selectedBrand = brand;
+  const makeFilter = document.getElementById("make-filter");
+  if (makeFilter && vehicleBrands.includes(brand)) {
+    makeFilter.value = brand;
+  }
+  renderBrandButtons();
+  renderBrandGrid();
   applyFilters();
 }
 
@@ -181,11 +220,16 @@ function searchProducts() {
 
 function applyFilters() {
   const searchTerm = document.getElementById("search")?.value.trim().toLowerCase() || "";
+  const makeValue = document.getElementById("make-filter")?.value || "";
   let filtered = [...products];
 
-  if (selectedCategory !== "All") {
-    filtered = filtered.filter(product => product.category === selectedCategory);
+  if (makeValue && vehicleBrands.includes(makeValue) && makeValue !== selectedBrand) {
+    selectedBrand = makeValue;
+    renderBrandButtons();
+    renderBrandGrid();
   }
+
+  filtered = filtered.filter(productMatchesSelectedBrand);
 
   if (searchTerm) {
     filtered = filtered.filter(product => getProductSearchText(product).includes(searchTerm));
@@ -200,6 +244,9 @@ function clearFitment() {
     const field = document.getElementById(id);
     if (field) field.value = "";
   });
+  selectedBrand = "All";
+  renderBrandButtons();
+  renderBrandGrid();
   applyFilters();
 }
 
@@ -397,7 +444,8 @@ document.addEventListener("keydown", event => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  renderCategoryButtons();
+  renderBrandButtons();
+  renderBrandGrid();
   populateFitmentSelectors();
   applyFilters();
   updateQuoteCount();

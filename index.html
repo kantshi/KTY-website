@@ -17,6 +17,7 @@
       <a href="#catalog">Catalog</a>
       <a href="#fitment">Fitment</a>
       <a href="#payment">QR Pay</a>
+      <a href="#order-system">Order System</a>
       <a href="#marketplaces">Marketplaces</a>
     </nav>
     <button class="quote-button" type="button" onclick="toggleQuoteDrawer()">
@@ -31,7 +32,7 @@
         <h1>Sell auto parts online with fitment help, QR payment, Shopee, and TikTok Shop.</h1>
         <p>
           This storefront is built for brake parts, filters, engine service items, lighting, batteries,
-          accessories, and other high-demand components. Customers can search by part name, category,
+          accessories, and other high-demand components. Customers can search by brand, part name,
           or vehicle compatibility before paying or buying on marketplace channels.
         </p>
         <div class="hero-actions">
@@ -79,15 +80,17 @@
     <section class="controls-panel" id="catalog">
       <div class="section-heading">
         <p class="eyebrow">Parts catalog</p>
-        <h2>Find the right auto part</h2>
-        <p>Use category, keyword, and vehicle fitment filters together.</p>
+        <h2>Shop by vehicle brand</h2>
+        <p>Start with Toyota, Nissan, Mazda, Isuzu, Mitsubishi, Hino, Suzuki, Ford, Chevrolet, or Honda.</p>
       </div>
 
+      <div class="brand-grid" id="brand-grid" aria-label="Vehicle brand catalog"></div>
+
       <div class="nav-bar">
-        <div class="categories" id="category-buttons" aria-label="Product categories"></div>
+        <div class="categories" id="brand-buttons" aria-label="Vehicle brand filters"></div>
         <div class="search-cart">
           <label class="sr-only" for="search">Search products</label>
-          <input type="search" id="search" placeholder="Search brake pads, oil filter, headlamp..." oninput="searchProducts()">
+          <input type="search" id="search" placeholder="Search Toyota brake pads, Honda filter, Ford belt..." oninput="searchProducts()">
         </div>
       </div>
 
@@ -122,19 +125,97 @@
     <section class="payment-section" id="payment">
       <div>
         <p class="eyebrow">Payment flow</p>
-        <h2>Pay by QR code</h2>
+        <h2>Pay by QR code and track order status</h2>
         <p>
-          For this static website, QR payment is shown as a manual payment flow:
-          the buyer scans the product QR, pays through your bank/e-wallet, then sends proof
-          with the product SKU. For production, connect a real payment gateway that generates
-          secure dynamic QR codes and confirms payment automatically.
+          For this static website, QR payment is shown as a demo. For a real shop, every order should
+          generate a unique order number and a unique QR payment reference. The payment gateway then
+          sends your website a webhook when the payment is successful, so the order status changes
+          automatically from "Pending Payment" to "Paid".
         </p>
       </div>
       <div class="payment-steps">
-        <span>1. Choose product</span>
-        <span>2. Scan QR</span>
-        <span>3. Send payment proof</span>
-        <span>4. Dispatch order</span>
+        <span>1. Customer places order</span>
+        <span>2. Website creates order ID</span>
+        <span>3. Customer pays unique QR</span>
+        <span>4. Gateway webhook marks order paid</span>
+      </div>
+    </section>
+
+    <section class="order-system-section" id="order-system">
+      <div class="section-heading">
+        <p class="eyebrow">How you know they ordered and paid</p>
+        <h2>Recommended payment and order confirmation design</h2>
+        <p>
+          The safest design is to use a backend order system plus a payment gateway webhook.
+          Do not rely only on screenshots, because screenshots can be late, duplicated, or fake.
+        </p>
+      </div>
+      <div class="order-flow-grid">
+        <article>
+          <span class="step-number">01</span>
+          <h3>Order created</h3>
+          <p>Customer fills name, phone, delivery address, vehicle details, and selected parts. Website saves an order with status <strong>Pending Payment</strong>.</p>
+        </article>
+        <article>
+          <span class="step-number">02</span>
+          <h3>Unique QR generated</h3>
+          <p>The payment gateway creates a QR code containing the exact amount and order ID, for example <strong>AP-2026-10025</strong>.</p>
+        </article>
+        <article>
+          <span class="step-number">03</span>
+          <h3>Payment verified</h3>
+          <p>When payment succeeds, the gateway calls your webhook. Your database marks the order as <strong>Paid</strong> and records transaction ID, amount, and time.</p>
+        </article>
+        <article>
+          <span class="step-number">04</span>
+          <h3>Seller notified</h3>
+          <p>You receive email, WhatsApp, or dashboard notification. Staff can pack the item, update to <strong>Processing</strong>, then add tracking.</p>
+        </article>
+      </div>
+
+      <div class="status-dashboard">
+        <div>
+          <p class="eyebrow">Admin dashboard example</p>
+          <h3>Orders you can monitor</h3>
+          <p>In production, this table comes from your database and updates when the payment gateway webhook confirms payment.</p>
+        </div>
+        <div class="dashboard-table" role="table" aria-label="Example order dashboard">
+          <div class="dashboard-row dashboard-head" role="row">
+            <span>Order</span>
+            <span>Customer</span>
+            <span>Amount</span>
+            <span>Status</span>
+          </div>
+          <div class="dashboard-row" role="row">
+            <span>AP-2026-10025</span>
+            <span>Toyota Vios owner</span>
+            <span>RM128.00</span>
+            <strong class="status paid">Paid</strong>
+          </div>
+          <div class="dashboard-row" role="row">
+            <span>AP-2026-10026</span>
+            <span>Ford Ranger owner</span>
+            <span>RM96.00</span>
+            <strong class="status pending">Pending Payment</strong>
+          </div>
+          <div class="dashboard-row" role="row">
+            <span>AP-2026-10027</span>
+            <span>Honda City owner</span>
+            <span>RM42.00</span>
+            <strong class="status processing">Processing</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="implementation-notes">
+        <h3>What to build for real payment confirmation</h3>
+        <ul>
+          <li><strong>Database:</strong> orders, order_items, payments, customers, shipments.</li>
+          <li><strong>Payment gateway:</strong> DuitNow QR, Stripe, Billplz, ToyyibPay, iPay88, PayPal, or local bank/e-wallet provider.</li>
+          <li><strong>Webhook endpoint:</strong> receives payment success/failure from the gateway and updates order status automatically.</li>
+          <li><strong>Admin dashboard:</strong> shows Pending Payment, Paid, Processing, Shipped, Cancelled, and Refunded orders.</li>
+          <li><strong>Notifications:</strong> send email/WhatsApp to you and the customer when order status changes.</li>
+        </ul>
       </div>
     </section>
 
@@ -172,7 +253,7 @@
         </article>
         <article>
           <h3>2. Real payment integration</h3>
-          <p>Replace the demo QR image with DuitNow, PromptPay, PayNow, Stripe, or another payment provider that confirms successful payment automatically.</p>
+          <p>Replace the demo QR image with a payment gateway that creates unique QR references and sends payment webhooks to your order system.</p>
         </article>
         <article>
           <h3>3. Checkout and order tracking</h3>
