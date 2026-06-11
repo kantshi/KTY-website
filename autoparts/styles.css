@@ -363,7 +363,7 @@ img { display: block; max-width: 100%; }
 .stock-line { font-size: 0.9rem; font-weight: 600; margin-bottom: 18px; }
 .stock-line.in { color: var(--ok); }
 .stock-line.low { color: var(--brand-dark); }
-.details .desc { color: var(--ink-soft); margin: 0 0 22px; }
+.details .desc { color: var(--ink-soft); margin: 0 0 22px; white-space: pre-line; }
 
 .specs { width: 100%; border-collapse: collapse; margin: 0 0 24px; font-size: 0.92rem; }
 .specs th, .specs td { text-align: left; padding: 9px 0; border-bottom: 1px solid var(--line); }
