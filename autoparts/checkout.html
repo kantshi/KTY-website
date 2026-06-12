@@ -149,6 +149,7 @@
   <script>
     const SHIPPING_FLAT = 12.00;
     const FREE_SHIP_OVER = 300.00;
+    const ORDER_CONFIRM_ENDPOINT = window.ORDER_CONFIRM_ENDPOINT || "/api/orders/confirm";
 
     function getTotals() {
       const subtotal = cartTotal();
@@ -188,7 +189,57 @@
       el.style.display = "block";
     }
 
-    function placeOrder(e) {
+    function buildOrderPayload(form, orderId, method) {
+      const t = getTotals();
+      const shipping = {
+        name: form.name.value.trim(),
+        phone: form.phone.value.trim(),
+        email: form.email.value.trim(),
+        address: form.address.value.trim(),
+        city: form.city.value.trim(),
+        postcode: form.postcode.value.trim(),
+        state: form.state.value.trim()
+      };
+      const items = getCart().map(item => ({
+        id: item.id,
+        sku: item.sku || "",
+        name: item.name,
+        qty: item.qty,
+        price: item.price,
+        lineTotal: item.price * item.qty
+      }));
+
+      return {
+        orderId,
+        paymentMethod: method,
+        shipping,
+        items,
+        totals: {
+          subtotal: t.subtotal,
+          shipping: t.shipping,
+          total: t.total
+        }
+      };
+    }
+
+    async function confirmPaidOrder(orderPayload) {
+      const res = await fetch(ORDER_CONFIRM_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderPayload)
+      });
+      if (!res.ok) {
+        let errMsg = `Failed to process payment confirmation (${res.status})`;
+        try {
+          const data = await res.json();
+          if (data?.error) errMsg = data.error;
+        } catch (_) {}
+        throw new Error(errMsg);
+      }
+      return res.json();
+    }
+
+    async function placeOrder(e) {
       e.preventDefault();
       const form = e.target;
       const required = ["name", "phone", "email", "address", "city", "postcode", "state"];
@@ -203,27 +254,39 @@
       }
       document.getElementById("form-error").style.display = "none";
 
+      const payBtn = document.getElementById("pay-btn");
+      payBtn.disabled = true;
+      payBtn.textContent = "Processing payment...";
+
       const t = getTotals();
       const orderId = "AP" + Date.now().toString().slice(-8);
       const payLabels = { fpx: "FPX Online Banking", card: "Credit / Debit Card", ewallet: "E-Wallet", cod: "Cash on Delivery" };
+      const orderPayload = buildOrderPayload(form, orderId, method);
 
-      // In a real store this is where you'd call your payment gateway / backend.
-      const root = document.getElementById("checkout-root");
-      root.innerHTML = `
-        <div class="confirm">
-          <div class="check">✓</div>
-          <h1>Order confirmed!</h1>
-          <p>Thank you, ${form.name.value.split(" ")[0]}. We've received your order and emailed a confirmation to <strong>${form.email.value}</strong>.</p>
-          <div class="order-box">
-            <div class="summary-row"><span>Order number</span><span><strong>${orderId}</strong></span></div>
-            <div class="summary-row"><span>Payment method</span><span>${payLabels[method]}</span></div>
-            <div class="summary-row"><span>Ship to</span><span>${form.city.value}, ${form.state.value}</span></div>
-            <div class="summary-row total"><span>Total paid</span><span>${formatPrice(t.total)}</span></div>
-          </div>
-          <a class="btn btn-primary btn-lg" href="index.html">Continue shopping</a>
-        </div>`;
-      clearCart();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      try {
+        await confirmPaidOrder(orderPayload);
+
+        const root = document.getElementById("checkout-root");
+        root.innerHTML = `
+          <div class="confirm">
+            <div class="check">✓</div>
+            <h1>Order confirmed!</h1>
+            <p>Thank you, ${form.name.value.split(" ")[0]}. We've received your order and emailed a confirmation to <strong>${form.email.value}</strong>.</p>
+            <div class="order-box">
+              <div class="summary-row"><span>Order number</span><span><strong>${orderId}</strong></span></div>
+              <div class="summary-row"><span>Payment method</span><span>${payLabels[method]}</span></div>
+              <div class="summary-row"><span>Ship to</span><span>${form.city.value}, ${form.state.value}</span></div>
+              <div class="summary-row total"><span>Total paid</span><span>${formatPrice(t.total)}</span></div>
+            </div>
+            <a class="btn btn-primary btn-lg" href="index.html">Continue shopping</a>
+          </div>`;
+        clearCart();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch (err) {
+        showError(err.message || "Payment processing failed. Please try again.");
+        payBtn.disabled = false;
+        payBtn.textContent = "Place order";
+      }
     }
 
     document.addEventListener("DOMContentLoaded", () => {

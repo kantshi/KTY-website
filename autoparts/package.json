@@ -1,0 +1,18 @@
+{
+  "name": "autoparts",
+  "version": "1.0.0",
+  "description": "AutoParts storefront with checkout email notifications",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "smoke:test-payment": "node smoke-test-payment.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1",
+    "nodemailer": "^8.0.11",
+    "pdfkit": "^0.19.1"
+  }
+}
