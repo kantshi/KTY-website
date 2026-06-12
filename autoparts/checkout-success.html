@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Status — AutoParts Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-mark">⚙</span>
+        <span>AutoParts Hub<small>Genuine car parts</small></span>
+      </a>
+      <nav class="main-tabs" id="main-tabs">
+        <a href="index.html">Catalog</a>
+        <a href="about.html">About us</a>
+      </nav>
+      <div class="header-right">
+        <a href="cart.html" class="cart-link" aria-label="View cart">🛒<span class="cart-count">0</span></a>
+        <button class="menu-toggle" aria-label="Toggle menu" onclick="document.getElementById('main-tabs').classList.toggle('open')">&#9776;</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" id="status-root">
+    <div class="confirm">
+      <div class="check">…</div>
+      <h1>Checking payment status</h1>
+      <p>We are verifying your payment with the gateway webhook.</p>
+      <div class="order-box">
+        <div class="summary-row"><span>Order number</span><span id="order-id-view">-</span></div>
+        <div class="summary-row"><span>Status</span><span id="order-status-view">Loading...</span></div>
+        <div class="summary-row"><span>Email PDF</span><span id="email-status-view">Pending</span></div>
+      </div>
+      <a class="btn btn-primary btn-lg" href="index.html">Continue shopping</a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>
+        <a href="index.html" class="logo"><span class="logo-mark">⚙</span><span style="color:#fff">AutoParts Hub</span></a>
+        <p>Quality car parts by brand, delivered with care across Malaysia.</p>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="index.html">Catalog</a></li>
+          <li><a href="cart.html">Cart</a></li>
+          <li><a href="about.html">About us</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:sales@autopartshub.my">sales@autopartshub.my</a></li>
+          <li><a href="tel:60312345678">+60 3-1234 5678</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2025 AutoParts Hub. All Rights Reserved.</div>
+  </footer>
+
+  <script src="cart.js"></script>
+  <script>
+    function paymentStatusLabel(status) {
+      const labels = {
+        pending_payment: "Pending payment",
+        awaiting_gateway_payment: "Awaiting gateway confirmation",
+        paid: "Paid (verified)",
+        payment_failed: "Payment failed",
+        payment_expired: "Payment expired",
+        pending_cod: "Pending cash-on-delivery",
+        payment_setup_failed: "Payment setup failed"
+      };
+      return labels[status] || status || "Unknown";
+    }
+
+    function updateView(orderId, status, emailStatus) {
+      document.getElementById("order-id-view").textContent = orderId || "-";
+      document.getElementById("order-status-view").textContent = paymentStatusLabel(status);
+      document.getElementById("email-status-view").textContent = emailStatus || "Pending";
+
+      const heading = document.querySelector(".confirm h1");
+      const body = document.querySelector(".confirm p");
+      if (status === "paid") {
+        heading.textContent = "Payment confirmed";
+        body.textContent = "Your payment has been verified by webhook. PDF shipping and inventory details are being sent by email.";
+      } else if (status === "payment_failed" || status === "payment_expired") {
+        heading.textContent = "Payment not completed";
+        body.textContent = "Your order is not marked as paid. Please return to checkout and try again.";
+      } else if (status === "pending_cod") {
+        heading.textContent = "Order received (COD)";
+        body.textContent = "This order will be marked paid only after cash is collected.";
+      }
+    }
+
+    async function fetchOrderStatus(orderId) {
+      const response = await fetch(`/api/orders/${encodeURIComponent(orderId)}/status`);
+      if (!response.ok) throw new Error("Unable to fetch order status.");
+      return response.json();
+    }
+
+    async function monitorOrder(orderId) {
+      const terminalStatuses = new Set(["paid", "payment_failed", "payment_expired", "pending_cod", "payment_setup_failed"]);
+      while (true) {
+        const statusData = await fetchOrderStatus(orderId);
+        const order = statusData.order;
+        updateView(order.orderId, order.status, order.emailStatus);
+        if (terminalStatuses.has(order.status)) break;
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      updateCartCount();
+      const params = new URLSearchParams(window.location.search);
+      const orderId = params.get("orderId");
+      if (!orderId) {
+        updateView("-", "payment_failed", "pending");
+        document.querySelector(".confirm h1").textContent = "Missing order reference";
+        document.querySelector(".confirm p").textContent = "Please complete checkout again so we can track payment status.";
+        return;
+      }
+
+      try {
+        await monitorOrder(orderId);
+      } catch (_error) {
+        updateView(orderId, "pending_payment", "pending");
+        document.querySelector(".confirm h1").textContent = "Status check error";
+        document.querySelector(".confirm p").textContent = "We could not fetch payment status right now. Please refresh in a moment.";
+      }
+    });
+  </script>
+</body>
+</html>
