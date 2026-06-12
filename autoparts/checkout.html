@@ -30,7 +30,7 @@
   <main class="container" id="checkout-root">
     <div class="section-head" style="margin-top:32px;">
       <h2>Checkout</h2>
-      <p>Enter your details and choose a payment method.</p>
+      <p>Pay by QR transfer, then upload your payment proof.</p>
     </div>
 
     <form id="checkout-form" class="checkout-layout" novalidate>
@@ -59,46 +59,26 @@
           </div>
         </div>
 
-        <!-- Payment -->
+        <!-- QR Payment -->
         <div class="form-card">
-          <h3>Payment method</h3>
-          <div class="pay-methods">
-            <label class="pay-option selected">
-              <input type="radio" name="payment" value="fpx" checked onchange="selectPayment(this)">
-              <span class="pay-ico">🏦</span>
-              <span class="pay-text"><strong>FPX Online Banking</strong><span>Pay directly from your Malaysian bank account</span></span>
-            </label>
-            <label class="pay-option">
-              <input type="radio" name="payment" value="card" onchange="selectPayment(this)">
-              <span class="pay-ico">💳</span>
-              <span class="pay-text"><strong>Credit / Debit Card</strong><span>Visa, Mastercard, AMEX</span></span>
-            </label>
-            <label class="pay-option">
-              <input type="radio" name="payment" value="ewallet" onchange="selectPayment(this)">
-              <span class="pay-ico">📱</span>
-              <span class="pay-text"><strong>E-Wallet</strong><span>Touch 'n Go, GrabPay, Boost, ShopeePay</span></span>
-            </label>
-            <label class="pay-option">
-              <input type="radio" name="payment" value="cod" onchange="selectPayment(this)">
-              <span class="pay-ico">💵</span>
-              <span class="pay-text"><strong>Cash on Delivery</strong><span>Pay when your order arrives</span></span>
-            </label>
-          </div>
-
-          <!-- Card notice (shown only for card) -->
-          <div class="card-fields field-grid" id="card-fields" style="display:none">
-            <div class="field full">
-              <p class="muted-note" style="margin:0;text-align:left">Card details are entered on the secure payment gateway page after you continue.</p>
+          <h3>QR payment</h3>
+          <div class="qr-payment-card">
+            <img src="images/qr-payment-placeholder.svg" alt="QR payment code">
+            <div>
+              <p style="margin:0 0 8px"><strong>Step 1:</strong> Scan the QR using your banking/e-wallet app and complete transfer.</p>
+              <p style="margin:0"><strong>Step 2:</strong> Upload payment proof below. We will email your proof image and shipping/inventory PDF to admin for processing.</p>
             </div>
           </div>
-
-          <!-- FPX bank select -->
-          <div class="field full" id="fpx-fields" style="margin-top:14px">
-            <label>Select bank</label>
-            <select name="bank">
-              <option>Maybank2u</option><option>CIMB Clicks</option><option>Public Bank</option>
-              <option>RHB Now</option><option>Hong Leong Connect</option><option>Bank Islam</option><option>AmBank</option>
-            </select>
+          <div class="field-grid" style="margin-top:16px">
+            <div class="field full">
+              <label>Transaction reference (optional)</label>
+              <input name="transactionReference" placeholder="e.g. bank transfer reference">
+            </div>
+            <div class="field full">
+              <label>Payment proof image *</label>
+              <input type="file" name="paymentProof" accept="image/*" required>
+              <p class="muted-note" style="text-align:left;margin-top:6px">Accepted formats: JPG, PNG, WEBP, HEIC. Max size: 8MB.</p>
+            </div>
           </div>
 
           <p class="error-msg" id="form-error" style="color:var(--danger);font-size:0.88rem;margin-top:14px;display:none"></p>
@@ -112,8 +92,8 @@
         <div class="summary-row"><span>Subtotal</span><span id="sum-subtotal">RM 0.00</span></div>
         <div class="summary-row"><span>Shipping</span><span id="sum-shipping">RM 0.00</span></div>
         <div class="summary-row total"><span>Total</span><span id="sum-total">RM 0.00</span></div>
-        <button type="submit" class="btn btn-primary btn-block btn-lg" id="pay-btn">Proceed to secure payment</button>
-        <p class="muted-note">🔒 Orders are marked paid only after verified gateway webhook confirmation.</p>
+        <button type="submit" class="btn btn-primary btn-block btn-lg" id="pay-btn">Submit payment proof</button>
+        <p class="muted-note">Your payment proof image and shipping PDF will be sent to admin email for inventory and shipping processing.</p>
       </aside>
     </form>
   </main>
@@ -148,7 +128,7 @@
   <script>
     const SHIPPING_FLAT = 12.00;
     const FREE_SHIP_OVER = 300.00;
-    const START_CHECKOUT_ENDPOINT = window.START_CHECKOUT_ENDPOINT || "/api/orders/start-checkout";
+    const SUBMIT_QR_PROOF_ENDPOINT = window.SUBMIT_QR_PROOF_ENDPOINT || "/api/orders/submit-proof";
 
     function getTotals() {
       const subtotal = cartTotal();
@@ -175,20 +155,13 @@
       return true;
     }
 
-    function selectPayment(input) {
-      document.querySelectorAll(".pay-option").forEach(o => o.classList.remove("selected"));
-      input.closest(".pay-option").classList.add("selected");
-      document.getElementById("card-fields").style.display = input.value === "card" ? "grid" : "none";
-      document.getElementById("fpx-fields").style.display = input.value === "fpx" ? "flex" : "none";
-    }
-
     function showError(msg) {
       const el = document.getElementById("form-error");
       el.textContent = msg;
       el.style.display = "block";
     }
 
-    function buildCheckoutPayload(form, method) {
+    function buildCheckoutPayload(form) {
       const t = getTotals();
       const shipping = {
         name: form.name.value.trim(),
@@ -209,7 +182,8 @@
       }));
 
       return {
-        paymentMethod: method,
+        paymentMethod: "qr_transfer",
+        transactionReference: form.transactionReference.value.trim(),
         shipping,
         items,
         totals: {
@@ -220,14 +194,17 @@
       };
     }
 
-    async function startCheckout(orderPayload) {
-      const res = await fetch(START_CHECKOUT_ENDPOINT, {
+    async function submitQrProof(orderPayload, proofFile) {
+      const formData = new FormData();
+      formData.append("orderData", JSON.stringify(orderPayload));
+      formData.append("paymentProof", proofFile);
+
+      const res = await fetch(SUBMIT_QR_PROOF_ENDPOINT, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderPayload)
+        body: formData
       });
       if (!res.ok) {
-        let errMsg = `Failed to start checkout (${res.status})`;
+        let errMsg = `Failed to submit payment proof (${res.status})`;
         try {
           const data = await res.json();
           if (data?.error) errMsg = data.error;
@@ -244,36 +221,34 @@
       for (const f of required) {
         if (!form[f].value.trim()) { showError("Please complete all required shipping fields."); form[f].focus(); return; }
       }
-      const method = form.payment.value;
+      if (!form.paymentProof.files || form.paymentProof.files.length === 0) {
+        showError("Please upload your payment proof image.");
+        form.paymentProof.focus();
+        return;
+      }
       document.getElementById("form-error").style.display = "none";
 
       const payBtn = document.getElementById("pay-btn");
       payBtn.disabled = true;
-      payBtn.textContent = "Redirecting to payment...";
+      payBtn.textContent = "Submitting proof...";
 
-      const orderPayload = buildCheckoutPayload(form, method);
+      const orderPayload = buildCheckoutPayload(form);
+      const proofFile = form.paymentProof.files[0];
 
       try {
-        const checkout = await startCheckout(orderPayload);
+        const checkout = await submitQrProof(orderPayload, proofFile);
         clearCart();
         const redirectUrl = checkout.checkoutUrl || checkout.redirectUrl;
-        if (!redirectUrl) {
-          throw new Error("Payment redirect URL missing from server response.");
-        }
-        window.location.href = redirectUrl;
+        window.location.href = redirectUrl || `checkout-success.html?orderId=${encodeURIComponent(checkout.orderId)}`;
       } catch (err) {
-        showError(err.message || "Payment processing failed. Please try again.");
+        showError(err.message || "Payment proof submission failed. Please try again.");
         payBtn.disabled = false;
-        payBtn.textContent = "Proceed to secure payment";
+        payBtn.textContent = "Submit payment proof";
       }
     }
 
     document.addEventListener("DOMContentLoaded", () => {
       if (renderSummary()) {
-        const params = new URLSearchParams(window.location.search);
-        if (params.get("cancelled") === "1") {
-          showError("Payment was canceled. Your order is still pending until payment is completed.");
-        }
         document.getElementById("checkout-form").addEventListener("submit", placeOrder);
       }
     });

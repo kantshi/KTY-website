@@ -1,6 +1,6 @@
 const payload = {
-  orderId: `TEST${Date.now()}`,
-  paymentMethod: "fpx",
+  paymentMethod: "qr_transfer",
+  transactionReference: `TEST-REF-${Date.now()}`,
   shipping: {
     name: "Smoke Test Customer",
     phone: "0123456789",
@@ -29,10 +29,18 @@ const payload = {
 
 async function run() {
   const baseUrl = process.env.PAYMENT_API_URL || "http://localhost:3000";
-  const response = await fetch(`${baseUrl}/api/orders/confirm`, {
+  const pngBytes = Buffer.from(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/w8AAgMBAp5G8xUAAAAASUVORK5CYII=",
+    "base64"
+  );
+
+  const formData = new FormData();
+  formData.append("orderData", JSON.stringify(payload));
+  formData.append("paymentProof", new Blob([pngBytes], { type: "image/png" }), "proof.png");
+
+  const response = await fetch(`${baseUrl}/api/orders/submit-proof`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
+    body: formData
   });
 
   const body = await response.json();

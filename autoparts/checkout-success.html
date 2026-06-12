@@ -30,12 +30,12 @@
   <main class="container" id="status-root">
     <div class="confirm">
       <div class="check">…</div>
-      <h1>Checking payment status</h1>
-      <p>We are verifying your payment with the gateway webhook.</p>
+      <h1>Checking order status</h1>
+      <p>We are confirming your QR payment proof submission.</p>
       <div class="order-box">
         <div class="summary-row"><span>Order number</span><span id="order-id-view">-</span></div>
         <div class="summary-row"><span>Status</span><span id="order-status-view">Loading...</span></div>
-        <div class="summary-row"><span>Email PDF</span><span id="email-status-view">Pending</span></div>
+        <div class="summary-row"><span>Email delivery</span><span id="email-status-view">Pending</span></div>
       </div>
       <a class="btn btn-primary btn-lg" href="index.html">Continue shopping</a>
     </div>
@@ -70,13 +70,9 @@
   <script>
     function paymentStatusLabel(status) {
       const labels = {
-        pending_payment: "Pending payment",
-        awaiting_gateway_payment: "Awaiting gateway confirmation",
-        paid: "Paid (verified)",
-        payment_failed: "Payment failed",
-        payment_expired: "Payment expired",
-        pending_cod: "Pending cash-on-delivery",
-        payment_setup_failed: "Payment setup failed"
+        proof_submitted: "Proof submitted",
+        pending_manual_review: "Pending admin review",
+        proof_submitted_email_failed: "Proof submitted, email failed"
       };
       return labels[status] || status || "Unknown";
     }
@@ -88,15 +84,12 @@
 
       const heading = document.querySelector(".confirm h1");
       const body = document.querySelector(".confirm p");
-      if (status === "paid") {
-        heading.textContent = "Payment confirmed";
-        body.textContent = "Your payment has been verified by webhook. PDF shipping and inventory details are being sent by email.";
-      } else if (status === "payment_failed" || status === "payment_expired") {
-        heading.textContent = "Payment not completed";
-        body.textContent = "Your order is not marked as paid. Please return to checkout and try again.";
-      } else if (status === "pending_cod") {
-        heading.textContent = "Order received (COD)";
-        body.textContent = "This order will be marked paid only after cash is collected.";
+      if (status === "pending_manual_review") {
+        heading.textContent = "Proof submitted successfully";
+        body.textContent = "Your payment proof image has been submitted. Admin will verify your transfer and process shipping.";
+      } else if (status === "proof_submitted_email_failed") {
+        heading.textContent = "Proof received, notification issue";
+        body.textContent = "We received your proof, but admin notification email failed. Please contact support with your order number.";
       }
     }
 
@@ -107,7 +100,7 @@
     }
 
     async function monitorOrder(orderId) {
-      const terminalStatuses = new Set(["paid", "payment_failed", "payment_expired", "pending_cod", "payment_setup_failed"]);
+      const terminalStatuses = new Set(["pending_manual_review", "proof_submitted_email_failed"]);
       while (true) {
         const statusData = await fetchOrderStatus(orderId);
         const order = statusData.order;
@@ -122,7 +115,7 @@
       const params = new URLSearchParams(window.location.search);
       const orderId = params.get("orderId");
       if (!orderId) {
-        updateView("-", "payment_failed", "pending");
+        updateView("-", "proof_submitted_email_failed", "pending");
         document.querySelector(".confirm h1").textContent = "Missing order reference";
         document.querySelector(".confirm p").textContent = "Please complete checkout again so we can track payment status.";
         return;
@@ -131,7 +124,7 @@
       try {
         await monitorOrder(orderId);
       } catch (_error) {
-        updateView(orderId, "pending_payment", "pending");
+        updateView(orderId, "proof_submitted", "pending");
         document.querySelector(".confirm h1").textContent = "Status check error";
         document.querySelector(".confirm p").textContent = "We could not fetch payment status right now. Please refresh in a moment.";
       }

@@ -1,13 +1,15 @@
 # KTY-website
 
-## AutoParts checkout payment + verified paid status workflow
+## AutoParts checkout QR payment proof workflow
 
-The `autoparts` app now tracks order payment status in backend storage and marks orders as paid only after a verified Stripe webhook:
+The `autoparts` app now uses QR-only checkout:
 
-- `POST /api/orders/start-checkout` -> creates a `pending_payment` order and Stripe Checkout session
-- `POST /api/stripe/webhook` -> verifies Stripe signature and updates order to `paid`
-- `GET /api/orders/:orderId/status` -> returns current payment/email status
-- After paid status is verified, backend generates a PDF with shipping + product details and emails `ktyautopart@gmail.com` (or `INVENTORY_EMAIL`)
+- Customer scans your QR and pays outside the website
+- Customer uploads payment proof image in checkout
+- Backend emails **two attachments** to `ktyautopart@gmail.com` (or `INVENTORY_EMAIL`):
+  - payment proof image
+  - shipping + product detail PDF (inventory reference)
+- `GET /api/orders/:orderId/status` reports submission/email status
 
 ### 1) Install dependencies
 
@@ -16,7 +18,7 @@ cd autoparts
 npm install
 ```
 
-### 2) Configure SMTP + Stripe
+### 2) Configure SMTP
 
 Copy `.env.example` values into your deployment environment:
 
@@ -25,13 +27,9 @@ Copy `.env.example` values into your deployment environment:
 - `SMTP_SECURE`
 - `SMTP_USER`
 - `SMTP_PASS`
-- `STRIPE_SECRET_KEY`
-- `STRIPE_WEBHOOK_SECRET`
-- optional: `INVENTORY_EMAIL`, `MAIL_FROM`, `BASE_URL`
+- optional: `INVENTORY_EMAIL`, `MAIL_FROM`, `BASE_URL`, `MAX_PROOF_IMAGE_MB`
 
 > For local dry-runs without real email, set `TEST_EMAIL_TRANSPORT=true`.
->
-> For local webhook testing, use Stripe CLI and copy its webhook secret into `STRIPE_WEBHOOK_SECRET`.
 
 ### 3) Run the app
 
@@ -42,25 +40,16 @@ npm start
 
 Then open: `http://localhost:3000/checkout.html`
 
-### 4) Listen to Stripe webhooks locally (recommended)
-
-In another terminal:
-
-```bash
-stripe listen --forward-to localhost:3000/api/stripe/webhook
-```
-
-Copy the `whsec_...` secret printed by Stripe CLI into `STRIPE_WEBHOOK_SECRET`.
-
-### 5) Test paid flow through checkout
+### 4) Test QR proof flow through checkout
 
 1. Open `http://localhost:3000/checkout.html`
-2. Submit checkout form
-3. Pay in Stripe hosted page (test mode)
-4. Return to `checkout-success.html` where status polling shows `Paid (verified)` once webhook arrives
-5. Inventory email with attached PDF is sent automatically after paid verification
+2. Fill shipping details
+3. Upload an image as payment proof
+4. Submit
+5. `checkout-success.html` shows `Pending admin review` once email dispatch is complete
+6. Admin inbox receives proof image + shipping PDF attachment
 
-### 6) Manual smoke test (no Stripe, local/dev only)
+### 5) Manual smoke test (local/dev)
 
 With server running:
 
