@@ -1,11 +1,11 @@
 /* ===== Design tokens ===== */
 :root {
-  --brand: #f26d21;
-  --brand-dark: #cf520e;
-  --brand-soft: #fff3ea;
-  --navy: #071833;
-  --navy-soft: #0f2a4d;
-  --ink: #0f1d33;
+  --brand: #d90c1f;
+  --brand-dark: #aa0818;
+  --brand-soft: #ffecef;
+  --navy: #0d1018;
+  --navy-soft: #1b2130;
+  --ink: #181d2a;
   --ink-soft: #5a6675;
   --line: #e7ebf0;
   --bg: #f4f6f9;
@@ -81,12 +81,10 @@ img { display: block; max-width: 100%; }
 .logo { display: inline-flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1.2rem; letter-spacing: -0.02em; }
 
 .logo-image {
-  height: 44px;
-  width: 44px;
-  border-radius: 12px;
-  object-fit: cover;
-  border: 1px solid var(--line);
-  box-shadow: 0 4px 12px rgba(7, 24, 51, 0.18);
+  height: 42px;
+  width: auto;
+  max-width: 132px;
+  object-fit: contain;
 }
 
 .logo-text { display: block; }
