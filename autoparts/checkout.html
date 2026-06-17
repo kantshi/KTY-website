@@ -126,13 +126,16 @@
     <div class="footer-bottom">© 2025 AutoParts Hub. All Rights Reserved.</div>
   </footer>
 
-  <script src="products.js?v=20260617-5"></script>
-  <script src="cart.js?v=20260617-5"></script>
+  <script src="products.js?v=20260617-6"></script>
+  <script src="cart.js?v=20260617-6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
   <script>
     const SHIPPING_FLAT = 12.00;
     const FREE_SHIP_OVER = 300.00;
     const SUBMIT_QR_PROOF_ENDPOINT = window.SUBMIT_QR_PROOF_ENDPOINT || "/api/orders/submit-proof";
     const PAYMENT_QR_ENDPOINT = window.PAYMENT_QR_ENDPOINT || "/api/payments/qr";
+    const QR_BANK_CODE = "014";
+    const QR_ACCOUNT_NUMBER = "407-050112-9";
     let qrRequestToken = 0;
 
     function getTotals() {
@@ -161,6 +164,80 @@
       return true;
     }
 
+    function normalizeDigits(value) {
+      return String(value || "").replace(/\D+/g, "");
+    }
+
+    function buildTlv(tag, value) {
+      const text = String(value || "");
+      return `${tag}${String(text.length).padStart(2, "0")}${text}`;
+    }
+
+    function crc16Ccitt(value) {
+      let crc = 0xFFFF;
+      for (let i = 0; i < value.length; i += 1) {
+        crc ^= value.charCodeAt(i) << 8;
+        for (let bit = 0; bit < 8; bit += 1) {
+          if ((crc & 0x8000) !== 0) {
+            crc = ((crc << 1) ^ 0x1021) & 0xFFFF;
+          } else {
+            crc = (crc << 1) & 0xFFFF;
+          }
+        }
+      }
+      return crc.toString(16).toUpperCase().padStart(4, "0");
+    }
+
+    function formatQrAmount(amount) {
+      const rounded = Math.round(Number(amount || 0) * 100) / 100;
+      return rounded.toFixed(2);
+    }
+
+    function buildScbPaymentPayload(amount) {
+      const accountDigits = normalizeDigits(QR_ACCOUNT_NUMBER);
+      const merchantAccount = buildTlv("00", "A000000677010111") + buildTlv("04", `${QR_BANK_CODE}${accountDigits}`);
+
+      let payload = "";
+      payload += buildTlv("00", "01");
+      payload += buildTlv("01", "12");
+      payload += buildTlv("29", merchantAccount);
+      payload += buildTlv("53", "764");
+      payload += buildTlv("54", formatQrAmount(amount));
+      payload += buildTlv("58", "TH");
+
+      const payloadWithChecksumTag = `${payload}6304`;
+      return `${payloadWithChecksumTag}${crc16Ccitt(payloadWithChecksumTag)}`;
+    }
+
+    async function generateClientSideQr(amount) {
+      if (!window.QRCode || typeof window.QRCode.toDataURL !== "function") {
+        throw new Error("QR code encoder is unavailable.");
+      }
+      const payload = buildScbPaymentPayload(amount);
+      return window.QRCode.toDataURL(payload, {
+        width: 360,
+        margin: 1,
+        errorCorrectionLevel: "M"
+      });
+    }
+
+    async function fetchServerGeneratedQr(amount) {
+      const response = await fetch(`${PAYMENT_QR_ENDPOINT}?amount=${encodeURIComponent(formatQrAmount(amount))}`);
+      if (!response.ok) {
+        let reason = `QR request failed (${response.status})`;
+        try {
+          const data = await response.json();
+          if (data && data.error) reason = data.error;
+        } catch (_error) {}
+        throw new Error(reason);
+      }
+      const data = await response.json();
+      if (!data || !data.qrDataUrl) {
+        throw new Error("QR image payload missing.");
+      }
+      return data;
+    }
+
     async function renderPaymentQr() {
       const totals = getTotals();
       const qrImage = document.getElementById("payment-qr-image");
@@ -174,30 +251,33 @@
 
       try {
         const amount = Number(totals.total || 0);
-        const response = await fetch(`${PAYMENT_QR_ENDPOINT}?amount=${encodeURIComponent(amount.toFixed(2))}`);
-        if (!response.ok) {
-          let reason = `QR request failed (${response.status})`;
-          try {
-            const data = await response.json();
-            if (data && data.error) reason = data.error;
-          } catch (_error) {}
-          throw new Error(reason);
-        }
-        const data = await response.json();
-        if (token !== qrRequestToken) return;
-        if (!data || !data.qrDataUrl) {
-          throw new Error("QR image payload missing.");
+        let qrDataUrl = "";
+        let accountNumber = QR_ACCOUNT_NUMBER;
+        let usedFallback = false;
+
+        try {
+          qrDataUrl = await generateClientSideQr(amount);
+        } catch (clientError) {
+          usedFallback = true;
+          const data = await fetchServerGeneratedQr(amount);
+          qrDataUrl = data.qrDataUrl;
+          if (data.account && data.account.accountNumber) {
+            accountNumber = data.account.accountNumber;
+          }
+          console.warn("Client-side QR generation failed; using server QR.", clientError);
         }
 
-        qrImage.src = data.qrDataUrl;
-        qrAccount.textContent = (data.account && data.account.accountNumber) || "407-050112-9";
-        if (Number.isFinite(Number(data.amount))) {
-          document.getElementById("payment-amount").textContent = formatPrice(Number(data.amount));
-        }
-        qrStatus.textContent = "Scan this QR to transfer the exact order total.";
+        if (token !== qrRequestToken) return;
+
+        qrImage.src = qrDataUrl;
+        qrAccount.textContent = accountNumber;
+        document.getElementById("payment-amount").textContent = formatPrice(amount);
+        qrStatus.textContent = usedFallback
+          ? "Scan this QR (server-generated) to transfer the exact order total."
+          : "Scan this QR to transfer the exact order total.";
       } catch (error) {
         if (token !== qrRequestToken) return;
-        qrStatus.textContent = "Could not generate payment QR. Please refresh or contact support.";
+        qrStatus.textContent = "Could not generate payment QR. Please refresh and try again.";
         console.error(error);
       }
     }
