@@ -15,6 +15,19 @@ const DEFAULT_DESCRIPTION_TEMPLATE = [
   "- ท่ออากาศรถยนต์ ใช้ต่อเข้าไอดี",
   "- สินค้าทำจากยางคุณภาพดี ผลิตในประเทศไทย"
 ].join("\n");
+const BRAND_FROM_PREFIX = {
+  TT: "Toyota",
+  NS: "Nissan",
+  KI: "Kia",
+  MS: "Mitsubishi",
+  IZ: "Isuzu",
+  HN: "Hino",
+  HD: "Honda",
+  SK: "Suzuki",
+  CR: "Chevrolet",
+  MD: "Mazda",
+  FO: "Ford"
+};
 
 const options = parseArgs(process.argv.slice(2));
 const autopartsDir = path.resolve(__dirname, "..");
@@ -212,16 +225,17 @@ function mergeProducts({ importRows, existingProducts, imageFiles, defaults }) {
 
     const base = existing ? { ...existing } : {};
     const inferredBrand = base.brand || inferBrandFromSku(row.sku) || defaults.brand;
+    const normalizedName = normalizeProductName(row.name, inferredBrand);
     const merged = {
       ...base,
       id: existing ? existing.id : ++maxId,
-      name: row.name,
+      name: normalizedName,
       brand: inferredBrand,
       part: base.part || defaults.part,
       price: row.price,
       sku: row.sku,
       stock: Number.isFinite(Number(base.stock)) ? Number(base.stock) : defaults.stock,
-      description: formatDescription(row.name, row.sku, defaults.description),
+      description: formatDescription(normalizedName, row.sku, defaults.description),
       images: matchedImages.length > 0 ? matchedImages : (Array.isArray(base.images) ? base.images : []),
       shopee: row.shopee || base.shopee || "",
       tiktok: row.tiktok || base.tiktok || ""
@@ -284,18 +298,31 @@ function imageRank(skuLower, name) {
 
 function inferBrandFromSku(sku) {
   const prefix = String(sku || "").split("-")[0].toUpperCase();
-  const map = {
-    TT: "Toyota",
-    NS: "Nissan",
-    MZ: "Mazda",
-    HN: "Honda",
-    IZ: "Isuzu",
-    MT: "Mitsubishi",
-    SZ: "Suzuki",
-    CV: "Chevrolet",
-    HI: "Hino"
-  };
-  return map[prefix] || "";
+  return BRAND_FROM_PREFIX[prefix] || "";
+}
+
+function normalizeProductName(name, brand) {
+  const rawName = String(name || "").trim();
+  const cleanBrand = String(brand || "").trim();
+  if (!cleanBrand) return rawName;
+
+  const prefix = "ท่ออากาศ";
+  const startsWithPrefix = rawName.startsWith(prefix);
+  let remainder = startsWithPrefix ? rawName.slice(prefix.length).trim() : rawName;
+
+  for (const knownBrand of Object.values(BRAND_FROM_PREFIX)) {
+    const brandRegex = new RegExp(`^${escapeRegExp(knownBrand)}\\b\\s*`, "i");
+    remainder = remainder.replace(brandRegex, "").trim();
+  }
+
+  if (!remainder) {
+    return `${prefix} ${cleanBrand}`.trim();
+  }
+  return `${prefix} ${cleanBrand} ${remainder}`.replace(/\s+/g, " ").trim();
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function formatDescription(name, sku, template) {

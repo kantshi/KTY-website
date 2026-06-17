@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server-qr.js",
     "smoke:test-payment": "node smoke-test-payment.js",
-    "import:products": "node scripts/import-products.js"
+    "import:products": "node scripts/import-products.js",
+    "normalize:products": "node scripts/normalize-product-names.js"
   },
   "keywords": [],
   "author": "",
