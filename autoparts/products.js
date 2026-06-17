@@ -380,7 +380,7 @@ const products = [
     stock: 50,
     description: "***สินค้าที่ได้รับ จะเป็นของใหม่ทั้งหมด***\n\nท่ออากาศ Toyota AE100\n(รหัส : TT-604)\n\n- ท่ออากาศรถยนต์ ใช้ต่อเข้าไอดี\n- สินค้าทำจากยางคุณภาพดี ผลิตในประเทศไทย",
     images: [],
-    shopee: "",
+    shopee: "https://shopee.co.th/%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A2%E0%B8%B2%E0%B8%87%E0%B8%AD%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A8-Toyota-AE100-i.1501857.3240861301?extraParams=%7B%22display_model_id%22%3A70176145274%2C%22model_selection_logic%22%3A3%7D&sp_atk=f4714298-5906-4411-b0ed-64ae3e09ee15&xptdk=f4714298-5906-4411-b0ed-64ae3e09ee15",
     tiktok: "",
   },
   {
@@ -393,7 +393,7 @@ const products = [
     stock: 50,
     description: "***สินค้าที่ได้รับ จะเป็นของใหม่ทั้งหมด***\n\nท่ออากาศ Toyota AE111\n(รหัส : TT-605)\n\n- ท่ออากาศรถยนต์ ใช้ต่อเข้าไอดี\n- สินค้าทำจากยางคุณภาพดี ผลิตในประเทศไทย",
     images: [],
-    shopee: "",
+    shopee: "https://shopee.co.th/%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A2%E0%B8%B2%E0%B8%87%E0%B8%AD%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A8-Toyota-AE111-i.1501857.7940696582?extraParams=%7B%22display_model_id%22%3A70176167540%2C%22model_selection_logic%22%3A3%7D&sp_atk=e2ab0ad0-cc78-487a-8fe9-d4a26cc9c490&xptdk=e2ab0ad0-cc78-487a-8fe9-d4a26cc9c490",
     tiktok: "",
   },
   {
@@ -406,7 +406,7 @@ const products = [
     stock: 50,
     description: "***สินค้าที่ได้รับ จะเป็นของใหม่ทั้งหมด***\n\nท่ออากาศ Toyota LH112 ยาว\n(รหัส : TT-607)\n\n- ท่ออากาศรถยนต์ ใช้ต่อเข้าไอดี\n- สินค้าทำจากยางคุณภาพดี ผลิตในประเทศไทย",
     images: [],
-    shopee: "",
+    shopee: "https://shopee.co.th/%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A2%E0%B8%B2%E0%B8%87%E0%B8%AD%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A8-Toyota-LH112-i.1501857.7740702002?extraParams=%7B%22display_model_id%22%3A60176299225%2C%22model_selection_logic%22%3A3%7D&sp_atk=0bdcef0b-0578-478f-a989-d016de64d5a9&xptdk=0bdcef0b-0578-478f-a989-d016de64d5a9",
     tiktok: "",
   },
   {
@@ -419,7 +419,7 @@ const products = [
     stock: 50,
     description: "***สินค้าที่ได้รับ จะเป็นของใหม่ทั้งหมด***\n\nท่ออากาศ Toyota CAMRY\n(รหัส : TT-608)\n\n- ท่ออากาศรถยนต์ ใช้ต่อเข้าไอดี\n- สินค้าทำจากยางคุณภาพดี ผลิตในประเทศไทย",
     images: [],
-    shopee: "",
+    shopee: "https://shopee.co.th/%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A2%E0%B8%B2%E0%B8%87%E0%B8%AD%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A8-Toyota-CAMRY-i.1501857.3644995246?extraParams=%7B%22display_model_id%22%3A30493413072%2C%22model_selection_logic%22%3A3%7D&sp_atk=b85f20c8-1416-4c0e-b1b5-b9b9f3894115&xptdk=b85f20c8-1416-4c0e-b1b5-b9b9f3894115",
     tiktok: "",
   },
   {
@@ -432,7 +432,7 @@ const products = [
     stock: 50,
     description: "***สินค้าที่ได้รับ จะเป็นของใหม่ทั้งหมด***\n\nท่ออากาศ Toyota Hi-TORQ\n(รหัส : TT-609)\n\n- ท่ออากาศรถยนต์ ใช้ต่อเข้าไอดี\n- สินค้าทำจากยางคุณภาพดี ผลิตในประเทศไทย",
     images: [],
-    shopee: "",
+    shopee: "https://shopee.co.th/%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A2%E0%B8%B2%E0%B8%87%E0%B8%AD%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A8-Toyota-HI-TORQ-i.1501857.4542750946?extraParams=%7B%22display_model_id%22%3A40332659973%2C%22model_selection_logic%22%3A3%7D&sp_atk=a97322dd-a9f1-401a-89fb-e28a8bcc3f3a&xptdk=a97322dd-a9f1-401a-89fb-e28a8bcc3f3a",
     tiktok: "",
   },
   {
@@ -445,7 +445,7 @@ const products = [
     stock: 50,
     description: "***สินค้าที่ได้รับ จะเป็นของใหม่ทั้งหมด***\n\nท่ออากาศ Toyota EXSIOR\n(รหัส : TT-610)\n\n- ท่ออากาศรถยนต์ ใช้ต่อเข้าไอดี\n- สินค้าทำจากยางคุณภาพดี ผลิตในประเทศไทย",
     images: [],
-    shopee: "",
+    shopee: "https://shopee.co.th/%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A2%E0%B8%B2%E0%B8%87%E0%B8%AD%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A8-Toyota-EXSIOR-i.1501857.7440707815?extraParams=%7B%22display_model_id%22%3A70176403151%2C%22model_selection_logic%22%3A3%7D&sp_atk=6b112482-72cb-41f1-b83c-11d06fe621d3&xptdk=6b112482-72cb-41f1-b83c-11d06fe621d3",
     tiktok: "",
   },
   {
@@ -458,7 +458,7 @@ const products = [
     stock: 50,
     description: "***สินค้าที่ได้รับ จะเป็นของใหม่ทั้งหมด***\n\nท่ออากาศ Toyota ST171\n(รหัส : TT-612)\n\n- ท่ออากาศรถยนต์ ใช้ต่อเข้าไอดี\n- สินค้าทำจากยางคุณภาพดี ผลิตในประเทศไทย",
     images: [],
-    shopee: "",
+    shopee: "https://shopee.co.th/%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A2%E0%B8%B2%E0%B8%87%E0%B8%AD%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A8-Toyota-ST171-i.1501857.5340703015?extraParams=%7B%22display_model_id%22%3A70176199181%2C%22model_selection_logic%22%3A3%7D&sp_atk=14fd38f0-88bc-4ee1-a218-8ceaeb1e2f85&xptdk=14fd38f0-88bc-4ee1-a218-8ceaeb1e2f85",
     tiktok: "",
   },
   {
@@ -471,7 +471,7 @@ const products = [
     stock: 50,
     description: "***สินค้าที่ได้รับ จะเป็นของใหม่ทั้งหมด***\n\nท่ออากาศ Toyota LH50-60\n(รหัส : TT-613)\n\n- ท่ออากาศรถยนต์ ใช้ต่อเข้าไอดี\n- สินค้าทำจากยางคุณภาพดี ผลิตในประเทศไทย",
     images: [],
-    shopee: "",
+    shopee: "https://shopee.co.th/%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A2%E0%B8%B2%E0%B8%87%E0%B8%AD%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A8-Toyota-LH50-60-i.1501857.5440703249?extraParams=%7B%22display_model_id%22%3A70176233781%2C%22model_selection_logic%22%3A3%7D&sp_atk=a9224ea1-6a82-4482-9b6f-3d18e400e2d8&xptdk=a9224ea1-6a82-4482-9b6f-3d18e400e2d8",
     tiktok: "",
   },
   {
@@ -484,7 +484,7 @@ const products = [
     stock: 50,
     description: "***สินค้าที่ได้รับ จะเป็นของใหม่ทั้งหมด***\n\nท่ออากาศ Toyota EE100\n(รหัส : TT-614)\n\n- ท่ออากาศรถยนต์ ใช้ต่อเข้าไอดี\n- สินค้าทำจากยางคุณภาพดี ผลิตในประเทศไทย",
     images: [],
-    shopee: "",
+    shopee: "https://shopee.co.th/%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A2%E0%B8%B2%E0%B8%87%E0%B8%AD%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A8-Toyota-EE100-i.1501857.4440698412?extraParams=%7B%22display_model_id%22%3A21158733666%2C%22model_selection_logic%22%3A3%7D&sp_atk=a42079d2-a5ce-4c1f-bc8d-b3ebe3b03e9f&xptdk=a42079d2-a5ce-4c1f-bc8d-b3ebe3b03e9f",
     tiktok: "",
   },
   {
@@ -497,7 +497,7 @@ const products = [
     stock: 50,
     description: "***สินค้าที่ได้รับ จะเป็นของใหม่ทั้งหมด***\n\nท่ออากาศ Toyota AT190\n(รหัส : TT-615)\n\n- ท่ออากาศรถยนต์ ใช้ต่อเข้าไอดี\n- สินค้าทำจากยางคุณภาพดี ผลิตในประเทศไทย",
     images: [],
-    shopee: "",
+    shopee: "https://shopee.co.th/%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A2%E0%B8%B2%E0%B8%87%E0%B8%AD%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A8-Toyota-AT190-i.1501857.5040703161?extraParams=%7B%22display_model_id%22%3A40176206169%2C%22model_selection_logic%22%3A3%7D&sp_atk=ae238db2-41f8-444d-9c00-a3b53145e1ea&xptdk=ae238db2-41f8-444d-9c00-a3b53145e1ea",
     tiktok: "",
   },
   {
@@ -510,7 +510,7 @@ const products = [
     stock: 50,
     description: "***สินค้าที่ได้รับ จะเป็นของใหม่ทั้งหมด***\n\nท่ออากาศ Toyota ST191\n(รหัส : TT-616)\n\n- ท่ออากาศรถยนต์ ใช้ต่อเข้าไอดี\n- สินค้าทำจากยางคุณภาพดี ผลิตในประเทศไทย",
     images: [],
-    shopee: "",
+    shopee: "https://shopee.co.th/%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A2%E0%B8%B2%E0%B8%87%E0%B8%AD%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A8-Toyota-ST191-i.1501857.7140702131?extraParams=%7B%22display_model_id%22%3A40176305887%2C%22model_selection_logic%22%3A3%7D&sp_atk=b2da880b-df3d-4980-bc62-a89eca16a188&xptdk=b2da880b-df3d-4980-bc62-a89eca16a188",
     tiktok: "",
   },
   {
@@ -523,7 +523,7 @@ const products = [
     stock: 50,
     description: "***สินค้าที่ได้รับ จะเป็นของใหม่ทั้งหมด***\n\nท่ออากาศ Toyota SOLUNA\n(รหัส : TT-617)\n\n- ท่ออากาศรถยนต์ ใช้ต่อเข้าไอดี\n- สินค้าทำจากยางคุณภาพดี ผลิตในประเทศไทย",
     images: [],
-    shopee: "",
+    shopee: "https://shopee.co.th/%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A2%E0%B8%B2%E0%B8%87%E0%B8%AD%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A8-Toyota-SOLUNA-i.1501857.5741615157?extraParams=%7B%22display_model_id%22%3A50242591121%2C%22model_selection_logic%22%3A3%7D&sp_atk=8ef452dd-5995-4ff4-a7f9-689758648fdd&xptdk=8ef452dd-5995-4ff4-a7f9-689758648fdd",
     tiktok: "",
   },
   {
@@ -549,7 +549,7 @@ const products = [
     stock: 50,
     description: "***สินค้าที่ได้รับ จะเป็นของใหม่ทั้งหมด***\n\nท่ออากาศ Toyota ALTIS 1600\n(รหัส : TT-619)\n\n- ท่ออากาศรถยนต์ ใช้ต่อเข้าไอดี\n- สินค้าทำจากยางคุณภาพดี ผลิตในประเทศไทย",
     images: [],
-    shopee: "",
+    shopee: "https://shopee.co.th/%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A2%E0%B8%B2%E0%B8%87%E0%B8%AD%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A8-Toyota-ALTIS-1600-i.1501857.5141460111?extraParams=%7B%22display_model_id%22%3A50231717859%2C%22model_selection_logic%22%3A3%7D&sp_atk=4a8722c8-5186-491f-842a-765c18bc84c4&xptdk=4a8722c8-5186-491f-842a-765c18bc84c4",
     tiktok: "",
   },
   {
@@ -562,7 +562,7 @@ const products = [
     stock: 50,
     description: "***สินค้าที่ได้รับ จะเป็นของใหม่ทั้งหมด***\n\nท่ออากาศ Toyota ALTIS 1800\n(รหัส : TT-620)\n\n- ท่ออากาศรถยนต์ ใช้ต่อเข้าไอดี\n- สินค้าทำจากยางคุณภาพดี ผลิตในประเทศไทย",
     images: [],
-    shopee: "",
+    shopee: "https://shopee.co.th/%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A2%E0%B8%B2%E0%B8%87%E0%B8%AD%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A8-Toyota-ALTIS-1600-i.1501857.5141460111?extraParams=%7B%22display_model_id%22%3A50231717859%2C%22model_selection_logic%22%3A3%7D&sp_atk=c9702340-39c0-40f7-92c4-6982d8793321&xptdk=c9702340-39c0-40f7-92c4-6982d8793321",
     tiktok: "",
   },
   {
@@ -2101,13 +2101,13 @@ const products = [
   },
   {
     id: 161,
-    name: "ท่ออากาศ Suzuki CARRY",
+    name: "ท่ออากาศ Suzuki SUZUKI CARRY",
     brand: "Suzuki",
     part: "Air Hose",
     price: 350.00,
     sku: "SK-001",
     stock: 50,
-    description: "***สินค้าที่ได้รับ จะเป็นของใหม่ทั้งหมด***\n\nท่ออากาศ Suzuki CARRY\n(รหัส : SK-001)\n\n- ท่ออากาศรถยนต์ ใช้ต่อเข้าไอดี\n- สินค้าทำจากยางคุณภาพดี ผลิตในประเทศไทย",
+    description: "***สินค้าที่ได้รับ จะเป็นของใหม่ทั้งหมด***\n\nท่ออากาศ Suzuki SUZUKI CARRY\n(รหัส : SK-001)\n\n- ท่ออากาศรถยนต์ ใช้ต่อเข้าไอดี\n- สินค้าทำจากยางคุณภาพดี ผลิตในประเทศไทย",
     images: [],
     shopee: "",
     tiktok: "",
@@ -2270,13 +2270,13 @@ const products = [
   },
   {
     id: 174,
-    name: "ท่ออากาศ Ford 6610",
+    name: "ท่ออากาศ Ford FORD 6610",
     brand: "Ford",
     part: "Air Hose",
     price: 120.00,
     sku: "FO-6009",
     stock: 50,
-    description: "***สินค้าที่ได้รับ จะเป็นของใหม่ทั้งหมด***\n\nท่ออากาศ Ford 6610\n(รหัส : FO-6009)\n\n- ท่ออากาศรถยนต์ ใช้ต่อเข้าไอดี\n- สินค้าทำจากยางคุณภาพดี ผลิตในประเทศไทย",
+    description: "***สินค้าที่ได้รับ จะเป็นของใหม่ทั้งหมด***\n\nท่ออากาศ Ford FORD 6610\n(รหัส : FO-6009)\n\n- ท่ออากาศรถยนต์ ใช้ต่อเข้าไอดี\n- สินค้าทำจากยางคุณภาพดี ผลิตในประเทศไทย",
     images: [],
     shopee: "",
     tiktok: "",
@@ -2565,6 +2565,19 @@ const products = [
     description: "***สินค้าที่ได้รับ จะเป็นของใหม่ทั้งหมด***\n\nท่ออากาศ Honda CR-V'08 2.0\n(รหัส : HD-021)\n\n- ท่ออากาศรถยนต์ ใช้ต่อเข้าไอดี\n- สินค้าทำจากยางคุณภาพดี ผลิตในประเทศไทย",
     images: [],
     shopee: "",
+    tiktok: "",
+  },
+  {
+    id: 197,
+    name: "ท่ออากาศ Toyota LH112 B",
+    brand: "Toyota",
+    part: "Air Hose",
+    price: 290.00,
+    sku: "TT-639",
+    stock: 50,
+    description: "***สินค้าที่ได้รับ จะเป็นของใหม่ทั้งหมด***\n\nท่ออากาศ Toyota LH112 B\n(รหัส : TT-639)\n\n- ท่ออากาศรถยนต์ ใช้ต่อเข้าไอดี\n- สินค้าทำจากยางคุณภาพดี ผลิตในประเทศไทย",
+    images: [],
+    shopee: "https://shopee.co.th/%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A2%E0%B8%B2%E0%B8%87%E0%B8%AD%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A8%E0%B8%A3%E0%B8%96%E0%B8%A2%E0%B8%99%E0%B8%95%E0%B9%8C-Toyota-LH112-B-i.1501857.52162247372?extraParams=%7B%22display_model_id%22%3A381062878490%2C%22model_selection_logic%22%3A3%7D&sp_atk=7c989fde-9719-4117-a220-62e7ab2e65dc&xptdk=7c989fde-9719-4117-a220-62e7ab2e65dc",
     tiktok: "",
   }
 ];

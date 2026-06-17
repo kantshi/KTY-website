@@ -27,6 +27,7 @@ const DESCRIPTION_TEMPLATE = [
   "- ท่ออากาศรถยนต์ ใช้ต่อเข้าไอดี",
   "- สินค้าทำจากยางคุณภาพดี ผลิตในประเทศไทย"
 ].join("\n");
+const THAI_AIR_HOSE_PREFIXES = ["ท่ออากาศ", "ท่อยางอากาศ"];
 
 const autopartsDir = path.resolve(__dirname, "..");
 const productsPath = path.join(autopartsDir, "products.js");
@@ -78,13 +79,13 @@ function normalizeProductName(name, brand) {
   if (!cleanBrand) return rawName;
 
   const prefix = "ท่ออากาศ";
-  const startsWithPrefix = rawName.startsWith(prefix);
-  let remainder = startsWithPrefix ? rawName.slice(prefix.length).trim() : rawName;
+  let remainder = stripThaiPrefix(rawName);
 
   for (const knownBrand of Object.values(BRAND_FROM_PREFIX)) {
     const brandRegex = new RegExp(`^${escapeRegExp(knownBrand)}\\b\\s*`, "i");
     remainder = remainder.replace(brandRegex, "").trim();
   }
+  remainder = stripThaiPrefix(remainder);
 
   if (!remainder) {
     return `${prefix} ${cleanBrand}`.trim();
@@ -100,6 +101,17 @@ function formatDescription(name, sku) {
 
 function escapeRegExp(value) {
   return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function stripThaiPrefix(value) {
+  let text = String(value || "").trim();
+  for (const thaiPrefix of THAI_AIR_HOSE_PREFIXES) {
+    if (text.startsWith(thaiPrefix)) {
+      text = text.slice(thaiPrefix.length).trim();
+      break;
+    }
+  }
+  return text;
 }
 
 function readProductsFile(filePath) {
