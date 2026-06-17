@@ -14,9 +14,8 @@ const INVENTORY_EMAIL = process.env.INVENTORY_EMAIL || "ktyautopart@gmail.com";
 const MAIL_FROM = process.env.MAIL_FROM || "AutoParts Hub <no-reply@autopartshub.my>";
 const TEST_EMAIL_TRANSPORT = process.env.TEST_EMAIL_TRANSPORT === "true";
 const MAX_PROOF_IMAGE_MB = Number(process.env.MAX_PROOF_IMAGE_MB || 8);
-const SCB_BANK_CODE = process.env.QR_BANK_CODE || "014";
-const SCB_ACCOUNT_DIGITS = normalizeAccountNumber(process.env.QR_BANK_ACCOUNT || "407-050112-9");
-const SCB_ACCOUNT_DISPLAY = formatScbAccount(SCB_ACCOUNT_DIGITS);
+const PROMPTPAY_MOBILE = normalizePromptPayMobile(process.env.QR_PROMPTPAY_MOBILE || "0827401051");
+const PROMPTPAY_DISPLAY = formatThaiMobileDisplay(PROMPTPAY_MOBILE);
 
 const DATA_DIR = path.join(__dirname, "data");
 const ORDERS_FILE = path.join(DATA_DIR, "orders.json");
@@ -54,8 +53,8 @@ app.get("/api/health", (_req, res) => {
   res.json({
     ok: true,
     paymentMode: "qr-proof-upload",
-    paymentQrBank: "SCB",
-    paymentQrAccount: SCB_ACCOUNT_DISPLAY,
+    paymentQrType: "promptpay",
+    paymentQrRecipient: PROMPTPAY_DISPLAY,
     maxProofImageMb: MAX_PROOF_IMAGE_MB,
     testEmailMode: TEST_EMAIL_TRANSPORT
   });
@@ -70,20 +69,20 @@ app.get("/api/payments/qr", async (req, res) => {
   const roundedAmount = Math.round(amount * 100) / 100;
   try {
     const payload = new ThaiQRPaymentBuilder()
-      .bankAccount(SCB_BANK_CODE, SCB_ACCOUNT_DIGITS)
+      .promptpay(PROMPTPAY_MOBILE, "mobile")
       .amount(roundedAmount)
       .build();
     const qrDataUrl = await QRCode.toDataURL(payload, {
-      width: 360,
-      margin: 1,
-      errorCorrectionLevel: "M"
+      width: 1024,
+      margin: 4,
+      errorCorrectionLevel: "H"
     });
 
     return res.json({
       ok: true,
       account: {
-        bank: "Siam Commercial Bank",
-        accountNumber: SCB_ACCOUNT_DISPLAY
+        bank: "PromptPay",
+        accountNumber: PROMPTPAY_DISPLAY
       },
       amount: roundedAmount,
       qrDataUrl
@@ -429,17 +428,17 @@ function mimeToExt(mimeType) {
   return map[mimeType] || ".img";
 }
 
-function normalizeAccountNumber(value) {
+function normalizePromptPayMobile(value) {
   const digits = String(value || "").replace(/\D+/g, "");
-  if (!digits) {
-    throw new Error("QR_BANK_ACCOUNT is missing or invalid.");
+  if (digits.length === 10 && digits.startsWith("0")) {
+    return digits;
   }
-  return digits;
+  if (digits.length === 11 && digits.startsWith("66")) {
+    return `0${digits.slice(2)}`;
+  }
+  throw new Error("QR_PROMPTPAY_MOBILE is missing or invalid.");
 }
 
-function formatScbAccount(accountDigits) {
-  if (accountDigits.length === 10) {
-    return `${accountDigits.slice(0, 3)}-${accountDigits.slice(3, 9)}-${accountDigits.slice(9)}`;
-  }
-  return accountDigits;
+function formatThaiMobileDisplay(mobile) {
+  return `${mobile.slice(0, 3)}-${mobile.slice(3, 6)}-${mobile.slice(6)}`;
 }

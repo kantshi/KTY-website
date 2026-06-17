@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260617-7">
+  <link rel="stylesheet" href="styles.css?v=20260617-8">
 </head>
 <body>
   <header class="header">
@@ -65,8 +65,8 @@
           <div class="qr-payment-card">
             <img id="payment-qr-image" src="images/qr-payment-placeholder.svg" alt="QR payment code">
             <div>
-              <p style="margin:0 0 8px"><strong>Bank:</strong> Siam Commercial Bank (SCB)</p>
-              <p style="margin:0 0 8px"><strong>Account:</strong> <span id="payment-account">407-050112-9</span></p>
+              <p style="margin:0 0 8px"><strong>Method:</strong> PromptPay</p>
+              <p style="margin:0 0 8px"><strong>PromptPay:</strong> <span id="payment-account">082-740-1051</span></p>
               <p style="margin:0 0 8px"><strong>Amount:</strong> <span id="payment-amount">฿0.00</span></p>
               <p style="margin:0 0 8px"><strong>Step 1:</strong> Scan the QR using your banking/e-wallet app and complete transfer.</p>
               <p style="margin:0"><strong>Step 2:</strong> Upload payment proof below. We will email your proof image and shipping/inventory PDF to admin for processing.</p>
@@ -127,16 +127,15 @@
     <div class="footer-bottom">© 2025 KTY Autoparts. All Rights Reserved.</div>
   </footer>
 
-  <script src="products.js?v=20260617-7"></script>
-  <script src="cart.js?v=20260617-7"></script>
+  <script src="products.js?v=20260617-8"></script>
+  <script src="cart.js?v=20260617-8"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
   <script>
     const SHIPPING_FLAT = 12.00;
     const FREE_SHIP_OVER = 300.00;
     const SUBMIT_QR_PROOF_ENDPOINT = window.SUBMIT_QR_PROOF_ENDPOINT || "/api/orders/submit-proof";
     const PAYMENT_QR_ENDPOINT = window.PAYMENT_QR_ENDPOINT || "/api/payments/qr";
-    const QR_BANK_CODE = "014";
-    const QR_ACCOUNT_NUMBER = "407-050112-9";
+    const PROMPTPAY_MOBILE = "0827401051";
     let qrRequestToken = 0;
 
     function getTotals() {
@@ -169,6 +168,27 @@
       return String(value || "").replace(/\D+/g, "");
     }
 
+    function normalizePromptPayMobile(value) {
+      const digits = normalizeDigits(value);
+      if (digits.length === 10 && digits.startsWith("0")) {
+        return digits;
+      }
+      if (digits.length === 11 && digits.startsWith("66")) {
+        return `0${digits.slice(2)}`;
+      }
+      throw new Error("PromptPay mobile must be a Thai mobile number.");
+    }
+
+    function formatThaiMobileDisplay(value) {
+      const mobile = normalizePromptPayMobile(value);
+      return `${mobile.slice(0, 3)}-${mobile.slice(3, 6)}-${mobile.slice(6)}`;
+    }
+
+    function buildPromptPayMobileValue(value) {
+      const mobile = normalizePromptPayMobile(value);
+      return mobile.replace(/^0/, "66").padStart(13, "0");
+    }
+
     function buildTlv(tag, value) {
       const text = String(value || "");
       return `${tag}${String(text.length).padStart(2, "0")}${text}`;
@@ -194,9 +214,8 @@
       return rounded.toFixed(2);
     }
 
-    function buildScbPaymentPayload(amount) {
-      const accountDigits = normalizeDigits(QR_ACCOUNT_NUMBER);
-      const merchantAccount = buildTlv("00", "A000000677010111") + buildTlv("04", `${QR_BANK_CODE}${accountDigits}`);
+    function buildPromptPayPaymentPayload(amount) {
+      const merchantAccount = buildTlv("00", "A000000677010111") + buildTlv("01", buildPromptPayMobileValue(PROMPTPAY_MOBILE));
 
       let payload = "";
       payload += buildTlv("00", "01");
@@ -214,7 +233,7 @@
       if (!window.QRCode || typeof window.QRCode.toDataURL !== "function") {
         throw new Error("QR code encoder is unavailable.");
       }
-      const payload = buildScbPaymentPayload(amount);
+      const payload = buildPromptPayPaymentPayload(amount);
       return window.QRCode.toDataURL(payload, {
         width: 1024,
         margin: 4,
@@ -254,7 +273,7 @@
       try {
         const amount = Number(totals.total || 0);
         let qrDataUrl = "";
-        let accountNumber = QR_ACCOUNT_NUMBER;
+        let accountNumber = formatThaiMobileDisplay(PROMPTPAY_MOBILE);
         let usedFallback = false;
 
         try {
