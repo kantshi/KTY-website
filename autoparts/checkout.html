@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=20260617-7">
 </head>
 <body>
   <header class="header">
@@ -71,6 +71,7 @@
               <p style="margin:0 0 8px"><strong>Step 1:</strong> Scan the QR using your banking/e-wallet app and complete transfer.</p>
               <p style="margin:0"><strong>Step 2:</strong> Upload payment proof below. We will email your proof image and shipping/inventory PDF to admin for processing.</p>
               <p id="payment-qr-status" class="muted-note" style="text-align:left;margin-top:10px">Generating secure payment QR...</p>
+              <p style="margin:8px 0 0"><a id="payment-qr-download" href="images/qr-payment-placeholder.svg" target="_blank" rel="noopener">Open full-size QR</a></p>
             </div>
           </div>
           <div class="field-grid" style="margin-top:16px">
@@ -123,11 +124,11 @@
         </ul>
       </div>
     </div>
-    <div class="footer-bottom">© 2025 AutoParts Hub. All Rights Reserved.</div>
+    <div class="footer-bottom">© 2025 KTY Autoparts. All Rights Reserved.</div>
   </footer>
 
-  <script src="products.js?v=20260617-6"></script>
-  <script src="cart.js?v=20260617-6"></script>
+  <script src="products.js?v=20260617-7"></script>
+  <script src="cart.js?v=20260617-7"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
   <script>
     const SHIPPING_FLAT = 12.00;
@@ -215,9 +216,9 @@
       }
       const payload = buildScbPaymentPayload(amount);
       return window.QRCode.toDataURL(payload, {
-        width: 360,
-        margin: 1,
-        errorCorrectionLevel: "M"
+        width: 1024,
+        margin: 4,
+        errorCorrectionLevel: "H"
       });
     }
 
@@ -243,6 +244,7 @@
       const qrImage = document.getElementById("payment-qr-image");
       const qrStatus = document.getElementById("payment-qr-status");
       const qrAccount = document.getElementById("payment-account");
+      const qrDownload = document.getElementById("payment-qr-download");
       if (!qrImage || !qrStatus || !qrAccount) return;
 
       const token = ++qrRequestToken;
@@ -270,6 +272,7 @@
         if (token !== qrRequestToken) return;
 
         qrImage.src = qrDataUrl;
+        if (qrDownload) qrDownload.href = qrDataUrl;
         qrAccount.textContent = accountNumber;
         document.getElementById("payment-amount").textContent = formatPrice(amount);
         qrStatus.textContent = usedFallback
