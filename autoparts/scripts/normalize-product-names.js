@@ -31,6 +31,7 @@ const BRAND_TABS = [
   "Mazda"
 ];
 const PRODUCT_NAME_PREFIX = "ท่อยางอากาศ";
+const IMAGE_EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg", ".heic", ".heif"]);
 const SPECIFIC_MARKETPLACE_LINKS = {
   "TT-622": {
     shopee: "https://shopee.co.th/%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A2%E0%B8%B2%E0%B8%87%E0%B8%AD%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A8-Toyota-1KZ-i.1501857.4141616903?extraParams=%7B%22display_model_id%22%3A60242574024%2C%22model_selection_logic%22%3A3%7D&sp_atk=8cfa3694-d704-4c81-afb3-4e66f7426e23&xptdk=8cfa3694-d704-4c81-afb3-4e66f7426e23"
@@ -53,6 +54,7 @@ const THAI_AIR_HOSE_PREFIXES = ["ท่ออากาศ", "ท่อยาง�
 
 const autopartsDir = path.resolve(__dirname, "..");
 const productsPath = path.join(autopartsDir, "products.js");
+const imagesDir = path.join(autopartsDir, "images");
 
 if (!fs.existsSync(productsPath)) {
   console.error(`products.js not found at ${productsPath}`);
@@ -60,6 +62,7 @@ if (!fs.existsSync(productsPath)) {
 }
 
 const { brands: existingBrands, products } = readProductsFile(productsPath);
+const imageFiles = loadImageFiles(imagesDir);
 let updatedCount = 0;
 
 const normalizedProducts = products.map((product) => {
@@ -70,11 +73,13 @@ const normalizedProducts = products.map((product) => {
   const specificLinks = getSpecificMarketplaceLinks(product.sku);
   const normalizedShopeeUrl = resolveShopeeUrl(specificLinks.shopee || product.shopee);
   const normalizedTikTokUrl = resolveTikTokUrl(specificLinks.tiktok || product.tiktok);
+  const syncedImages = resolveProductImages(product.sku, product.images, imageFiles);
 
   const changed = (
     product.brand !== inferredBrand ||
     product.name !== normalizedName ||
     product.description !== normalizedDescription ||
+    !areSameImages(product.images, syncedImages) ||
     (product.shopee || "") !== normalizedShopeeUrl ||
     (product.tiktok || "") !== normalizedTikTokUrl
   );
@@ -85,6 +90,7 @@ const normalizedProducts = products.map((product) => {
     brand: inferredBrand,
     name: normalizedName,
     description: normalizedDescription,
+    images: syncedImages,
     shopee: normalizedShopeeUrl,
     tiktok: normalizedTikTokUrl
   };
@@ -109,6 +115,53 @@ function normalizeMarketplaceUrl(url) {
 function getSpecificMarketplaceLinks(sku) {
   const key = String(sku || "").trim().toUpperCase();
   return SPECIFIC_MARKETPLACE_LINKS[key] || {};
+}
+
+function loadImageFiles(dirPath) {
+  if (!fs.existsSync(dirPath)) return [];
+  return fs.readdirSync(dirPath).filter((file) => IMAGE_EXTENSIONS.has(path.extname(file).toLowerCase()));
+}
+
+function resolveProductImages(sku, existingImages, imageFiles) {
+  const matched = matchImagesForSku(sku, imageFiles).map((file) => `images/${file}`);
+  if (matched.length > 0) return matched;
+  if (!Array.isArray(existingImages)) return [];
+  return existingImages
+    .filter((value) => typeof value === "string")
+    .map((value) => String(value).trim())
+    .filter(Boolean);
+}
+
+function matchImagesForSku(sku, imageFiles) {
+  const skuLower = String(sku || "").trim().toLowerCase();
+  if (!skuLower) return [];
+
+  const matches = imageFiles.filter((file) => {
+    const basename = path.parse(file).name.toLowerCase();
+    return basename === skuLower || basename.startsWith(`${skuLower}_`);
+  });
+
+  matches.sort((a, b) => compareImageNamesForSku(skuLower, a, b));
+  return matches;
+}
+
+function compareImageNamesForSku(skuLower, fileA, fileB) {
+  const nameA = path.parse(fileA).name.toLowerCase();
+  const nameB = path.parse(fileB).name.toLowerCase();
+  return imageRank(skuLower, nameA) - imageRank(skuLower, nameB) || nameA.localeCompare(nameB, undefined, { numeric: true });
+}
+
+function imageRank(skuLower, name) {
+  if (name === skuLower) return 0;
+  if (name.endsWith("_m")) return 2;
+  return 1;
+}
+
+function areSameImages(currentImages, nextImages) {
+  const current = Array.isArray(currentImages) ? currentImages.map((value) => String(value || "")) : [];
+  const next = Array.isArray(nextImages) ? nextImages.map((value) => String(value || "")) : [];
+  if (current.length !== next.length) return false;
+  return current.every((value, index) => value === next[index]);
 }
 
 function isSpecificShopeeUrl(url) {

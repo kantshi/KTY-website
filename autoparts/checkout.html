@@ -63,10 +63,14 @@
         <div class="form-card">
           <h3>QR payment</h3>
           <div class="qr-payment-card">
-            <img src="images/qr-payment-placeholder.svg" alt="QR payment code">
+            <img id="payment-qr-image" src="images/qr-payment-placeholder.svg" alt="QR payment code">
             <div>
+              <p style="margin:0 0 8px"><strong>Bank:</strong> Siam Commercial Bank (SCB)</p>
+              <p style="margin:0 0 8px"><strong>Account:</strong> <span id="payment-account">407-050112-9</span></p>
+              <p style="margin:0 0 8px"><strong>Amount:</strong> <span id="payment-amount">฿0.00</span></p>
               <p style="margin:0 0 8px"><strong>Step 1:</strong> Scan the QR using your banking/e-wallet app and complete transfer.</p>
               <p style="margin:0"><strong>Step 2:</strong> Upload payment proof below. We will email your proof image and shipping/inventory PDF to admin for processing.</p>
+              <p id="payment-qr-status" class="muted-note" style="text-align:left;margin-top:10px">Generating secure payment QR...</p>
             </div>
           </div>
           <div class="field-grid" style="margin-top:16px">
@@ -122,12 +126,14 @@
     <div class="footer-bottom">© 2025 AutoParts Hub. All Rights Reserved.</div>
   </footer>
 
-  <script src="products.js?v=20260617-4"></script>
-  <script src="cart.js?v=20260617-4"></script>
+  <script src="products.js?v=20260617-5"></script>
+  <script src="cart.js?v=20260617-5"></script>
   <script>
     const SHIPPING_FLAT = 12.00;
     const FREE_SHIP_OVER = 300.00;
     const SUBMIT_QR_PROOF_ENDPOINT = window.SUBMIT_QR_PROOF_ENDPOINT || "/api/orders/submit-proof";
+    const PAYMENT_QR_ENDPOINT = window.PAYMENT_QR_ENDPOINT || "/api/payments/qr";
+    let qrRequestToken = 0;
 
     function getTotals() {
       const subtotal = cartTotal();
@@ -151,7 +157,49 @@
       document.getElementById("sum-subtotal").textContent = formatPrice(t.subtotal);
       document.getElementById("sum-shipping").textContent = t.shipping === 0 ? "FREE" : formatPrice(t.shipping);
       document.getElementById("sum-total").textContent = formatPrice(t.total);
+      document.getElementById("payment-amount").textContent = formatPrice(t.total);
       return true;
+    }
+
+    async function renderPaymentQr() {
+      const totals = getTotals();
+      const qrImage = document.getElementById("payment-qr-image");
+      const qrStatus = document.getElementById("payment-qr-status");
+      const qrAccount = document.getElementById("payment-account");
+      if (!qrImage || !qrStatus || !qrAccount) return;
+
+      const token = ++qrRequestToken;
+      qrStatus.textContent = "Generating secure payment QR...";
+      qrImage.src = "images/qr-payment-placeholder.svg";
+
+      try {
+        const amount = Number(totals.total || 0);
+        const response = await fetch(`${PAYMENT_QR_ENDPOINT}?amount=${encodeURIComponent(amount.toFixed(2))}`);
+        if (!response.ok) {
+          let reason = `QR request failed (${response.status})`;
+          try {
+            const data = await response.json();
+            if (data && data.error) reason = data.error;
+          } catch (_error) {}
+          throw new Error(reason);
+        }
+        const data = await response.json();
+        if (token !== qrRequestToken) return;
+        if (!data || !data.qrDataUrl) {
+          throw new Error("QR image payload missing.");
+        }
+
+        qrImage.src = data.qrDataUrl;
+        qrAccount.textContent = (data.account && data.account.accountNumber) || "407-050112-9";
+        if (Number.isFinite(Number(data.amount))) {
+          document.getElementById("payment-amount").textContent = formatPrice(Number(data.amount));
+        }
+        qrStatus.textContent = "Scan this QR to transfer the exact order total.";
+      } catch (error) {
+        if (token !== qrRequestToken) return;
+        qrStatus.textContent = "Could not generate payment QR. Please refresh or contact support.";
+        console.error(error);
+      }
     }
 
     function showError(msg) {
@@ -248,6 +296,7 @@
 
     document.addEventListener("DOMContentLoaded", () => {
       if (renderSummary()) {
+        renderPaymentQr();
         document.getElementById("checkout-form").addEventListener("submit", placeOrder);
       }
     });

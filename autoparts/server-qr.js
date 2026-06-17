@@ -4,6 +4,8 @@ const path = require("path");
 const multer = require("multer");
 const nodemailer = require("nodemailer");
 const PDFDocument = require("pdfkit");
+const QRCode = require("qrcode");
+const { ThaiQRPaymentBuilder } = require("thai-qr-payment");
 
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
@@ -12,6 +14,9 @@ const INVENTORY_EMAIL = process.env.INVENTORY_EMAIL || "ktyautopart@gmail.com";
 const MAIL_FROM = process.env.MAIL_FROM || "AutoParts Hub <no-reply@autopartshub.my>";
 const TEST_EMAIL_TRANSPORT = process.env.TEST_EMAIL_TRANSPORT === "true";
 const MAX_PROOF_IMAGE_MB = Number(process.env.MAX_PROOF_IMAGE_MB || 8);
+const SCB_BANK_CODE = process.env.QR_BANK_CODE || "014";
+const SCB_ACCOUNT_DIGITS = normalizeAccountNumber(process.env.QR_BANK_ACCOUNT || "407-050112-9");
+const SCB_ACCOUNT_DISPLAY = formatScbAccount(SCB_ACCOUNT_DIGITS);
 
 const DATA_DIR = path.join(__dirname, "data");
 const ORDERS_FILE = path.join(DATA_DIR, "orders.json");
@@ -49,9 +54,44 @@ app.get("/api/health", (_req, res) => {
   res.json({
     ok: true,
     paymentMode: "qr-proof-upload",
+    paymentQrBank: "SCB",
+    paymentQrAccount: SCB_ACCOUNT_DISPLAY,
     maxProofImageMb: MAX_PROOF_IMAGE_MB,
     testEmailMode: TEST_EMAIL_TRANSPORT
   });
+});
+
+app.get("/api/payments/qr", async (req, res) => {
+  const amount = Number(req.query.amount);
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return res.status(400).json({ ok: false, error: "amount must be a positive number." });
+  }
+
+  const roundedAmount = Math.round(amount * 100) / 100;
+  try {
+    const payload = new ThaiQRPaymentBuilder()
+      .bankAccount(SCB_BANK_CODE, SCB_ACCOUNT_DIGITS)
+      .amount(roundedAmount)
+      .build();
+    const qrDataUrl = await QRCode.toDataURL(payload, {
+      width: 360,
+      margin: 1,
+      errorCorrectionLevel: "M"
+    });
+
+    return res.json({
+      ok: true,
+      account: {
+        bank: "Siam Commercial Bank",
+        accountNumber: SCB_ACCOUNT_DISPLAY
+      },
+      amount: roundedAmount,
+      qrDataUrl
+    });
+  } catch (error) {
+    console.error("Failed to generate payment QR:", error);
+    return res.status(500).json({ ok: false, error: "Could not generate payment QR code." });
+  }
 });
 
 app.post("/api/orders/submit-proof", (req, res) => {
@@ -387,4 +427,19 @@ function mimeToExt(mimeType) {
     "image/heif": ".heif"
   };
   return map[mimeType] || ".img";
+}
+
+function normalizeAccountNumber(value) {
+  const digits = String(value || "").replace(/\D+/g, "");
+  if (!digits) {
+    throw new Error("QR_BANK_ACCOUNT is missing or invalid.");
+  }
+  return digits;
+}
+
+function formatScbAccount(accountDigits) {
+  if (accountDigits.length === 10) {
+    return `${accountDigits.slice(0, 3)}-${accountDigits.slice(3, 9)}-${accountDigits.slice(9)}`;
+  }
+  return accountDigits;
 }
