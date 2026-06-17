@@ -1,7 +1,7 @@
 // app.js — catalog rendering, brand filtering and search
 
 let selectedBrand = "All";
-const PLACEHOLDER_IMAGE = "images/product-placeholder.svg";
+const APP_PLACEHOLDER_IMAGE = "images/product-placeholder.svg";
 
 function safeFormatPrice(value) {
   if (typeof formatPrice === "function") return formatPrice(value);
@@ -35,7 +35,7 @@ function sortProducts(items) {
 }
 
 function getCardImage(product) {
-  return productHasImage(product) ? getPrimaryImage(product) : PLACEHOLDER_IMAGE;
+  return productHasImage(product) ? getPrimaryImage(product) : APP_PLACEHOLDER_IMAGE;
 }
 
 function renderBrandCountBadge() {
@@ -74,7 +74,7 @@ function renderProducts(items) {
     card.innerHTML = `
       <a class="product-thumb" href="product.html?id=${p.id}">
         <span class="product-tag">${p.brand}</span>
-        <img src="${getCardImage(p)}" alt="${p.name}" loading="lazy" onerror="this.onerror=null;this.src='${PLACEHOLDER_IMAGE}'">
+        <img src="${getCardImage(p)}" alt="${p.name}" loading="lazy" onerror="this.onerror=null;this.src='${APP_PLACEHOLDER_IMAGE}'">
       </a>
       <div class="product-body">
         <span class="product-part">${p.part}</span>
