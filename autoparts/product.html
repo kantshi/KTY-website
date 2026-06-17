@@ -102,11 +102,13 @@
     <div class="footer-bottom">© 2025 AutoParts Hub. All Rights Reserved.</div>
   </footer>
 
-  <script src="products.js?v=20260617-2"></script>
-  <script src="cart.js?v=20260617-2"></script>
+  <script src="products.js?v=20260617-3"></script>
+  <script src="cart.js?v=20260617-3"></script>
   <script>
     let currentIndex = 0;
     let currentProduct = null;
+    const SHOPEE_SHOP_URL = "https://shopee.co.th/shop/1501857";
+    const TIKTOK_SHOP_URL = "https://www.tiktok.com/@kty.autopart/shop";
 
     const productId = parseInt(new URLSearchParams(window.location.search).get("id"));
 
@@ -146,13 +148,29 @@
       }
     }
 
-    function resolveMarketplaceUrl(kind, rawUrl) {
+    function buildMarketplaceKeyword(product) {
+      return String(product && product.name ? product.name : "").trim() || "อะไหล่รถยนต์";
+    }
+
+    function buildShopeeSearchUrl(product) {
+      return `${SHOPEE_SHOP_URL}/search?keyword=${encodeURIComponent(buildMarketplaceKeyword(product))}`;
+    }
+
+    function buildTikTokSearchUrl(product) {
+      return `${TIKTOK_SHOP_URL}?search=${encodeURIComponent(buildMarketplaceKeyword(product))}`;
+    }
+
+    function resolveMarketplaceUrl(kind, product, rawUrl) {
       const normalized = normalizeMarketplaceUrl(rawUrl);
       if (kind === "shopee") {
-        return isSpecificShopeeUrl(normalized) ? String(rawUrl || "").trim() : "";
+        return isSpecificShopeeUrl(normalized)
+          ? String(rawUrl || "").trim()
+          : buildShopeeSearchUrl(product);
       }
       if (kind === "tiktok") {
-        return isSpecificTikTokUrl(normalized) ? String(rawUrl || "").trim() : "";
+        return isSpecificTikTokUrl(normalized)
+          ? String(rawUrl || "").trim()
+          : buildTikTokSearchUrl(product);
       }
       return String(rawUrl || "").trim();
     }
@@ -202,8 +220,8 @@
 
     function renderShopLinks(product) {
       const links = [
-        { key: "shopee", label: "Buy on Shopee", icon: "🛒", url: resolveMarketplaceUrl("shopee", product.shopee) },
-        { key: "tiktok", label: "Buy on TikTok Shop", icon: "🎵", url: resolveMarketplaceUrl("tiktok", product.tiktok) }
+        { key: "shopee", label: "Buy on Shopee", icon: "🛒", url: resolveMarketplaceUrl("shopee", product, product.shopee) },
+        { key: "tiktok", label: "Buy on TikTok Shop", icon: "🎵", url: resolveMarketplaceUrl("tiktok", product, product.tiktok) }
       ];
       document.getElementById("shop-links").innerHTML = links.map(l => l.url
         ? `<a class="shop-btn ${l.key}" href="${l.url}" target="_blank" rel="noopener">

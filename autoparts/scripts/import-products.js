@@ -43,7 +43,7 @@ const BRAND_TABS = [
   "Mazda"
 ];
 const SHOPEE_SHOP_URL = "https://shopee.co.th/shop/1501857";
-const TIKTOK_PROFILE_URL = "https://www.tiktok.com/@kty.autopart";
+const TIKTOK_SHOP_URL = "https://www.tiktok.com/@kty.autopart/shop";
 const PRODUCT_NAME_PREFIX = "ท่อยางอากาศ";
 
 const options = parseArgs(process.argv.slice(2));
@@ -243,6 +243,7 @@ function mergeProducts({ importRows, existingProducts, imageFiles, defaults }) {
     const base = existing ? { ...existing } : {};
     const inferredBrand = base.brand || inferBrandFromSku(row.sku) || defaults.brand;
     const normalizedName = normalizeProductName(row.name, inferredBrand);
+    const marketplaceKeyword = buildMarketplaceKeyword(normalizedName);
     const merged = {
       ...base,
       id: existing ? existing.id : ++maxId,
@@ -254,8 +255,8 @@ function mergeProducts({ importRows, existingProducts, imageFiles, defaults }) {
       stock: Number.isFinite(Number(base.stock)) ? Number(base.stock) : defaults.stock,
       description: formatDescription(normalizedName, row.sku, defaults.description),
       images: matchedImages.length > 0 ? matchedImages : (Array.isArray(base.images) ? base.images : []),
-      shopee: resolveShopeeUrl(row.shopee || base.shopee),
-      tiktok: resolveTikTokUrl(row.tiktok || base.tiktok)
+      shopee: resolveShopeeUrl(row.shopee || base.shopee, marketplaceKeyword),
+      tiktok: resolveTikTokUrl(row.tiktok || base.tiktok, marketplaceKeyword)
     };
 
     if (existing) {
@@ -322,6 +323,18 @@ function normalizeMarketplaceUrl(url) {
   return String(url || "").trim().replace(/\/+$/, "");
 }
 
+function buildMarketplaceKeyword(name) {
+  return String(name || "").trim() || "อะไหล่รถยนต์";
+}
+
+function buildShopeeSearchUrl(keyword) {
+  return `${SHOPEE_SHOP_URL}/search?keyword=${encodeURIComponent(keyword)}`;
+}
+
+function buildTikTokSearchUrl(keyword) {
+  return `${TIKTOK_SHOP_URL}?search=${encodeURIComponent(keyword)}`;
+}
+
 function isSpecificShopeeUrl(url) {
   const normalized = normalizeMarketplaceUrl(url);
   if (!normalized) return false;
@@ -349,14 +362,14 @@ function isSpecificTikTokUrl(url) {
   return pathname.includes("/product/") || pathname.includes("/shop/product/") || pathname.includes("/view/product/");
 }
 
-function resolveShopeeUrl(url) {
+function resolveShopeeUrl(url, keyword) {
   if (isSpecificShopeeUrl(url)) return String(url).trim();
-  return "";
+  return buildShopeeSearchUrl(keyword);
 }
 
-function resolveTikTokUrl(url) {
+function resolveTikTokUrl(url, keyword) {
   if (isSpecificTikTokUrl(url)) return String(url).trim();
-  return "";
+  return buildTikTokSearchUrl(keyword);
 }
 
 function normalizeProductName(name, brand) {

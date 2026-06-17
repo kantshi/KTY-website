@@ -31,7 +31,7 @@ const BRAND_TABS = [
   "Mazda"
 ];
 const SHOPEE_SHOP_URL = "https://shopee.co.th/shop/1501857";
-const TIKTOK_PROFILE_URL = "https://www.tiktok.com/@kty.autopart";
+const TIKTOK_SHOP_URL = "https://www.tiktok.com/@kty.autopart/shop";
 const PRODUCT_NAME_PREFIX = "ท่อยางอากาศ";
 
 const DESCRIPTION_TEMPLATE = [
@@ -61,8 +61,9 @@ const normalizedProducts = products.map((product) => {
   const inferredBrand = inferBrandFromSku(product.sku) || product.brand || "Toyota";
   const normalizedName = normalizeProductName(product.name, inferredBrand);
   const normalizedDescription = formatDescription(normalizedName, product.sku);
-  const normalizedShopeeUrl = resolveShopeeUrl(product.shopee);
-  const normalizedTikTokUrl = resolveTikTokUrl(product.tiktok);
+  const marketplaceKeyword = buildMarketplaceKeyword(normalizedName);
+  const normalizedShopeeUrl = resolveShopeeUrl(product.shopee, marketplaceKeyword);
+  const normalizedTikTokUrl = resolveTikTokUrl(product.tiktok, marketplaceKeyword);
 
   const changed = (
     product.brand !== inferredBrand ||
@@ -99,6 +100,18 @@ function normalizeMarketplaceUrl(url) {
   return String(url || "").trim().replace(/\/+$/, "");
 }
 
+function buildMarketplaceKeyword(name) {
+  return String(name || "").trim() || "อะไหล่รถยนต์";
+}
+
+function buildShopeeSearchUrl(keyword) {
+  return `${SHOPEE_SHOP_URL}/search?keyword=${encodeURIComponent(keyword)}`;
+}
+
+function buildTikTokSearchUrl(keyword) {
+  return `${TIKTOK_SHOP_URL}?search=${encodeURIComponent(keyword)}`;
+}
+
 function isSpecificShopeeUrl(url) {
   const normalized = normalizeMarketplaceUrl(url);
   if (!normalized) return false;
@@ -126,14 +139,14 @@ function isSpecificTikTokUrl(url) {
   return pathname.includes("/product/") || pathname.includes("/shop/product/") || pathname.includes("/view/product/");
 }
 
-function resolveShopeeUrl(url) {
+function resolveShopeeUrl(url, keyword) {
   if (isSpecificShopeeUrl(url)) return String(url).trim();
-  return "";
+  return buildShopeeSearchUrl(keyword);
 }
 
-function resolveTikTokUrl(url) {
+function resolveTikTokUrl(url, keyword) {
   if (isSpecificTikTokUrl(url)) return String(url).trim();
-  return "";
+  return buildTikTokSearchUrl(keyword);
 }
 
 function normalizeProductName(name, brand) {
