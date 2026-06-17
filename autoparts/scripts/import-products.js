@@ -42,9 +42,15 @@ const BRAND_TABS = [
   "Isuzu",
   "Mazda"
 ];
-const SHOPEE_SHOP_URL = "https://shopee.co.th/shop/1501857";
-const TIKTOK_SHOP_URL = "https://www.tiktok.com/@kty.autopart/shop";
 const PRODUCT_NAME_PREFIX = "ท่อยางอากาศ";
+const SPECIFIC_MARKETPLACE_LINKS = {
+  "TT-622": {
+    shopee: "https://shopee.co.th/%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A2%E0%B8%B2%E0%B8%87%E0%B8%AD%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A8-Toyota-1KZ-i.1501857.4141616903?extraParams=%7B%22display_model_id%22%3A60242574024%2C%22model_selection_logic%22%3A3%7D&sp_atk=8cfa3694-d704-4c81-afb3-4e66f7426e23&xptdk=8cfa3694-d704-4c81-afb3-4e66f7426e23"
+  },
+  "TT-661": {
+    tiktok: "https://shop.tiktok.com/th/pdp/1735426849839548309?source=product_detail&enter_method=feed_list_more_from&first_entrance=unknown&first_entrance_position=feed_list_more_from&first_entrance_tt_scene=share"
+  }
+};
 
 const options = parseArgs(process.argv.slice(2));
 const autopartsDir = path.resolve(__dirname, "..");
@@ -243,7 +249,7 @@ function mergeProducts({ importRows, existingProducts, imageFiles, defaults }) {
     const base = existing ? { ...existing } : {};
     const inferredBrand = base.brand || inferBrandFromSku(row.sku) || defaults.brand;
     const normalizedName = normalizeProductName(row.name, inferredBrand);
-    const marketplaceKeyword = buildMarketplaceKeyword(normalizedName);
+    const specificLinks = getSpecificMarketplaceLinks(row.sku);
     const merged = {
       ...base,
       id: existing ? existing.id : ++maxId,
@@ -255,8 +261,8 @@ function mergeProducts({ importRows, existingProducts, imageFiles, defaults }) {
       stock: Number.isFinite(Number(base.stock)) ? Number(base.stock) : defaults.stock,
       description: formatDescription(normalizedName, row.sku, defaults.description),
       images: matchedImages.length > 0 ? matchedImages : (Array.isArray(base.images) ? base.images : []),
-      shopee: resolveShopeeUrl(row.shopee || base.shopee, marketplaceKeyword),
-      tiktok: resolveTikTokUrl(row.tiktok || base.tiktok, marketplaceKeyword)
+      shopee: resolveShopeeUrl(specificLinks.shopee || row.shopee || base.shopee),
+      tiktok: resolveTikTokUrl(specificLinks.tiktok || row.tiktok || base.tiktok)
     };
 
     if (existing) {
@@ -323,16 +329,9 @@ function normalizeMarketplaceUrl(url) {
   return String(url || "").trim().replace(/\/+$/, "");
 }
 
-function buildMarketplaceKeyword(name) {
-  return String(name || "").trim() || "อะไหล่รถยนต์";
-}
-
-function buildShopeeSearchUrl(keyword) {
-  return `${SHOPEE_SHOP_URL}/search?keyword=${encodeURIComponent(keyword)}`;
-}
-
-function buildTikTokSearchUrl(keyword) {
-  return `${TIKTOK_SHOP_URL}?search=${encodeURIComponent(keyword)}`;
+function getSpecificMarketplaceLinks(sku) {
+  const key = String(sku || "").trim().toUpperCase();
+  return SPECIFIC_MARKETPLACE_LINKS[key] || {};
 }
 
 function isSpecificShopeeUrl(url) {
@@ -357,19 +356,20 @@ function isSpecificTikTokUrl(url) {
   const host = parsed.hostname.toLowerCase();
   const pathname = parsed.pathname.toLowerCase();
   if (host === "vt.tiktok.com") return true;
+  if (host === "shop.tiktok.com") return pathname.includes("/pdp/");
   if (!host.includes("tiktok.com")) return false;
   if (!pathname.includes("@kty.autopart")) return false;
   return pathname.includes("/product/") || pathname.includes("/shop/product/") || pathname.includes("/view/product/");
 }
 
-function resolveShopeeUrl(url, keyword) {
+function resolveShopeeUrl(url) {
   if (isSpecificShopeeUrl(url)) return String(url).trim();
-  return buildShopeeSearchUrl(keyword);
+  return "";
 }
 
-function resolveTikTokUrl(url, keyword) {
+function resolveTikTokUrl(url) {
   if (isSpecificTikTokUrl(url)) return String(url).trim();
-  return buildTikTokSearchUrl(keyword);
+  return "";
 }
 
 function normalizeProductName(name, brand) {
