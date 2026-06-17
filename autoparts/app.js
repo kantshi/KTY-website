@@ -2,26 +2,13 @@
 
 let selectedBrand = "All";
 const PLACEHOLDER_IMAGE = "images/product-placeholder.svg";
-const imageStatusCache = new Map();
 
 function getPrimaryImage(product) {
   if (!product || !Array.isArray(product.images)) return "";
   return (product.images.find(Boolean) || "").trim();
 }
 
-function checkImageExists(src) {
-  if (!src) return Promise.resolve(false);
-  return new Promise(resolve => {
-    const img = new Image();
-    img.onload = () => resolve(true);
-    img.onerror = () => resolve(false);
-    img.src = src;
-  });
-}
-
 function productHasImage(product) {
-  const status = imageStatusCache.get(product.id);
-  if (typeof status === "boolean") return status;
   return Boolean(getPrimaryImage(product));
 }
 
@@ -40,21 +27,13 @@ function sortProducts(items) {
   return [...items].sort(compareProducts);
 }
 
-async function warmImageStatusCache(items) {
-  await Promise.all(items.map(async product => {
-    const src = getPrimaryImage(product);
-    const hasImage = await checkImageExists(src);
-    imageStatusCache.set(product.id, hasImage);
-  }));
-}
-
 function getCardImage(product) {
   return productHasImage(product) ? getPrimaryImage(product) : PLACEHOLDER_IMAGE;
 }
 
 function renderBrandCountBadge() {
   const badge = document.getElementById("brand-count-eyebrow");
-  if (!badge || !Array.isArray(BRANDS)) return;
+  if (!badge || typeof BRANDS === "undefined" || !Array.isArray(BRANDS)) return;
   const count = BRANDS.length;
   const noun = count === 1 ? "brand" : "brands";
   badge.textContent = `⚙ Parts for ${count} major ${noun}`;
@@ -62,7 +41,7 @@ function renderBrandCountBadge() {
 
 function renderBrandFilters() {
   const wrap = document.getElementById("brand-filters");
-  if (!wrap) return;
+  if (!wrap || typeof BRANDS === "undefined" || !Array.isArray(BRANDS)) return;
   const all = ["All", ...BRANDS];
   wrap.innerHTML = all.map(b =>
     `<button class="${b === selectedBrand ? "active" : ""}" onclick="filterBrand('${b}', this)">${b}</button>`
@@ -118,7 +97,8 @@ function searchProducts() {
 function applyFilters() {
   const searchInput = document.getElementById("search");
   const term = searchInput ? searchInput.value.toLowerCase().trim() : "";
-  let filtered = products;
+  const source = (typeof products !== "undefined" && Array.isArray(products)) ? products : [];
+  let filtered = source;
 
   if (selectedBrand !== "All") {
     filtered = filtered.filter(p => p.brand === selectedBrand);
@@ -134,14 +114,23 @@ function applyFilters() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  if (typeof products === "undefined" || !Array.isArray(products)) {
+    const grid = document.getElementById("product-grid");
+    const count = document.getElementById("result-count");
+    if (grid) {
+      grid.innerHTML = '<p class="empty-state">Catalog failed to load. Please refresh this page.</p>';
+    }
+    if (count) count.textContent = "0 parts";
+    return;
+  }
+
   renderBrandCountBadge();
   // Allow ?brand=Toyota deep links from the homepage brand grid
   const params = new URLSearchParams(window.location.search);
   const brandParam = params.get("brand");
-  if (brandParam && BRANDS.includes(brandParam)) {
+  if (brandParam && typeof BRANDS !== "undefined" && Array.isArray(BRANDS) && BRANDS.includes(brandParam)) {
     selectedBrand = brandParam;
   }
   renderBrandFilters();
   applyFilters();
-  warmImageStatusCache(products).then(applyFilters);
 });
