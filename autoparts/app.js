@@ -2,6 +2,14 @@
 
 let selectedBrand = "All";
 
+function renderBrandCountBadge() {
+  const badge = document.getElementById("brand-count-eyebrow");
+  if (!badge || !Array.isArray(BRANDS)) return;
+  const count = BRANDS.length;
+  const noun = count === 1 ? "brand" : "brands";
+  badge.textContent = `⚙ Parts for ${count} major ${noun}`;
+}
+
 function renderBrandFilters() {
   const wrap = document.getElementById("brand-filters");
   if (!wrap) return;
@@ -76,6 +84,7 @@ function applyFilters() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  renderBrandCountBadge();
   // Allow ?brand=Toyota deep links from the homepage brand grid
   const params = new URLSearchParams(window.location.search);
   const brandParam = params.get("brand");
