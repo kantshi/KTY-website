@@ -82,13 +82,9 @@ img { display: block; max-width: 100%; }
 
 .logo-image {
   height: 42px;
-  width: 132px;
+  width: auto;
+  max-width: 132px;
   object-fit: contain;
-  background: #fff;
-  border-radius: 10px;
-  padding: 4px 8px;
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow-sm);
 }
 
 .logo-text { display: block; }
@@ -516,6 +512,21 @@ img { display: block; max-width: 100%; }
 .info-card .ico { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 14px; background: var(--brand-soft); font-size: 1.5rem; margin-bottom: 14px; }
 .info-card h3 { margin: 0 0 8px; font-size: 1.1rem; }
 .info-card p { margin: 0; color: var(--ink-soft); }
+.about-hero {
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at 18% 22%, #fff3ec 0%, transparent 42%), linear-gradient(180deg, #fff, var(--bg));
+}
+.about-hero .eyebrow { margin-bottom: 14px; }
+.about-hero .hero-actions { justify-content: center; margin-top: 20px; }
+.about-layout { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: clamp(16px, 3vw, 26px); }
+.about-story { max-width: 78ch; margin: 0 auto; }
+.about-story p { margin-bottom: 14px; color: var(--ink-soft); }
+.about-story .signature { color: var(--ink); font-weight: 700; }
+.about-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+.about-list li { color: var(--ink-soft); }
+.about-callout { margin-top: 14px; background: #fff6f0; border: 1px solid #ffd8bf; border-radius: 12px; padding: 12px 14px; color: var(--ink); }
+.about-cta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
 
 /* ===== Footer ===== */
 .footer { background: var(--navy); color: rgba(255,255,255,0.78); margin-top: 40px; }
@@ -550,10 +561,9 @@ img { display: block; max-width: 100%; }
   .header-inner { height: 68px; gap: 10px; }
   .logo { gap: 8px; font-size: 1rem; }
   .logo-image {
-    width: 108px;
+    width: auto;
+    max-width: 108px;
     height: 34px;
-    padding: 3px 6px;
-    border-radius: 8px;
   }
   .logo-text small { font-size: 0.55rem; letter-spacing: 0.09em; }
   .menu-toggle { display: block; }
@@ -570,6 +580,7 @@ img { display: block; max-width: 100%; }
   .thumbs img { padding: 4px; }
   .field-grid { grid-template-columns: 1fr; }
   .qr-payment-card { grid-template-columns: 1fr; }
+  .about-layout { grid-template-columns: 1fr; }
   .footer-inner { grid-template-columns: 1fr; }
   .cart-item { grid-template-columns: 64px 1fr; }
   .cart-item img { width: 64px; height: 64px; }
@@ -578,6 +589,6 @@ img { display: block; max-width: 100%; }
 
 @media (max-width: 420px) {
   .logo { font-size: 0.92rem; }
-  .logo-image { width: 96px; height: 30px; }
+  .logo-image { width: auto; max-width: 96px; height: 30px; }
   .logo-text small { font-size: 0.5rem; }
 }
