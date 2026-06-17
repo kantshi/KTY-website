@@ -2,7 +2,7 @@
 
 const CART_KEY = "autoparts_cart";
 const CURRENCY = "฿"; // Thai Baht
-const PLACEHOLDER_IMAGE = "images/product-placeholder.svg";
+const CART_PLACEHOLDER_IMAGE = "images/product-placeholder.svg";
 
 function formatPrice(value) {
   return CURRENCY + Number(value).toFixed(2);
@@ -46,7 +46,7 @@ function addToCart(productId, qty = 1) {
       brand: product.brand,
       sku: product.sku || "",
       price: product.price,
-      image: (Array.isArray(product.images) && product.images[0]) ? product.images[0] : PLACEHOLDER_IMAGE,
+      image: (Array.isArray(product.images) && product.images[0]) ? product.images[0] : CART_PLACEHOLDER_IMAGE,
       qty: qty
     });
   }
