@@ -45,6 +45,7 @@ img { display: block; max-width: 100%; }
 }
 
 .section { padding-block: clamp(40px, 7vw, 80px); }
+.section-tight { padding-top: 0; }
 
 .section-head {
   max-width: 640px;
@@ -85,6 +86,11 @@ img { display: block; max-width: 100%; }
   width: auto;
   max-width: 132px;
   object-fit: contain;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
 }
 
 .logo-text { display: block; }
@@ -517,8 +523,25 @@ img { display: block; max-width: 100%; }
   overflow: hidden;
   background: radial-gradient(circle at 18% 22%, #fff3ec 0%, transparent 42%), linear-gradient(180deg, #fff, var(--bg));
 }
+.about-hero .container { max-width: 860px; }
 .about-hero .eyebrow { margin-bottom: 14px; }
 .about-hero .hero-actions { justify-content: center; margin-top: 20px; }
+.about-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+.about-pill {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
 .about-layout { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: clamp(16px, 3vw, 26px); }
 .about-story { max-width: 78ch; margin: 0 auto; }
 .about-story p { margin-bottom: 14px; color: var(--ink-soft); }
@@ -581,6 +604,7 @@ img { display: block; max-width: 100%; }
   .field-grid { grid-template-columns: 1fr; }
   .qr-payment-card { grid-template-columns: 1fr; }
   .about-layout { grid-template-columns: 1fr; }
+  .about-highlights { justify-content: flex-start; }
   .footer-inner { grid-template-columns: 1fr; }
   .cart-item { grid-template-columns: 64px 1fr; }
   .cart-item img { width: 64px; height: 64px; }
