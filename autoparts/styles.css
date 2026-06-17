@@ -82,9 +82,13 @@ img { display: block; max-width: 100%; }
 
 .logo-image {
   height: 42px;
-  width: auto;
-  max-width: 132px;
+  width: 132px;
   object-fit: contain;
+  background: #fff;
+  border-radius: 10px;
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
 }
 
 .logo-text { display: block; }
@@ -297,9 +301,22 @@ img { display: block; max-width: 100%; }
   transition: transform 0.25s, box-shadow 0.25s;
 }
 .product-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-md); }
-.product-thumb { position: relative; display: block; aspect-ratio: 1/1; background: linear-gradient(135deg,#fafbfc,#eef1f5); overflow: hidden; }
-.product-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
-.product-card:hover .product-thumb img { transform: scale(1.05); }
+.product-thumb {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1/1;
+  background: #fff;
+  overflow: hidden;
+}
+.product-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 14px;
+  transition: transform 0.3s;
+}
+.product-card:hover .product-thumb img { transform: scale(1.02); }
 .product-tag {
   position: absolute; top: 12px; left: 12px;
   background: var(--navy); color: #fff;
@@ -332,7 +349,13 @@ img { display: block; max-width: 100%; }
   aspect-ratio: 1/1;
   display: flex; align-items: center; justify-content: center;
 }
-.gallery-main img { width: 100%; height: 100%; object-fit: cover; }
+.gallery-main img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #fff;
+  padding: 18px;
+}
 .gallery-btn {
   position: absolute; top: 50%; transform: translateY(-50%);
   background: rgba(255,255,255,0.92); color: var(--ink);
@@ -346,9 +369,10 @@ img { display: block; max-width: 100%; }
 .gallery-btn.right { right: 14px; }
 .thumbs { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
 .thumbs img {
-  width: 72px; height: 72px; object-fit: cover;
+  width: 72px; height: 72px; object-fit: contain;
   border-radius: var(--radius-sm); border: 2px solid var(--line);
   cursor: pointer; transition: border-color 0.2s, transform 0.15s; background:#fff;
+  padding: 4px;
 }
 .thumbs img:hover { transform: translateY(-2px); }
 .thumbs img.active { border-color: var(--brand); }
