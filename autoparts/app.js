@@ -3,6 +3,13 @@
 let selectedBrand = "All";
 const PLACEHOLDER_IMAGE = "images/product-placeholder.svg";
 
+function safeFormatPrice(value) {
+  if (typeof formatPrice === "function") return formatPrice(value);
+  const amount = Number(value);
+  const fallback = Number.isFinite(amount) ? amount : 0;
+  return `฿${fallback.toFixed(2)}`;
+}
+
 function getPrimaryImage(product) {
   if (!product || !Array.isArray(product.images)) return "";
   return (product.images.find(Boolean) || "").trim();
@@ -51,6 +58,7 @@ function renderBrandFilters() {
 function renderProducts(items) {
   const grid = document.getElementById("product-grid");
   const count = document.getElementById("result-count");
+  if (!grid) return;
   grid.innerHTML = "";
   if (count) count.textContent = `${items.length} part${items.length === 1 ? "" : "s"}`;
 
@@ -72,10 +80,10 @@ function renderProducts(items) {
         <span class="product-part">${p.part}</span>
         <h3><a href="product.html?id=${p.id}">${p.name}</a></h3>
         ${lowStock}
-        <p class="product-price">${formatPrice(p.price)}</p>
+        <p class="product-price">${safeFormatPrice(p.price)}</p>
         <div class="card-actions">
           <a class="btn btn-ghost" href="product.html?id=${p.id}">Details</a>
-          <button class="btn btn-primary" onclick="addToCart(${p.id})">Add to cart</button>
+          <button class="btn btn-primary" onclick="if (typeof addToCart === 'function') addToCart(${p.id})">Add to cart</button>
         </div>
       </div>
     `;
