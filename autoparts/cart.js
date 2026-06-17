@@ -43,6 +43,7 @@ function addToCart(productId, qty = 1) {
       id: product.id,
       name: product.name,
       brand: product.brand,
+      sku: product.sku || "",
       price: product.price,
       image: product.images[0],
       qty: qty

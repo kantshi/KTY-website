@@ -1,0 +1,6 @@
+node_modules/
+.env
+*.log
+autoparts/data/orders.json
+autoparts/uploads/payment-proofs/*
+!autoparts/uploads/payment-proofs/.gitkeep
