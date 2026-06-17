@@ -313,10 +313,10 @@ img { display: block; max-width: 100%; }
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 14px;
+  padding: 22px;
   transition: transform 0.3s;
 }
-.product-card:hover .product-thumb img { transform: scale(1.02); }
+.product-card:hover .product-thumb img { transform: scale(1.01); }
 .product-tag {
   position: absolute; top: 12px; left: 12px;
   background: var(--navy); color: #fff;
@@ -354,7 +354,7 @@ img { display: block; max-width: 100%; }
   height: 100%;
   object-fit: contain;
   background: #fff;
-  padding: 18px;
+  padding: 28px;
 }
 .gallery-btn {
   position: absolute; top: 50%; transform: translateY(-50%);
@@ -372,7 +372,7 @@ img { display: block; max-width: 100%; }
   width: 72px; height: 72px; object-fit: contain;
   border-radius: var(--radius-sm); border: 2px solid var(--line);
   cursor: pointer; transition: border-color 0.2s, transform 0.15s; background:#fff;
-  padding: 4px;
+  padding: 6px;
 }
 .thumbs img:hover { transform: translateY(-2px); }
 .thumbs img.active { border-color: var(--brand); }
@@ -423,7 +423,15 @@ img { display: block; max-width: 100%; }
   background: var(--card); border: 1px solid var(--line);
   border-radius: var(--radius); padding: 14px; align-items: center;
 }
-.cart-item img { width: 90px; height: 90px; object-fit: cover; border-radius: var(--radius-sm); background:#f0f0f0; }
+.cart-item img {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 8px;
+}
 .cart-item .ci-name { font-weight: 600; }
 .cart-item .ci-brand { font-size: 0.8rem; color: var(--brand); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
 .cart-item .ci-price { color: var(--ink-soft); font-size: 0.9rem; margin-top: 4px; }
@@ -557,9 +565,9 @@ img { display: block; max-width: 100%; }
   }
   .main-tabs.open { display: flex; }
   .main-tabs a { text-align: center; padding: 12px 18px; }
-  .product-thumb img { padding: 10px; }
-  .gallery-main img { padding: 12px; }
-  .thumbs img { padding: 3px; }
+  .product-thumb img { padding: 14px; }
+  .gallery-main img { padding: 16px; }
+  .thumbs img { padding: 4px; }
   .field-grid { grid-template-columns: 1fr; }
   .qr-payment-card { grid-template-columns: 1fr; }
   .footer-inner { grid-template-columns: 1fr; }

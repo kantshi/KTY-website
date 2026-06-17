@@ -1,6 +1,56 @@
 // app.js — catalog rendering, brand filtering and search
 
 let selectedBrand = "All";
+const PLACEHOLDER_IMAGE = "images/product-placeholder.svg";
+const imageStatusCache = new Map();
+
+function getPrimaryImage(product) {
+  if (!product || !Array.isArray(product.images)) return "";
+  return (product.images.find(Boolean) || "").trim();
+}
+
+function checkImageExists(src) {
+  if (!src) return Promise.resolve(false);
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = src;
+  });
+}
+
+function productHasImage(product) {
+  const status = imageStatusCache.get(product.id);
+  if (typeof status === "boolean") return status;
+  return Boolean(getPrimaryImage(product));
+}
+
+function compareProducts(a, b) {
+  const aMissing = productHasImage(a) ? 0 : 1;
+  const bMissing = productHasImage(b) ? 0 : 1;
+  if (aMissing !== bMissing) return aMissing - bMissing;
+
+  const brandCompare = (a.brand || "").localeCompare(b.brand || "", undefined, { sensitivity: "base" });
+  if (brandCompare !== 0) return brandCompare;
+
+  return (a.name || "").localeCompare(b.name || "", undefined, { sensitivity: "base" });
+}
+
+function sortProducts(items) {
+  return [...items].sort(compareProducts);
+}
+
+async function warmImageStatusCache(items) {
+  await Promise.all(items.map(async product => {
+    const src = getPrimaryImage(product);
+    const hasImage = await checkImageExists(src);
+    imageStatusCache.set(product.id, hasImage);
+  }));
+}
+
+function getCardImage(product) {
+  return productHasImage(product) ? getPrimaryImage(product) : PLACEHOLDER_IMAGE;
+}
 
 function renderBrandCountBadge() {
   const badge = document.getElementById("brand-count-eyebrow");
@@ -37,7 +87,7 @@ function renderProducts(items) {
     card.innerHTML = `
       <a class="product-thumb" href="product.html?id=${p.id}">
         <span class="product-tag">${p.brand}</span>
-        <img src="${p.images[0]}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'">
+        <img src="${getCardImage(p)}" alt="${p.name}" loading="lazy" onerror="this.onerror=null;this.src='${PLACEHOLDER_IMAGE}'">
       </a>
       <div class="product-body">
         <span class="product-part">${p.part}</span>
@@ -80,7 +130,7 @@ function applyFilters() {
       p.brand.toLowerCase().includes(term)
     );
   }
-  renderProducts(filtered);
+  renderProducts(sortProducts(filtered));
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -93,4 +143,5 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   renderBrandFilters();
   applyFilters();
+  warmImageStatusCache(products).then(applyFilters);
 });

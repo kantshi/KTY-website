@@ -41,7 +41,7 @@
     <div>
       <div class="gallery-main">
         <button class="gallery-btn left" onclick="prevImage()" aria-label="Previous image">&#10094;</button>
-        <img id="main-image" src="" alt="Product image" onerror="this.style.opacity=0">
+        <img id="main-image" src="" alt="Product image" onerror="this.onerror=null;this.src='images/product-placeholder.svg'">
         <button class="gallery-btn right" onclick="nextImage()" aria-label="Next image">&#10095;</button>
       </div>
       <div class="thumbs" id="thumbs"></div>
@@ -203,8 +203,10 @@
         specsTable.innerHTML = "";
       }
 
-      document.getElementById("thumbs").innerHTML = p.images
-        .map((src, i) => `<img src="${src}" alt="View ${i + 1}" onclick="showImage(${i})" onerror="this.style.display='none'">`).join("");
+      const galleryImages = Array.isArray(p.images) && p.images.length ? p.images : ["images/product-placeholder.svg"];
+      currentProduct.images = galleryImages;
+      document.getElementById("thumbs").innerHTML = galleryImages
+        .map((src, i) => `<img src="${src}" alt="View ${i + 1}" onclick="showImage(${i})" onerror="this.onerror=null;this.src='images/product-placeholder.svg'">`).join("");
 
       showImage(0);
       updateLineTotal();

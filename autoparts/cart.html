@@ -87,7 +87,7 @@
           <div class="cart-items">
             ${cart.map(item => `
               <div class="cart-item">
-                <img src="${item.image}" alt="${item.name}" onerror="this.style.visibility='hidden'">
+                <img src="${item.image}" alt="${item.name}" onerror="this.onerror=null;this.src='images/product-placeholder.svg'">
                 <div>
                   <div class="ci-brand">${item.brand}</div>
                   <a class="ci-name" href="product.html?id=${item.id}">${item.name}</a>
