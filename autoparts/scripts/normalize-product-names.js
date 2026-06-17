@@ -32,6 +32,7 @@ const BRAND_TABS = [
 ];
 const SHOPEE_SHOP_URL = "https://shopee.co.th/shop/1501857";
 const TIKTOK_PROFILE_URL = "https://www.tiktok.com/@kty.autopart";
+const TIKTOK_SHOP_URL = "https://www.tiktok.com/@kty.autopart/shop";
 const PRODUCT_NAME_PREFIX = "ท่อยางอากาศ";
 
 const DESCRIPTION_TEMPLATE = [
@@ -61,13 +62,16 @@ const normalizedProducts = products.map((product) => {
   const inferredBrand = inferBrandFromSku(product.sku) || product.brand || "Toyota";
   const normalizedName = normalizeProductName(product.name, inferredBrand);
   const normalizedDescription = formatDescription(normalizedName, product.sku);
+  const keyword = buildMarketplaceKeyword(normalizedName, product.sku);
+  const normalizedShopeeUrl = resolveShopeeUrl(product.shopee, keyword);
+  const normalizedTikTokUrl = resolveTikTokUrl(product.tiktok, keyword);
 
   const changed = (
     product.brand !== inferredBrand ||
     product.name !== normalizedName ||
     product.description !== normalizedDescription ||
-    (product.shopee || "") !== (product.shopee || SHOPEE_SHOP_URL) ||
-    (product.tiktok || "") !== (product.tiktok || TIKTOK_PROFILE_URL)
+    (product.shopee || "") !== normalizedShopeeUrl ||
+    (product.tiktok || "") !== normalizedTikTokUrl
   );
   if (changed) updatedCount += 1;
 
@@ -76,8 +80,8 @@ const normalizedProducts = products.map((product) => {
     brand: inferredBrand,
     name: normalizedName,
     description: normalizedDescription,
-    shopee: product.shopee || SHOPEE_SHOP_URL,
-    tiktok: product.tiktok || TIKTOK_PROFILE_URL
+    shopee: normalizedShopeeUrl,
+    tiktok: normalizedTikTokUrl
   };
 });
 
@@ -91,6 +95,46 @@ console.log(`Updated file: ${productsPath}`);
 function inferBrandFromSku(sku) {
   const prefix = String(sku || "").split("-")[0].toUpperCase();
   return BRAND_FROM_PREFIX[prefix] || "";
+}
+
+function normalizeMarketplaceUrl(url) {
+  return String(url || "").trim().replace(/\/+$/, "");
+}
+
+function buildMarketplaceKeyword(name, sku) {
+  return [String(name || "").trim(), String(sku || "").trim()].filter(Boolean).join(" ").trim() || "อะไหล่รถยนต์";
+}
+
+function buildShopeeSearchUrl(keyword) {
+  return `${SHOPEE_SHOP_URL}/search?keyword=${encodeURIComponent(keyword)}`;
+}
+
+function buildTikTokSearchUrl(keyword) {
+  return `${TIKTOK_SHOP_URL}?search=${encodeURIComponent(keyword)}`;
+}
+
+function isGenericShopeeUrl(url) {
+  const normalized = normalizeMarketplaceUrl(url);
+  if (!normalized) return true;
+  return normalized === normalizeMarketplaceUrl(SHOPEE_SHOP_URL)
+    || normalized === normalizeMarketplaceUrl(`${SHOPEE_SHOP_URL}/search`);
+}
+
+function isGenericTikTokUrl(url) {
+  const normalized = normalizeMarketplaceUrl(url);
+  if (!normalized) return true;
+  return normalized === normalizeMarketplaceUrl(TIKTOK_PROFILE_URL)
+    || normalized === normalizeMarketplaceUrl(TIKTOK_SHOP_URL);
+}
+
+function resolveShopeeUrl(url, keyword) {
+  if (!isGenericShopeeUrl(url)) return String(url).trim();
+  return buildShopeeSearchUrl(keyword);
+}
+
+function resolveTikTokUrl(url, keyword) {
+  if (!isGenericTikTokUrl(url)) return String(url).trim();
+  return buildTikTokSearchUrl(keyword);
 }
 
 function normalizeProductName(name, brand) {
