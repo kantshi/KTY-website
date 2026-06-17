@@ -9,7 +9,7 @@ const BRAND_FROM_PREFIX = {
   NS: "Nissan",
   KI: "Kia",
   MS: "Mitsubishi",
-  IZ: "Isuzu",
+  IZ: "Izusu",
   HN: "Hino",
   HD: "Honda",
   SK: "Suzuki",
@@ -17,6 +17,22 @@ const BRAND_FROM_PREFIX = {
   MD: "Mazda",
   FO: "Ford"
 };
+const BRAND_TABS = [
+  "Toyota",
+  "Nissan",
+  "Mitsubishi",
+  "Kia",
+  "Suzuki",
+  "Chevrolet",
+  "Ford",
+  "Hino",
+  "Honda",
+  "Izusu",
+  "Mazda"
+];
+const SHOPEE_SHOP_URL = "https://shopee.co.th/shop/1501857";
+const TIKTOK_PROFILE_URL = "https://www.tiktok.com/@kty.autopart";
+const PRODUCT_NAME_PREFIX = "ท่อยางอากาศ";
 
 const DESCRIPTION_TEMPLATE = [
   "***สินค้าที่ได้รับ จะเป็นของใหม่ทั้งหมด***",
@@ -42,14 +58,16 @@ let updatedCount = 0;
 
 const normalizedProducts = products.map((product) => {
   if (!product || !product.sku) return product;
-  const inferredBrand = inferBrandFromSku(product.sku) || product.brand || "AutoParts";
+  const inferredBrand = inferBrandFromSku(product.sku) || product.brand || "Toyota";
   const normalizedName = normalizeProductName(product.name, inferredBrand);
   const normalizedDescription = formatDescription(normalizedName, product.sku);
 
   const changed = (
     product.brand !== inferredBrand ||
     product.name !== normalizedName ||
-    product.description !== normalizedDescription
+    product.description !== normalizedDescription ||
+    (product.shopee || "") !== (product.shopee || SHOPEE_SHOP_URL) ||
+    (product.tiktok || "") !== (product.tiktok || TIKTOK_PROFILE_URL)
   );
   if (changed) updatedCount += 1;
 
@@ -57,7 +75,9 @@ const normalizedProducts = products.map((product) => {
     ...product,
     brand: inferredBrand,
     name: normalizedName,
-    description: normalizedDescription
+    description: normalizedDescription,
+    shopee: product.shopee || SHOPEE_SHOP_URL,
+    tiktok: product.tiktok || TIKTOK_PROFILE_URL
   };
 });
 
@@ -78,7 +98,7 @@ function normalizeProductName(name, brand) {
   const cleanBrand = String(brand || "").trim();
   if (!cleanBrand) return rawName;
 
-  const prefix = "ท่ออากาศ";
+  const prefix = PRODUCT_NAME_PREFIX;
   let remainder = stripThaiPrefix(rawName);
 
   for (const knownBrand of Object.values(BRAND_FROM_PREFIX)) {
@@ -126,11 +146,12 @@ function readProductsFile(filePath) {
 }
 
 function buildBrandList(existingBrands, products) {
-  const brandSet = new Set(existingBrands || []);
-  for (const product of products) {
-    if (product && product.brand) brandSet.add(String(product.brand));
+  const allowed = new Set(BRAND_TABS);
+  const hasAnyAllowed = products.some((product) => product && allowed.has(String(product.brand || "")));
+  if (!hasAnyAllowed) {
+    return existingBrands && existingBrands.length > 0 ? existingBrands : ["Toyota"];
   }
-  return Array.from(brandSet);
+  return BRAND_TABS.slice();
 }
 
 function buildProductsJs(brands, products) {
