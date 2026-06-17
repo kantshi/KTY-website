@@ -6,6 +6,15 @@ const vm = require("vm");
 const readXlsxFile = require("read-excel-file/node");
 
 const IMAGE_EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg", ".heic", ".heif"]);
+const DEFAULT_DESCRIPTION_TEMPLATE = [
+  "***สินค้าที่ได้รับ จะเป็นของใหม่ทั้งหมด***",
+  "",
+  "{name}",
+  "(รหัส : {sku})",
+  "",
+  "- ท่ออากาศรถยนต์ ใช้ต่อเข้าไอดี",
+  "- สินค้าทำจากยางคุณภาพดี ผลิตในประเทศไทย"
+].join("\n");
 
 const options = parseArgs(process.argv.slice(2));
 const autopartsDir = path.resolve(__dirname, "..");
@@ -13,9 +22,9 @@ const sourcePath = options.source ? path.resolve(process.cwd(), options.source) 
 const productsPath = path.resolve(process.cwd(), options.output || path.join(autopartsDir, "products.js"));
 const imagesDir = path.resolve(process.cwd(), options.imagesDir || path.join(autopartsDir, "images"));
 const defaultBrand = options.brand || "AutoParts";
-const defaultPart = options.part || "Auto Part";
+const defaultPart = options.part || "Air Hose";
 const defaultStock = Number.isFinite(Number(options.stock)) ? Number(options.stock) : 50;
-const defaultDescription = options.description || "Quality auto part from KTY Auto Part.";
+const defaultDescription = options.description || DEFAULT_DESCRIPTION_TEMPLATE;
 
 if (!sourcePath) {
   fail("Missing required --source argument. Example: npm run import:products -- --source \"products.xlsx\"");
@@ -38,7 +47,7 @@ async function run() {
   const rows = await readRowsFromSource(sourcePath, options.sheet);
   const importRows = toImportRows(rows);
   if (importRows.length === 0) {
-    fail("No valid rows found. Make sure column A has SKU and column B has product name.");
+    fail("No valid rows found. Check SKU/name/price columns in your file.");
   }
 
   const imageFiles = fs.readdirSync(imagesDir)
@@ -83,24 +92,25 @@ async function readRowsFromSource(filePath, sheet) {
 
 function toImportRows(rows) {
   const results = [];
+  const mapping = detectColumnMapping(rows);
+  const startAt = mapping.headerRowIndex >= 0 ? mapping.headerRowIndex + 1 : 0;
 
-  for (let i = 0; i < rows.length; i += 1) {
+  for (let i = startAt; i < rows.length; i += 1) {
     const row = rows[i] || [];
-    const sku = String(row[0] || "").trim();
+    const sku = String(row[mapping.sku] || "").trim();
     if (!sku) continue;
-    if (i === 0 && /^sku$/i.test(sku)) continue;
 
-    const name = String(row[1] || "").trim();
-    const price = parsePrice(row[8]);
-    const shopee = String(row[9] || "").trim();
-    const tiktok = String(row[10] || "").trim();
+    const name = String(row[mapping.name] || "").trim();
+    const price = parsePrice(row[mapping.price]);
+    const shopee = String(row[mapping.shopee] || "").trim();
+    const tiktok = String(row[mapping.tiktok] || "").trim();
 
     if (!name) {
-      console.warn(`Skipping row ${i + 1}: missing product name in column B.`);
+      console.warn(`Skipping row ${i + 1}: missing product name.`);
       continue;
     }
     if (!Number.isFinite(price)) {
-      console.warn(`Skipping row ${i + 1}: invalid price in column I.`);
+      console.warn(`Skipping row ${i + 1}: invalid price.`);
       continue;
     }
 
@@ -115,6 +125,64 @@ function toImportRows(rows) {
   }
 
   return results;
+}
+
+function detectColumnMapping(rows) {
+  const fallback = {
+    sku: 0,
+    name: 1,
+    price: 8,
+    shopee: 9,
+    tiktok: 10,
+    headerRowIndex: -1
+  };
+
+  const keyMatchers = {
+    sku: ["sku", "website sku", "website_sku"],
+    name: ["name", "product name", "ชื่อสินค้า"],
+    price: ["price", "ราคาขาย", "selling price"],
+    shopee: ["shopee"],
+    tiktok: ["tiktok", "tik tok"]
+  };
+
+  const scanRows = rows.slice(0, 5);
+  for (let rowIndex = 0; rowIndex < scanRows.length; rowIndex += 1) {
+    const row = scanRows[rowIndex] || [];
+    const found = { headerRowIndex: rowIndex };
+
+    for (let colIndex = 0; colIndex < row.length; colIndex += 1) {
+      const normalized = normalizeHeader(row[colIndex]);
+      if (!normalized) continue;
+      for (const [key, aliases] of Object.entries(keyMatchers)) {
+        if (found[key] !== undefined) continue;
+        if (aliases.some((alias) => normalized === normalizeHeader(alias))) {
+          found[key] = colIndex;
+        }
+      }
+    }
+
+    const hasCore = found.sku !== undefined && found.name !== undefined && found.price !== undefined;
+    if (hasCore) {
+      return {
+        sku: found.sku,
+        name: found.name,
+        price: found.price,
+        shopee: found.shopee ?? fallback.shopee,
+        tiktok: found.tiktok ?? fallback.tiktok,
+        headerRowIndex: found.headerRowIndex
+      };
+    }
+  }
+
+  return fallback;
+}
+
+function normalizeHeader(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\uFEFF/g, "")
+    .replace(/\s+/g, " ");
 }
 
 function mergeProducts({ importRows, existingProducts, imageFiles, defaults }) {
@@ -143,19 +211,20 @@ function mergeProducts({ importRows, existingProducts, imageFiles, defaults }) {
     }
 
     const base = existing ? { ...existing } : {};
+    const inferredBrand = base.brand || inferBrandFromSku(row.sku) || defaults.brand;
     const merged = {
       ...base,
       id: existing ? existing.id : ++maxId,
       name: row.name,
-      brand: base.brand || defaults.brand,
+      brand: inferredBrand,
       part: base.part || defaults.part,
       price: row.price,
       sku: row.sku,
       stock: Number.isFinite(Number(base.stock)) ? Number(base.stock) : defaults.stock,
-      description: base.description || defaults.description,
+      description: formatDescription(row.name, row.sku, defaults.description),
       images: matchedImages.length > 0 ? matchedImages : (Array.isArray(base.images) ? base.images : []),
-      shopee: row.shopee,
-      tiktok: row.tiktok
+      shopee: row.shopee || base.shopee || "",
+      tiktok: row.tiktok || base.tiktok || ""
     };
 
     if (existing) {
@@ -211,6 +280,28 @@ function imageRank(skuLower, name) {
   if (name === skuLower) return 0;
   if (name.endsWith("_m")) return 2;
   return 1;
+}
+
+function inferBrandFromSku(sku) {
+  const prefix = String(sku || "").split("-")[0].toUpperCase();
+  const map = {
+    TT: "Toyota",
+    NS: "Nissan",
+    MZ: "Mazda",
+    HN: "Honda",
+    IZ: "Isuzu",
+    MT: "Mitsubishi",
+    SZ: "Suzuki",
+    CV: "Chevrolet",
+    HI: "Hino"
+  };
+  return map[prefix] || "";
+}
+
+function formatDescription(name, sku, template) {
+  return String(template || DEFAULT_DESCRIPTION_TEMPLATE)
+    .replace(/\{name\}/g, String(name || "").trim())
+    .replace(/\{sku\}/g, String(sku || "").trim());
 }
 
 function readProductsFile(filePath) {
