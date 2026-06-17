@@ -5,7 +5,8 @@
   "main": "server-qr.js",
   "scripts": {
     "start": "node server-qr.js",
-    "smoke:test-payment": "node smoke-test-payment.js"
+    "smoke:test-payment": "node smoke-test-payment.js",
+    "import:products": "node scripts/import-products.js"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +15,7 @@
     "express": "^5.2.1",
     "multer": "^2.1.1",
     "nodemailer": "^8.0.11",
-    "pdfkit": "^0.19.1"
+    "pdfkit": "^0.19.1",
+    "read-excel-file": "^9.2.0"
   }
 }

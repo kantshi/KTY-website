@@ -59,3 +59,41 @@ npm run smoke:test-payment
 ```
 
 Expected result: response contains `{ ok: true, orderId, emailSentTo, ... }`.
+
+## Bulk import products from spreadsheet + SKU image prefix matching
+
+If you upload many products, you can import from Excel/CSV using:
+
+```bash
+cd autoparts
+npm run import:products -- --source "/absolute/or/relative/path/to/products.xlsx"
+```
+
+Optional arguments:
+
+- `--sheet Sheet1` (or sheet number like `--sheet 1`)
+- `--output /workspace/autoparts/products.js`
+- `--imagesDir /workspace/autoparts/images`
+- `--brand "Toyota"` (default for new products)
+- `--part "Air Hose"` (default for new products)
+- `--stock 50` (default for new products)
+- `--description "Default description text"`
+- `--dry-run` (preview summary without writing file)
+
+Spreadsheet mapping used by importer:
+
+- Column A -> `sku`
+- Column B -> `name`
+- Column I -> `price`
+- Column J -> `shopee`
+- Column K -> `tiktok`
+
+Image matching rule:
+
+- Put files inside `autoparts/images/`
+- Any file that starts with SKU basename is attached to that product
+- Example SKU `TT-602` will match:
+  - `TT-602.png`
+  - `TT-602_2.jpg`
+  - `TT-602_3.webp`
+  - `TT-602_m.png`
