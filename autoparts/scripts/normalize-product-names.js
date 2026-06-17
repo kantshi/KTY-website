@@ -9,7 +9,7 @@ const BRAND_FROM_PREFIX = {
   NS: "Nissan",
   KI: "Kia",
   MS: "Mitsubishi",
-  IZ: "Izusu",
+  IZ: "Isuzu",
   HN: "Hino",
   HD: "Honda",
   SK: "Suzuki",
@@ -27,7 +27,7 @@ const BRAND_TABS = [
   "Ford",
   "Hino",
   "Honda",
-  "Izusu",
+  "Isuzu",
   "Mazda"
 ];
 const SHOPEE_SHOP_URL = "https://shopee.co.th/shop/1501857";
