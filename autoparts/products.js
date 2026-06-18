@@ -1119,7 +1119,7 @@ const products = [
     sku: "IZ-572",
     stock: 50,
     description: "***สินค้าที่ได้รับ จะเป็นของใหม่ทั้งหมด***\n\nท่อยางอากาศ Isuzu KB-Z\n(รหัส : IZ-572)\n\n- ท่ออากาศรถยนต์ ใช้ต่อเข้าไอดี\n- สินค้าทำจากยางคุณภาพดี ผลิตในประเทศไทย",
-    images: [IMG + "IZ-572.png", IMG + "IZ-572_m.png"],
+    images: [IMG + "IZ-572.png", IMG + "IZ-572-1.png", IMG + "IZ-572-1_2.png", IMG + "IZ-572_m.png", IMG + "IZ-572-1_m.png"],
     shopee: "",
     tiktok: "",
   },

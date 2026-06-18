@@ -301,7 +301,11 @@ function matchImagesForSku(sku, imageFiles) {
   const skuLower = String(sku).toLowerCase();
   const matches = imageFiles.filter((file) => {
     const basename = path.parse(file).name.toLowerCase();
-    return basename === skuLower || basename.startsWith(`${skuLower}_`);
+    return (
+      basename === skuLower ||
+      basename.startsWith(`${skuLower}_`) ||
+      new RegExp(`^${escapeRegExp(skuLower)}-\\d+(?:_|$)`).test(basename)
+    );
   });
 
   matches.sort((a, b) => compareImageNamesForSku(skuLower, a, b));
