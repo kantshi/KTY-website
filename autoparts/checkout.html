@@ -40,14 +40,14 @@
         <div class="form-card">
           <h3>Shipping details</h3>
           <div class="field-grid">
-            <div class="field"><label>Full name *</label><input name="name" required placeholder="Somchai Prasert"></div>
-            <div class="field"><label>Phone *</label><input name="phone" required placeholder="08x-xxx-xxxx"></div>
-            <div class="field full"><label>Email *</label><input type="email" name="email" required placeholder="you@email.com"></div>
-            <div class="field full"><label>Address *</label><input name="address" required placeholder="Street address"></div>
-            <div class="field"><label>District / City *</label><input name="city" required placeholder="Bangkok"></div>
-            <div class="field"><label>Postcode *</label><input name="postcode" required placeholder="10110"></div>
+            <div class="field"><label>Full name <span style="color:var(--danger)">*</span></label><input name="name" required placeholder="Somchai Prasert"></div>
+            <div class="field"><label>Phone <span style="color:var(--danger)">*</span></label><input name="phone" required placeholder="08x-xxx-xxxx"></div>
+            <div class="field full"><label>Email <span style="color:var(--danger)">*</span></label><input type="email" name="email" required placeholder="you@email.com"></div>
+            <div class="field full"><label>Address <span style="color:var(--danger)">*</span></label><input name="address" required placeholder="Street address"></div>
+            <div class="field"><label>District / City <span style="color:var(--danger)">*</span></label><input name="city" required placeholder="Bangkok"></div>
+            <div class="field"><label>Postcode <span style="color:var(--danger)">*</span></label><input name="postcode" required placeholder="10110"></div>
             <div class="field full">
-              <label>Province *</label>
+              <label>Province <span style="color:var(--danger)">*</span></label>
               <select name="state" required>
                 <option value="">Select province</option>
                 <option>Amnat Charoen</option><option>Ang Thong</option><option>Bangkok</option>
@@ -89,7 +89,7 @@
             <div>
               <p class="payment-amount-highlight"><strong>Amount to transfer</strong><span id="payment-amount">฿0.00</span></p>
               <p style="margin:0 0 8px"><strong>Step 1:</strong> Scan this PromptPay QR and transfer the exact total shown.</p>
-              <p style="margin:0"><strong>Step 2:</strong> Upload payment proof below. We will email your proof image and shipping/inventory PDF to admin for processing.</p>
+              <p style="margin:0"><strong>Step 2:</strong> Upload payment proof below. We will send your receipt image and shipping slip PDF to our order processing inbox.</p>
               <p id="payment-qr-status" class="muted-note" style="text-align:left;margin-top:10px">Fixed PromptPay QR ready.</p>
               <p style="margin:8px 0 0"><a id="payment-qr-download" href="images/promptpay-0827401051.png" target="_blank" rel="noopener">Open full-size QR</a></p>
             </div>
@@ -100,7 +100,7 @@
               <input name="transactionReference" placeholder="e.g. bank transfer reference">
             </div>
             <div class="field full">
-              <label>Payment proof image *</label>
+              <label>Payment proof image <span style="color:var(--danger)">*</span></label>
               <input type="file" name="paymentProof" accept="image/*" required>
               <p class="muted-note" style="text-align:left;margin-top:6px">Accepted formats: JPG, PNG, WEBP, HEIC. Max size: 8MB.</p>
             </div>
@@ -118,7 +118,7 @@
         <div class="summary-row"><span>Shipping</span><span id="sum-shipping">RM 0.00</span></div>
         <div class="summary-row total"><span>Total</span><span id="sum-total">RM 0.00</span></div>
         <button type="submit" class="btn btn-primary btn-block btn-lg" id="pay-btn">Submit payment proof</button>
-        <p class="muted-note">Your payment proof and order details will be sent to admin email for manual review and shipping processing.</p>
+        <p class="muted-note">Your payment proof and order details will be sent to our order processing inbox.</p>
       </aside>
     </form>
   </main>

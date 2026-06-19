@@ -70,7 +70,7 @@
     function paymentStatusLabel(status) {
       const labels = {
         proof_submitted: "Proof submitted",
-        pending_manual_review: "Pending admin review",
+        pending_manual_review: "Payment received",
         proof_submitted_email_failed: "Proof submitted, email failed"
       };
       return labels[status] || status || "Unknown";
@@ -85,10 +85,10 @@
       const body = document.querySelector(".confirm p");
       if (status === "pending_manual_review") {
         heading.textContent = "Proof submitted successfully";
-        body.textContent = "Your payment proof image has been submitted. Admin will verify your transfer and process shipping.";
+        body.textContent = "Your payment proof image has been submitted successfully. Your order is now being processed for shipping.";
       } else if (status === "proof_submitted_email_failed") {
         heading.textContent = "Proof received, notification issue";
-        body.textContent = "We received your proof, but admin notification email failed. Please contact support with your order number.";
+        body.textContent = "We received your proof, but email delivery failed. Please contact support with your order number.";
       }
     }
 
@@ -126,7 +126,7 @@
       if (statusFromQuery || source === "formsubmit") {
         updateView(orderId, statusFromQuery || "pending_manual_review", emailStatusFromQuery || "submitted");
         document.querySelector(".confirm h1").textContent = "Proof submitted successfully";
-        document.querySelector(".confirm p").textContent = "Your proof was sent for manual review. Admin will verify payment and process shipping.";
+        document.querySelector(".confirm p").textContent = "Your payment proof was submitted successfully. Your order is now being processed.";
         return;
       }
 
