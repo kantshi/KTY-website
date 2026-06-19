@@ -229,7 +229,153 @@
       return lines.join("\n");
     }
 
-    function buildFormSubmitData(orderPayload, proofFile, orderId) {
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function toAsciiPdfText(value) {
+      return String(value ?? "")
+        .replace(/[^\x20-\x7E]/g, "?")
+        .replace(/\\/g, "\\\\")
+        .replace(/\(/g, "\\(")
+        .replace(/\)/g, "\\)");
+    }
+
+    function wrapPdfLine(line, maxChars) {
+      const text = String(line || "");
+      if (text.length <= maxChars) return [text];
+
+      const words = text.split(/\s+/).filter(Boolean);
+      if (words.length === 0) return [text.slice(0, maxChars)];
+
+      const output = [];
+      let current = "";
+      for (const word of words) {
+        const next = current ? `${current} ${word}` : word;
+        if (next.length <= maxChars) {
+          current = next;
+          continue;
+        }
+        if (current) output.push(current);
+        if (word.length <= maxChars) {
+          current = word;
+          continue;
+        }
+        let remaining = word;
+        while (remaining.length > maxChars) {
+          output.push(`${remaining.slice(0, maxChars - 1)}-`);
+          remaining = remaining.slice(maxChars - 1);
+        }
+        current = remaining;
+      }
+      if (current) output.push(current);
+      return output;
+    }
+
+    function buildShippingPdfLines(orderPayload, orderId) {
+      const lines = [
+        "KTY AUTOPARTS - SHIPPING DETAILS",
+        `Order ID: ${orderId}`,
+        `Generated: ${new Date().toISOString()}`,
+        `Payment Method: ${orderPayload.paymentMethod || "qr_transfer"}`,
+        `Transaction Reference: ${orderPayload.transactionReference || "N/A"}`,
+        "",
+        "SHIP TO",
+        `Name: ${orderPayload.shipping.name}`,
+        `Phone: ${orderPayload.shipping.phone}`,
+        `Email: ${orderPayload.shipping.email}`,
+        `Address: ${orderPayload.shipping.address}`,
+        `District/City: ${orderPayload.shipping.city}`,
+        `Province: ${orderPayload.shipping.state}`,
+        `Postcode: ${orderPayload.shipping.postcode}`,
+        "",
+        "ITEMS"
+      ];
+
+      for (const item of orderPayload.items) {
+        lines.push(
+          `- ${item.sku || "N/A"} | ${item.name} | Qty ${item.qty} | ${formatPrice(item.lineTotal)}`
+        );
+      }
+
+      lines.push("");
+      lines.push(`Subtotal: ${formatPrice(orderPayload.totals.subtotal)}`);
+      lines.push(`Shipping: ${orderPayload.totals.shipping === 0 ? "FREE" : formatPrice(orderPayload.totals.shipping)}`);
+      lines.push(`Total: ${formatPrice(orderPayload.totals.total)}`);
+      return lines;
+    }
+
+    function createSimplePdfBlob(lines) {
+      const a4Width = 595;
+      const a4Height = 842;
+      const maxCharsPerLine = 88;
+      const maxLinesPerPage = 52;
+      const wrapped = [];
+
+      for (const line of lines) {
+        wrapped.push(...wrapPdfLine(line, maxCharsPerLine));
+      }
+
+      const safeLines = wrapped.map(toAsciiPdfText);
+      if (safeLines.length > maxLinesPerPage) {
+        const overflowCount = safeLines.length - maxLinesPerPage + 1;
+        safeLines.length = maxLinesPerPage - 1;
+        safeLines.push(`... and ${overflowCount} more line(s). See orderData in email body.`);
+      }
+
+      const contentLines = ["BT", "/F1 11 Tf", "50 790 Td", "14 TL"];
+      for (const line of safeLines) {
+        contentLines.push(`(${line}) Tj`);
+        contentLines.push("T*");
+      }
+      contentLines.push("ET");
+      const contentStream = `${contentLines.join("\n")}\n`;
+      const contentLength = contentStream.length;
+
+      const objects = [
+        "<< /Type /Catalog /Pages 2 0 R >>",
+        "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+        `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${a4Width} ${a4Height}] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>`,
+        "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+        `<< /Length ${contentLength} >>\nstream\n${contentStream}endstream`
+      ];
+
+      const chunks = ["%PDF-1.4\n"];
+      const offsets = [0];
+      let cursor = chunks[0].length;
+
+      for (let i = 0; i < objects.length; i++) {
+        offsets.push(cursor);
+        const objText = `${i + 1} 0 obj\n${objects[i]}\nendobj\n`;
+        chunks.push(objText);
+        cursor += objText.length;
+      }
+
+      const xrefStart = cursor;
+      let xref = `xref\n0 ${objects.length + 1}\n`;
+      xref += "0000000000 65535 f \n";
+      for (let i = 1; i < offsets.length; i++) {
+        xref += `${String(offsets[i]).padStart(10, "0")} 00000 n \n`;
+      }
+
+      const trailer = `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefStart}\n%%EOF`;
+      chunks.push(xref, trailer);
+
+      return new Blob(chunks, { type: "application/pdf" });
+    }
+
+    function buildShippingPdfFile(orderPayload, orderId) {
+      const lines = buildShippingPdfLines(orderPayload, orderId);
+      const pdfBlob = createSimplePdfBlob(lines);
+      return new File([pdfBlob], `${orderId}-shipping-details.pdf`, { type: "application/pdf" });
+    }
+
+    function buildFormSubmitData(orderPayload, proofFile, orderId, shippingPdfFile) {
       const formData = new FormData();
       formData.append("name", orderPayload.shipping.name);
       formData.append("email", orderPayload.shipping.email);
@@ -241,13 +387,25 @@
       formData.append("orderId", orderId);
       formData.append("orderData", JSON.stringify(orderPayload));
       formData.append("message", buildOrderSummaryText(orderPayload, orderId));
+      formData.append("shippingAddressCard", [
+        "<h2>Shipping Details</h2>",
+        `<p><strong>Name:</strong> ${escapeHtml(orderPayload.shipping.name)}</p>`,
+        `<p><strong>Phone:</strong> ${escapeHtml(orderPayload.shipping.phone)}</p>`,
+        `<p><strong>Email:</strong> ${escapeHtml(orderPayload.shipping.email)}</p>`,
+        `<p><strong>Address:</strong> ${escapeHtml(orderPayload.shipping.address)}</p>`,
+        `<p><strong>District/City:</strong> ${escapeHtml(orderPayload.shipping.city)}</p>`,
+        `<p><strong>Province:</strong> ${escapeHtml(orderPayload.shipping.state)}</p>`,
+        `<p><strong>Postcode:</strong> ${escapeHtml(orderPayload.shipping.postcode)}</p>`
+      ].join(""));
       formData.append("attachment", proofFile, proofFile.name || "payment-proof.jpg");
+      formData.append("attachment", shippingPdfFile, shippingPdfFile.name || `${orderId}-shipping-details.pdf`);
       return formData;
     }
 
     async function submitViaFormSubmit(orderPayload, proofFile) {
       const orderId = generateOrderId();
-      const formData = buildFormSubmitData(orderPayload, proofFile, orderId);
+      const shippingPdfFile = buildShippingPdfFile(orderPayload, orderId);
+      const formData = buildFormSubmitData(orderPayload, proofFile, orderId, shippingPdfFile);
       const response = await fetch(FORMSUBMIT_AJAX_ENDPOINT, {
         method: "POST",
         headers: { Accept: "application/json" },
