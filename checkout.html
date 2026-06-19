@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/autoparts/styles.css?v=20260619-7">
+  <link rel="stylesheet" href="/autoparts/styles.css?v=20260619-8">
 </head>
 <body>
   <header class="header">
@@ -146,8 +146,8 @@
     <div class="footer-bottom">© 2025 KTY Autoparts. All Rights Reserved.</div>
   </footer>
 
-  <script src="/autoparts/products.js?v=20260619-7"></script>
-  <script src="/autoparts/cart.js?v=20260619-7"></script>
+  <script src="/autoparts/products.js?v=20260619-8"></script>
+  <script src="/autoparts/cart.js?v=20260619-8"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
     const SHIPPING_FLAT = 12.00;
@@ -509,96 +509,65 @@
       return new File([pdfBlob], `${orderId}-shipping-slip.pdf`, { type: "application/pdf" });
     }
 
-    function setInputFile(input, file) {
-      const dataTransfer = new DataTransfer();
-      dataTransfer.items.add(file);
-      input.files = dataTransfer.files;
-    }
-
-    function buildFormSubmitFields(orderPayload, proofFile, orderId) {
-      return {
-        name: orderPayload.shipping.name,
-        email: orderPayload.shipping.email,
-        phone: orderPayload.shipping.phone,
-        _replyto: orderPayload.shipping.email,
-        _subject: `QR Payment Proof Submitted - ${orderId}`,
-        _captcha: "false",
-        _template: "table",
-        orderId,
-        orderData: JSON.stringify(orderPayload),
-        message: buildOrderSummaryText(orderPayload, orderId),
-        shippingAddressCard: [
-          "<h2>Shipping Details</h2>",
-          `<p><strong>Name:</strong> ${escapeHtml(orderPayload.shipping.name)}</p>`,
-          `<p><strong>Phone:</strong> ${escapeHtml(orderPayload.shipping.phone)}</p>`,
-          `<p><strong>Email:</strong> ${escapeHtml(orderPayload.shipping.email)}</p>`,
-          `<p><strong>Address:</strong> ${escapeHtml(orderPayload.shipping.address)}</p>`,
-          `<p><strong>District/City:</strong> ${escapeHtml(orderPayload.shipping.city)}</p>`,
-          `<p><strong>Province:</strong> ${escapeHtml(orderPayload.shipping.state)}</p>`,
-          `<p><strong>Postcode:</strong> ${escapeHtml(orderPayload.shipping.postcode)}</p>`
-        ].join(""),
-        proofFileName: proofFile.name || "payment-proof.jpg",
-        proofFileType: proofFile.type || "image/*"
-      };
+    function buildFormSubmitData(orderPayload, proofFile, orderId, shippingPdfFile) {
+      const formData = new FormData();
+      formData.append("name", orderPayload.shipping.name);
+      formData.append("email", orderPayload.shipping.email);
+      formData.append("phone", orderPayload.shipping.phone);
+      formData.append("_replyto", orderPayload.shipping.email);
+      formData.append("_subject", `QR Payment Proof Submitted - ${orderId}`);
+      formData.append("_captcha", "false");
+      formData.append("_template", "table");
+      formData.append("orderId", orderId);
+      formData.append("orderData", JSON.stringify(orderPayload));
+      formData.append("message", buildOrderSummaryText(orderPayload, orderId));
+      formData.append("shippingAddressCard", [
+        "<h2>Shipping Details</h2>",
+        `<p><strong>Name:</strong> ${escapeHtml(orderPayload.shipping.name)}</p>`,
+        `<p><strong>Phone:</strong> ${escapeHtml(orderPayload.shipping.phone)}</p>`,
+        `<p><strong>Email:</strong> ${escapeHtml(orderPayload.shipping.email)}</p>`,
+        `<p><strong>Address:</strong> ${escapeHtml(orderPayload.shipping.address)}</p>`,
+        `<p><strong>District/City:</strong> ${escapeHtml(orderPayload.shipping.city)}</p>`,
+        `<p><strong>Province:</strong> ${escapeHtml(orderPayload.shipping.state)}</p>`,
+        `<p><strong>Postcode:</strong> ${escapeHtml(orderPayload.shipping.postcode)}</p>`
+      ].join(""));
+      formData.append("proofFileName", proofFile.name || "payment-proof.jpg");
+      formData.append("proofFileType", proofFile.type || "image/*");
+      // Keep one attachment only for highest FormSubmit compatibility.
+      formData.append("attachment", shippingPdfFile, shippingPdfFile.name || `${orderId}-shipping-slip.pdf`);
+      return formData;
     }
 
     async function submitViaFormSubmit(orderPayload, proofFile) {
       const orderId = generateOrderId();
       const shippingPdfFile = await buildShippingPdfFile(orderPayload, orderId, proofFile);
-      const form = document.createElement("form");
-      form.method = "POST";
-      form.action = FORMSUBMIT_AJAX_ENDPOINT.replace("/ajax/", "/");
-      form.enctype = "multipart/form-data";
-      form.style.display = "none";
+      const formData = buildFormSubmitData(orderPayload, proofFile, orderId, shippingPdfFile);
+      const response = await fetch(FORMSUBMIT_AJAX_ENDPOINT, {
+        method: "POST",
+        body: formData
+      });
 
-      const frameName = `formsubmit-frame-${orderId}`;
-      const frame = document.createElement("iframe");
-      frame.name = frameName;
-      frame.style.display = "none";
-      form.target = frameName;
-
-      const fields = buildFormSubmitFields(orderPayload, proofFile, orderId);
-      for (const [key, value] of Object.entries(fields)) {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = key;
-        input.value = String(value || "");
-        form.appendChild(input);
+      let payload = null;
+      let payloadText = "";
+      try {
+        payload = await response.json();
+      } catch (_error) {
+        try {
+          payloadText = await response.text();
+        } catch (_error2) {}
       }
 
-      const attachmentPdfInput = document.createElement("input");
-      attachmentPdfInput.type = "file";
-      attachmentPdfInput.name = "attachment";
-      attachmentPdfInput.style.display = "none";
-      setInputFile(attachmentPdfInput, shippingPdfFile);
-      form.appendChild(attachmentPdfInput);
+      if (!response.ok) {
+        const message = (payload && payload.message)
+          ? payload.message
+          : (payloadText ? payloadText.slice(0, 120) : `Fallback submit failed (${response.status})`);
+        throw new Error(message);
+      }
 
-      const attachmentProofInput = document.createElement("input");
-      attachmentProofInput.type = "file";
-      attachmentProofInput.name = "attachment";
-      attachmentProofInput.style.display = "none";
-      setInputFile(attachmentProofInput, proofFile);
-      form.appendChild(attachmentProofInput);
-
-      document.body.appendChild(frame);
-      document.body.appendChild(form);
-
-      await new Promise((resolve) => {
-        let done = false;
-        const cleanup = () => {
-          if (form.parentNode) form.parentNode.removeChild(form);
-          if (frame.parentNode) frame.parentNode.removeChild(frame);
-        };
-        const finish = () => {
-          if (done) return;
-          done = true;
-          cleanup();
-          resolve();
-        };
-        frame.addEventListener("load", finish, { once: true });
-        setTimeout(finish, 4000);
-        form.submit();
-      });
+      const message = String((payload && payload.message) || payloadText || "");
+      if (/activate\\s+form/i.test(message)) {
+        throw new Error("Payment proof inbox is not activated yet. Please contact admin to activate form receiver.");
+      }
 
       return {
         ok: true,
