@@ -669,17 +669,11 @@
       form.enctype = "multipart/form-data";
       form.target = frame.name;
       proofInput.name = "attachment";
-      proofInput.multiple = false;
+      proofInput.multiple = true;
 
       const existingPdfInput = form.querySelector('input[data-kty-fallback-file="shipping-pdf"]');
       if (existingPdfInput) existingPdfInput.remove();
-      const pdfInput = document.createElement("input");
-      pdfInput.type = "file";
-      pdfInput.name = "attachment";
-      pdfInput.style.display = "none";
-      pdfInput.setAttribute("data-kty-fallback-file", "shipping-pdf");
-      setSingleFileInput(pdfInput, [shippingPdfFile]);
-      form.appendChild(pdfInput);
+      setSingleFileInput(proofInput, [proofFile, shippingPdfFile]);
 
       upsertHiddenField(form, "_replyto", orderPayload.shipping.email);
       upsertHiddenField(form, "_subject", `KTY Order Payment Proof - ${orderId}`);
