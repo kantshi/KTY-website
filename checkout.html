@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/autoparts/styles.css?v=20260619-13">
+  <link rel="stylesheet" href="/autoparts/styles.css?v=20260619-14">
 </head>
 <body>
   <header class="header">
@@ -147,8 +147,8 @@
     <div class="footer-bottom">© 2025 KTY Autoparts. All Rights Reserved.</div>
   </footer>
 
-  <script src="/autoparts/products.js?v=20260619-13"></script>
-  <script src="/autoparts/cart.js?v=20260619-13"></script>
+  <script src="/autoparts/products.js?v=20260619-14"></script>
+  <script src="/autoparts/cart.js?v=20260619-14"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
     const SHIPPING_FLAT = 12.00;
@@ -424,13 +424,13 @@
       const panelWidth = panelRight - panelLeft;
 
       ctx.fillStyle = "#111";
-      ctx.fillRect(panelLeft + 36, 128, 240, 62);
+      ctx.fillRect(panelLeft + 36, 128, 230, 60);
       ctx.fillStyle = "#fff";
-      ctx.font = `700 44px ${fontFamily}`;
-      ctx.fillText("SHIP TO:", panelLeft + 56, 173);
+      ctx.font = `700 42px ${fontFamily}`;
+      ctx.fillText("SHIP TO:", panelLeft + 54, 170);
 
       ctx.fillStyle = "#333";
-      ctx.font = `500 44px ${fontFamily}`;
+      ctx.font = `500 40px ${fontFamily}`;
       let y = drawCanvasTextBlock(
         ctx,
         [
@@ -440,9 +440,9 @@
           `Phone: ${orderPayload.shipping.phone}`
         ].join("\n"),
         panelLeft + 330,
-        158,
+        155,
         panelWidth - 370,
-        48
+        44
       );
 
       y += 30;
@@ -454,16 +454,16 @@
       ctx.stroke();
 
       ctx.fillStyle = "#444";
-      ctx.font = `700 44px ${fontFamily}`;
-      ctx.fillText("FROM:", panelLeft + 40, y + 58);
-      ctx.font = `500 44px ${fontFamily}`;
+      ctx.font = `700 42px ${fontFamily}`;
+      ctx.fillText("FROM:", panelLeft + 40, y + 52);
+      ctx.font = `500 40px ${fontFamily}`;
       y = drawCanvasTextBlock(
         ctx,
-        "KTY Autopart\n54/54 จอมทอง14 แขวงบางค้อ\nเขตจอมทอง กทม. 10150",
+        "KTY Autopart\n54/54 จอมทอง14 แขวงบางค้อ\nเขตจอมทอง กทม. 10150\nPhone: 065-962-6254",
         panelLeft + 330,
-        y + 58,
+        y + 52,
         panelWidth - 370,
-        48
+        44
       );
 
       y += 40;
@@ -474,41 +474,77 @@
       ctx.lineTo(panelRight, y);
       ctx.stroke();
 
-      y += 60;
-      const colGap = 36;
-      const colWidth = Math.floor((panelWidth - colGap) / 2);
-      const leftColX = panelLeft + 40;
-      const rightColX = leftColX + colWidth + colGap;
-      const lineHeight = 40;
+      y += 54;
+      ctx.fillStyle = "#555";
+      ctx.font = `700 40px ${fontFamily}`;
+      ctx.fillText("ORDER ID:", panelLeft + 40, y);
+      ctx.fillStyle = "#333";
+      ctx.font = `500 40px ${fontFamily}`;
+      ctx.fillText(orderId, panelLeft + 260, y);
+      ctx.fillStyle = "#555";
+      ctx.font = `700 40px ${fontFamily}`;
+      ctx.fillText("DATE:", panelLeft + 650, y);
+      ctx.fillStyle = "#333";
+      ctx.font = `500 40px ${fontFamily}`;
+      ctx.fillText(new Date().toISOString().slice(0, 10), panelLeft + 790, y);
 
-      function drawInfoBlock(x, topY, label, value) {
-        ctx.fillStyle = "#555";
-        ctx.font = `700 46px ${fontFamily}`;
-        ctx.fillText(label, x, topY);
-        ctx.fillStyle = "#333";
-        ctx.font = `500 42px ${fontFamily}`;
-        return drawCanvasTextBlock(ctx, value, x, topY + 44, colWidth - 20, lineHeight);
-      }
+      y += 56;
+      ctx.fillStyle = "#555";
+      ctx.font = `700 40px ${fontFamily}`;
+      ctx.fillText("TOTAL:", panelLeft + 40, y);
+      ctx.fillStyle = "#333";
+      ctx.font = `500 40px ${fontFamily}`;
+      ctx.fillText(formatPrice(orderPayload.totals.total), panelLeft + 260, y);
 
-      let leftY = drawInfoBlock(leftColX, y, "ORDER ID", orderId);
-      leftY += 16;
-      leftY = drawInfoBlock(leftColX, leftY, "TOTAL", formatPrice(orderPayload.totals.total));
+      y += 44;
+      ctx.strokeStyle = "#111";
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(panelLeft, y);
+      ctx.lineTo(panelRight, y);
+      ctx.stroke();
 
-      const productNames = (Array.isArray(orderPayload.items) ? orderPayload.items : []).map((item) => {
+      y += 46;
+      const productColX = panelLeft + 40;
+      const qtyColX = panelLeft + 760;
+      const priceColX = panelRight - 30;
+      ctx.fillStyle = "#555";
+      ctx.font = `700 36px ${fontFamily}`;
+      ctx.fillText("PRODUCT (SKU)", productColX, y);
+      ctx.fillText("QTY", qtyColX, y);
+      ctx.fillText("PRICE", priceColX - 120, y);
+
+      y += 22;
+      ctx.beginPath();
+      ctx.moveTo(panelLeft, y);
+      ctx.lineTo(panelRight, y);
+      ctx.stroke();
+      y += 34;
+
+      const items = Array.isArray(orderPayload.items) ? orderPayload.items : [];
+      const maxProductWidth = qtyColX - productColX - 20;
+      for (const item of items) {
         const sku = String(item.sku || "N/A").trim();
-        return `${String(item.name || "").trim()} (${sku})`;
-      });
-      const shownProducts = productNames.slice(0, 4);
-      if (productNames.length > shownProducts.length) {
-        shownProducts.push(`+ ${productNames.length - shownProducts.length} more item(s)`);
+        const label = `${String(item.name || "").trim()} (${sku})`;
+        ctx.fillStyle = "#333";
+        ctx.font = `500 34px ${fontFamily}`;
+        const wrapped = splitCanvasText(ctx, label, maxProductWidth);
+        const rowHeight = Math.max(42, wrapped.length * 38);
+        drawCanvasTextBlock(ctx, wrapped.join("\n"), productColX, y, maxProductWidth, 38);
+        ctx.fillText(String(item.qty || 1), qtyColX, y);
+        const unitPrice = Number(item.price || 0);
+        ctx.fillText(formatPrice(unitPrice), priceColX - 120, y);
+
+        y += rowHeight;
+        ctx.strokeStyle = "#d6d6d6";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(panelLeft, y - 12);
+        ctx.lineTo(panelRight, y - 12);
+        ctx.stroke();
+        y += 14;
+        if (y > canvas.height - 120) break;
       }
-      const productsText = shownProducts.join("\n");
-
-      let rightY = drawInfoBlock(rightColX, y, "DATE", new Date().toISOString().slice(0, 10));
-      rightY += 16;
-      rightY = drawInfoBlock(rightColX, rightY, "PRODUCTS", productsText || "N/A");
-
-      y = Math.max(leftY, rightY) + 10;
       return canvas;
     }
 
