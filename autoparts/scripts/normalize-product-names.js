@@ -283,7 +283,19 @@ const BRANDS = [
 ${brandText}
 ];
 
-const IMG = "images/";
+const IMG = (() => {
+  if (typeof window === "undefined" || !window.location) return "images/";
+  if (typeof window.__KTY_IMAGE_BASE__ === "string" && window.__KTY_IMAGE_BASE__) {
+    return window.__KTY_IMAGE_BASE__;
+  }
+  const pathname = String(window.location.pathname || "");
+  const marker = "/autoparts/";
+  const index = pathname.toLowerCase().indexOf(marker);
+  if (index >= 0) {
+    return \`\${pathname.slice(0, index)}\${marker}images/\`;
+  }
+  return "/autoparts/images/";
+})();
 
 const products = [
 ${productText}

@@ -1,7 +1,32 @@
 // app.js — catalog rendering, brand filtering and search
 
 let selectedBrand = "All";
-const APP_PLACEHOLDER_IMAGE = "images/product-placeholder.svg";
+const APP_IMAGE_BASE = (() => {
+  if (typeof window === "undefined" || !window.location) return "images/";
+  if (typeof window.__KTY_IMAGE_BASE__ === "string" && window.__KTY_IMAGE_BASE__) {
+    return window.__KTY_IMAGE_BASE__;
+  }
+  const pathname = String(window.location.pathname || "");
+  const marker = "/autoparts/";
+  const index = pathname.toLowerCase().indexOf(marker);
+  if (index >= 0) {
+    return `${pathname.slice(0, index)}${marker}images/`;
+  }
+  return "/autoparts/images/";
+})();
+const APP_PLACEHOLDER_IMAGE = `${APP_IMAGE_BASE}product-placeholder.svg`;
+
+function resolveCatalogImagePath(imagePath) {
+  const rawPath = String(imagePath || "").trim();
+  if (!rawPath) return "";
+  if (/^(?:https?:)?\/\//i.test(rawPath) || rawPath.startsWith("data:") || rawPath.startsWith("/")) {
+    return rawPath;
+  }
+  if (rawPath.startsWith("images/")) {
+    return `${APP_IMAGE_BASE}${rawPath.slice("images/".length)}`;
+  }
+  return rawPath;
+}
 
 function safeFormatPrice(value) {
   if (typeof formatPrice === "function") return formatPrice(value);
@@ -12,7 +37,7 @@ function safeFormatPrice(value) {
 
 function getPrimaryImage(product) {
   if (!product || !Array.isArray(product.images)) return "";
-  return (product.images.find(Boolean) || "").trim();
+  return resolveCatalogImagePath(product.images.find(Boolean));
 }
 
 function productHasImage(product) {

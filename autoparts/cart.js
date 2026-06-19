@@ -2,7 +2,32 @@
 
 const CART_KEY = "autoparts_cart";
 const CURRENCY = "฿"; // Thai Baht
-const CART_PLACEHOLDER_IMAGE = "images/product-placeholder.svg";
+const CART_IMAGE_BASE = (() => {
+  if (typeof window === "undefined" || !window.location) return "images/";
+  if (typeof window.__KTY_IMAGE_BASE__ === "string" && window.__KTY_IMAGE_BASE__) {
+    return window.__KTY_IMAGE_BASE__;
+  }
+  const pathname = String(window.location.pathname || "");
+  const marker = "/autoparts/";
+  const index = pathname.toLowerCase().indexOf(marker);
+  if (index >= 0) {
+    return `${pathname.slice(0, index)}${marker}images/`;
+  }
+  return "/autoparts/images/";
+})();
+const CART_PLACEHOLDER_IMAGE = `${CART_IMAGE_BASE}product-placeholder.svg`;
+
+function resolveCartImagePath(imagePath) {
+  const rawPath = String(imagePath || "").trim();
+  if (!rawPath) return CART_PLACEHOLDER_IMAGE;
+  if (/^(?:https?:)?\/\//i.test(rawPath) || rawPath.startsWith("data:") || rawPath.startsWith("/")) {
+    return rawPath;
+  }
+  if (rawPath.startsWith("images/")) {
+    return `${CART_IMAGE_BASE}${rawPath.slice("images/".length)}`;
+  }
+  return rawPath;
+}
 
 function formatPrice(value) {
   return CURRENCY + Number(value).toFixed(2);
@@ -10,7 +35,11 @@ function formatPrice(value) {
 
 function getCart() {
   try {
-    return JSON.parse(localStorage.getItem(CART_KEY)) || [];
+    const storedCart = JSON.parse(localStorage.getItem(CART_KEY)) || [];
+    return storedCart.map(item => ({
+      ...item,
+      image: resolveCartImagePath(item.image)
+    }));
   } catch (e) {
     return [];
   }
@@ -46,7 +75,7 @@ function addToCart(productId, qty = 1) {
       brand: product.brand,
       sku: product.sku || "",
       price: product.price,
-      image: (Array.isArray(product.images) && product.images[0]) ? product.images[0] : CART_PLACEHOLDER_IMAGE,
+      image: (Array.isArray(product.images) && product.images[0]) ? resolveCartImagePath(product.images[0]) : CART_PLACEHOLDER_IMAGE,
       qty: qty
     });
   }
