@@ -525,12 +525,20 @@
       const maxProductWidth = qtyColX - productColX - 20;
       for (const item of items) {
         const sku = String(item.sku || "N/A").trim();
-        const label = `${String(item.name || "").trim()} (${sku})`;
+        const productName = String(item.name || "").trim();
         ctx.fillStyle = "#333";
         ctx.font = `500 34px ${fontFamily}`;
-        const wrapped = splitCanvasText(ctx, label, maxProductWidth);
-        const rowHeight = Math.max(42, wrapped.length * 38);
-        drawCanvasTextBlock(ctx, wrapped.join("\n"), productColX, y, maxProductWidth, 38);
+        const productLines = splitCanvasText(ctx, productName, maxProductWidth);
+        const skuLineText = `SKU: ${sku}`;
+        ctx.font = `500 30px ${fontFamily}`;
+        const skuLines = splitCanvasText(ctx, skuLineText, maxProductWidth);
+        const rowHeight = Math.max(42, (productLines.length * 38) + (skuLines.length * 34));
+        ctx.font = `500 34px ${fontFamily}`;
+        drawCanvasTextBlock(ctx, productLines.join("\n"), productColX, y, maxProductWidth, 38);
+        const skuStartY = y + (productLines.length * 38);
+        ctx.fillStyle = "#4c4c4c";
+        ctx.font = `500 30px ${fontFamily}`;
+        drawCanvasTextBlock(ctx, skuLines.join("\n"), productColX, skuStartY, maxProductWidth, 34);
         ctx.fillText(String(item.qty || 1), qtyColX, y);
         const unitPrice = Number(item.price || 0);
         ctx.fillText(formatPrice(unitPrice), priceColX - 120, y);
