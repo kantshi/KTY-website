@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/autoparts/styles.css?v=20260619-4">
+  <link rel="stylesheet" href="/autoparts/styles.css?v=20260619-5">
 </head>
 <body>
   <header class="header">
@@ -146,8 +146,9 @@
     <div class="footer-bottom">© 2025 KTY Autoparts. All Rights Reserved.</div>
   </footer>
 
-  <script src="/autoparts/products.js?v=20260619-4"></script>
-  <script src="/autoparts/cart.js?v=20260619-4"></script>
+  <script src="/autoparts/products.js?v=20260619-5"></script>
+  <script src="/autoparts/cart.js?v=20260619-5"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
     const SHIPPING_FLAT = 12.00;
     const FREE_SHIP_OVER = 300.00;
@@ -369,10 +370,143 @@
       return new Blob(chunks, { type: "application/pdf" });
     }
 
-    function buildShippingPdfFile(orderPayload, orderId) {
+    function readFileAsDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ""));
+        reader.onerror = () => reject(new Error("Could not read payment proof image for PDF."));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function createPrintablePdfWithJsPdf(orderPayload, orderId, proofFile) {
+      const jsPDFCtor = window.jspdf && window.jspdf.jsPDF;
+      if (!jsPDFCtor) return null;
+
+      const doc = new jsPDFCtor({ unit: "mm", format: "a4" });
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const left = 14;
+      const right = pageWidth - 14;
+      const boxWidth = right - left;
+      let y = 16;
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(16);
+      doc.text("KTY AUTOPARTS", left, y);
+      y += 7;
+      doc.setFontSize(12);
+      doc.text("Shipping Address Slip (Ready to Print)", left, y);
+      y += 7;
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.text(`Order ID: ${orderId}`, left, y);
+      doc.text(`Date: ${new Date().toLocaleString()}`, right, y, { align: "right" });
+      y += 6;
+      doc.text(`Payment: ${orderPayload.paymentMethod || "qr_transfer"}`, left, y);
+      doc.text(`Ref: ${orderPayload.transactionReference || "N/A"}`, right, y, { align: "right" });
+      y += 6;
+
+      doc.setDrawColor(220);
+      doc.rect(left, y, boxWidth, 45);
+      y += 6;
+      doc.setFont("helvetica", "bold");
+      doc.text("SHIP TO", left + 3, y);
+      y += 5;
+      doc.setFont("helvetica", "normal");
+      const shipLines = [
+        `Name: ${orderPayload.shipping.name}`,
+        `Phone: ${orderPayload.shipping.phone}`,
+        `Email: ${orderPayload.shipping.email}`,
+        `Address: ${orderPayload.shipping.address}`,
+        `District/City: ${orderPayload.shipping.city}`,
+        `Province: ${orderPayload.shipping.state}  Postcode: ${orderPayload.shipping.postcode}`
+      ];
+      for (const line of shipLines) {
+        const wrapped = doc.splitTextToSize(line, boxWidth - 6);
+        doc.text(wrapped, left + 3, y);
+        y += wrapped.length * 4.5;
+      }
+
+      y += 4;
+      doc.setFont("helvetica", "bold");
+      doc.text("ORDER ITEMS", left, y);
+      y += 5;
+
+      doc.setFillColor(245);
+      doc.rect(left, y - 4, boxWidth, 6, "F");
+      doc.setFontSize(9);
+      doc.text("SKU", left + 2, y);
+      doc.text("Product", left + 36, y);
+      doc.text("Qty", right - 36, y, { align: "right" });
+      doc.text("Total", right - 2, y, { align: "right" });
+      y += 5;
+
+      doc.setFont("helvetica", "normal");
+      for (const item of orderPayload.items) {
+        const sku = String(item.sku || "N/A");
+        const nameLines = doc.splitTextToSize(String(item.name || ""), 96);
+        const lineHeight = Math.max(5, nameLines.length * 4.2);
+        doc.text(sku, left + 2, y);
+        doc.text(nameLines, left + 36, y);
+        doc.text(String(item.qty), right - 36, y, { align: "right" });
+        doc.text(formatPrice(item.lineTotal), right - 2, y, { align: "right" });
+        y += lineHeight;
+        if (y > 245) {
+          doc.addPage();
+          y = 18;
+        }
+      }
+
+      y += 2;
+      doc.setDrawColor(220);
+      doc.line(left, y, right, y);
+      y += 6;
+      doc.setFont("helvetica", "bold");
+      doc.text(`Subtotal: ${formatPrice(orderPayload.totals.subtotal)}`, right, y, { align: "right" });
+      y += 5;
+      doc.text(`Shipping: ${orderPayload.totals.shipping === 0 ? "FREE" : formatPrice(orderPayload.totals.shipping)}`, right, y, { align: "right" });
+      y += 5;
+      doc.setFontSize(12);
+      doc.text(`Grand Total: ${formatPrice(orderPayload.totals.total)}`, right, y, { align: "right" });
+
+      const proofType = String((proofFile && proofFile.type) || "").toLowerCase();
+      const supportedProofImage = proofType.includes("jpeg") || proofType.includes("jpg") || proofType.includes("png");
+      if (proofFile && supportedProofImage) {
+        const proofDataUrl = await readFileAsDataUrl(proofFile);
+        const imageProps = doc.getImageProperties(proofDataUrl);
+        const maxW = pageWidth - left * 2;
+        const maxH = 250;
+        const ratio = Math.min(maxW / imageProps.width, maxH / imageProps.height);
+        const drawW = imageProps.width * ratio;
+        const drawH = imageProps.height * ratio;
+        const imageX = (pageWidth - drawW) / 2;
+        const imageY = 24;
+        const format = proofType.includes("png") ? "PNG" : "JPEG";
+
+        doc.addPage();
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(13);
+        doc.text("Payment Proof Image", left, 16);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.text(`Order ID: ${orderId}`, left, 22);
+        doc.addImage(proofDataUrl, format, imageX, imageY, drawW, drawH);
+      }
+
+      const blob = doc.output("blob");
+      return new File([blob], `${orderId}-shipping-slip.pdf`, { type: "application/pdf" });
+    }
+
+    async function buildShippingPdfFile(orderPayload, orderId, proofFile) {
+      try {
+        const printable = await createPrintablePdfWithJsPdf(orderPayload, orderId, proofFile);
+        if (printable) return printable;
+      } catch (_error) {}
+
       const lines = buildShippingPdfLines(orderPayload, orderId);
       const pdfBlob = createSimplePdfBlob(lines);
-      return new File([pdfBlob], `${orderId}-shipping-details.pdf`, { type: "application/pdf" });
+      return new File([pdfBlob], `${orderId}-shipping-slip.pdf`, { type: "application/pdf" });
     }
 
     function buildFormSubmitData(orderPayload, proofFile, orderId, shippingPdfFile) {
@@ -397,14 +531,14 @@
         `<p><strong>Province:</strong> ${escapeHtml(orderPayload.shipping.state)}</p>`,
         `<p><strong>Postcode:</strong> ${escapeHtml(orderPayload.shipping.postcode)}</p>`
       ].join(""));
-      formData.append("attachment", proofFile, proofFile.name || "payment-proof.jpg");
-      formData.append("attachment", shippingPdfFile, shippingPdfFile.name || `${orderId}-shipping-details.pdf`);
+      formData.append("attachment", shippingPdfFile, shippingPdfFile.name || `${orderId}-shipping-slip.pdf`);
+      formData.append("attachment[]", proofFile, proofFile.name || "payment-proof.jpg");
       return formData;
     }
 
     async function submitViaFormSubmit(orderPayload, proofFile) {
       const orderId = generateOrderId();
-      const shippingPdfFile = buildShippingPdfFile(orderPayload, orderId);
+      const shippingPdfFile = await buildShippingPdfFile(orderPayload, orderId, proofFile);
       const formData = buildFormSubmitData(orderPayload, proofFile, orderId, shippingPdfFile);
       const response = await fetch(FORMSUBMIT_AJAX_ENDPOINT, {
         method: "POST",
