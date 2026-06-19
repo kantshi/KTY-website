@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/autoparts/styles.css?v=20260619-12">
+  <link rel="stylesheet" href="/autoparts/styles.css?v=20260619-13">
 </head>
 <body>
   <header class="header">
@@ -147,8 +147,8 @@
     <div class="footer-bottom">© 2025 KTY Autoparts. All Rights Reserved.</div>
   </footer>
 
-  <script src="/autoparts/products.js?v=20260619-12"></script>
-  <script src="/autoparts/cart.js?v=20260619-12"></script>
+  <script src="/autoparts/products.js?v=20260619-13"></script>
+  <script src="/autoparts/cart.js?v=20260619-13"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
     const SHIPPING_FLAT = 12.00;
@@ -424,13 +424,13 @@
       const panelWidth = panelRight - panelLeft;
 
       ctx.fillStyle = "#111";
-      ctx.fillRect(panelLeft + 36, 130, 250, 72);
+      ctx.fillRect(panelLeft + 36, 128, 240, 62);
       ctx.fillStyle = "#fff";
-      ctx.font = `700 52px ${fontFamily}`;
-      ctx.fillText("SHIP TO:", panelLeft + 62, 182);
+      ctx.font = `700 44px ${fontFamily}`;
+      ctx.fillText("SHIP TO:", panelLeft + 56, 173);
 
-      ctx.fillStyle = "#444";
-      ctx.font = `500 56px ${fontFamily}`;
+      ctx.fillStyle = "#333";
+      ctx.font = `500 44px ${fontFamily}`;
       let y = drawCanvasTextBlock(
         ctx,
         [
@@ -440,9 +440,9 @@
           `Phone: ${orderPayload.shipping.phone}`
         ].join("\n"),
         panelLeft + 330,
-        154,
+        158,
         panelWidth - 370,
-        60
+        48
       );
 
       y += 30;
@@ -453,17 +453,17 @@
       ctx.lineTo(panelRight, y);
       ctx.stroke();
 
-      ctx.fillStyle = "#555";
-      ctx.font = `700 52px ${fontFamily}`;
-      ctx.fillText("FROM:", panelLeft + 40, y + 66);
-      ctx.font = `500 54px ${fontFamily}`;
+      ctx.fillStyle = "#444";
+      ctx.font = `700 44px ${fontFamily}`;
+      ctx.fillText("FROM:", panelLeft + 40, y + 58);
+      ctx.font = `500 44px ${fontFamily}`;
       y = drawCanvasTextBlock(
         ctx,
         "KTY Autopart\n54/54 จอมทอง14 แขวงบางค้อ\nเขตจอมทอง กทม. 10150",
         panelLeft + 330,
-        y + 66,
+        y + 58,
         panelWidth - 370,
-        60
+        48
       );
 
       y += 40;
@@ -474,30 +474,41 @@
       ctx.lineTo(panelRight, y);
       ctx.stroke();
 
-      y += 65;
-      ctx.fillStyle = "#555";
-      ctx.font = `700 50px ${fontFamily}`;
-      ctx.fillText("ORDER ID:", panelLeft + 40, y);
-      ctx.font = `500 50px ${fontFamily}`;
-      ctx.fillText(orderId, panelLeft + 270, y);
+      y += 60;
+      const colGap = 36;
+      const colWidth = Math.floor((panelWidth - colGap) / 2);
+      const leftColX = panelLeft + 40;
+      const rightColX = leftColX + colWidth + colGap;
+      const lineHeight = 40;
 
-      ctx.font = `700 50px ${fontFamily}`;
-      ctx.fillText("DATE:", panelLeft + 610, y);
-      ctx.font = `500 50px ${fontFamily}`;
-      ctx.fillText(new Date().toISOString().slice(0, 10), panelLeft + 780, y);
+      function drawInfoBlock(x, topY, label, value) {
+        ctx.fillStyle = "#555";
+        ctx.font = `700 46px ${fontFamily}`;
+        ctx.fillText(label, x, topY);
+        ctx.fillStyle = "#333";
+        ctx.font = `500 42px ${fontFamily}`;
+        return drawCanvasTextBlock(ctx, value, x, topY + 44, colWidth - 20, lineHeight);
+      }
 
-      y += 78;
-      ctx.font = `700 50px ${fontFamily}`;
-      ctx.fillText("TOTAL:", panelLeft + 40, y);
-      ctx.font = `500 50px ${fontFamily}`;
-      ctx.fillText(formatPrice(orderPayload.totals.total), panelLeft + 270, y);
+      let leftY = drawInfoBlock(leftColX, y, "ORDER ID", orderId);
+      leftY += 16;
+      leftY = drawInfoBlock(leftColX, leftY, "TOTAL", formatPrice(orderPayload.totals.total));
 
-      ctx.font = `700 50px ${fontFamily}`;
-      ctx.fillText("REMARKS:", panelLeft + 610, y);
-      ctx.font = `500 46px ${fontFamily}`;
-      const ref = orderPayload.transactionReference || "NO REMARKS";
-      drawCanvasTextBlock(ctx, ref, panelLeft + 860, y, panelRight - (panelLeft + 860), 54);
+      const productNames = (Array.isArray(orderPayload.items) ? orderPayload.items : []).map((item) => {
+        const sku = String(item.sku || "N/A").trim();
+        return `${String(item.name || "").trim()} (${sku})`;
+      });
+      const shownProducts = productNames.slice(0, 4);
+      if (productNames.length > shownProducts.length) {
+        shownProducts.push(`+ ${productNames.length - shownProducts.length} more item(s)`);
+      }
+      const productsText = shownProducts.join("\n");
 
+      let rightY = drawInfoBlock(rightColX, y, "DATE", new Date().toISOString().slice(0, 10));
+      rightY += 16;
+      rightY = drawInfoBlock(rightColX, rightY, "PRODUCTS", productsText || "N/A");
+
+      y = Math.max(leftY, rightY) + 10;
       return canvas;
     }
 
@@ -569,16 +580,14 @@
       if (existingPdfInput) existingPdfInput.remove();
       const pdfInput = document.createElement("input");
       pdfInput.type = "file";
-      pdfInput.name = "attachment";
+      pdfInput.name = "shippingSlipPdf";
       pdfInput.style.display = "none";
       pdfInput.setAttribute("data-kty-fallback-file", "shipping-pdf");
       setSingleFileInput(pdfInput, shippingPdfFile);
       form.appendChild(pdfInput);
 
       upsertHiddenField(form, "_replyto", orderPayload.shipping.email);
-      upsertHiddenField(form, "_subject", `QR Payment Proof Submitted - ${orderId}`);
-      upsertHiddenField(form, "_captcha", "false");
-      upsertHiddenField(form, "_template", "table");
+      upsertHiddenField(form, "_subject", `KTY Order Payment Proof - ${orderId}`);
       upsertHiddenField(form, "_next", redirectUrl);
       upsertHiddenField(form, "orderId", orderId);
       upsertHiddenField(form, "orderData", JSON.stringify(orderPayload));
