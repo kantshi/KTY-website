@@ -542,7 +542,7 @@ img { display: block; max-width: 100%; }
   overflow: hidden;
   background: radial-gradient(circle at 18% 22%, #fff3ec 0%, transparent 42%), linear-gradient(180deg, #fff, var(--bg));
 }
-.about-hero .container { max-width: 860px; }
+.about-hero .container { max-width: 1160px; }
 .about-hero .eyebrow {
   margin-bottom: 16px;
   padding: 9px 20px;
@@ -560,9 +560,9 @@ img { display: block; max-width: 100%; }
 .about-highlights {
   display: grid;
   grid-template-columns: repeat(3, minmax(240px, 1fr));
-  gap: 34px;
-  margin: 36px auto 0;
-  width: min(100%, 1040px);
+  gap: 46px;
+  margin: 40px auto 0;
+  width: min(100%, 1120px);
 }
 .about-pill {
   position: relative;
@@ -674,6 +674,7 @@ img { display: block; max-width: 100%; }
 @media (max-width: 900px) {
   .product-detail, .cart-layout, .checkout-layout { grid-template-columns: 1fr; }
   .summary { position: static; }
+  .about-highlights { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
   .footer-inner { grid-template-columns: 1fr 1fr; }
   .about-pill { animation: none !important; }
 }
