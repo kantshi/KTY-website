@@ -616,6 +616,59 @@
       input.files = dataTransfer.files;
     }
 
+    function getOrCreateFormSubmitFrame() {
+      const frameId = "kty-formsubmit-frame";
+      let frame = document.getElementById(frameId);
+      if (!frame) {
+        frame = document.createElement("iframe");
+        frame.id = frameId;
+        frame.name = frameId;
+        frame.style.display = "none";
+        frame.setAttribute("aria-hidden", "true");
+        document.body.appendChild(frame);
+      }
+      return frame;
+    }
+
+    function waitForFormSubmitRedirect(frame, successPath, timeoutMs = 30000) {
+      return new Promise((resolve, reject) => {
+        let finished = false;
+        const normalizePath = (value) => String(value || "").replace(/\/+$/, "") || "/";
+        const expectedPath = normalizePath(successPath);
+
+        const cleanup = () => {
+          frame.removeEventListener("load", handleLoad);
+          clearTimeout(timer);
+        };
+
+        const handleLoad = () => {
+          if (finished) return;
+          try {
+            const location = frame.contentWindow && frame.contentWindow.location;
+            if (!location) return;
+            const sameOrigin = location.origin === window.location.origin;
+            const loadedPath = normalizePath(location.pathname);
+            if (sameOrigin && loadedPath === expectedPath) {
+              finished = true;
+              cleanup();
+              resolve();
+            }
+          } catch (_error) {
+            // Ignore cross-origin access errors while waiting for redirect back.
+          }
+        };
+
+        const timer = setTimeout(() => {
+          if (finished) return;
+          finished = true;
+          cleanup();
+          reject(new Error("Submission is taking longer than expected. Please wait and try again."));
+        }, timeoutMs);
+
+        frame.addEventListener("load", handleLoad);
+      });
+    }
+
     async function submitViaFormSubmit(form, orderPayload, proofFile) {
       const orderId = generateOrderId();
       const shippingPdfFile = await buildShippingPdfFile(orderPayload, orderId, proofFile);
@@ -626,15 +679,36 @@
       }
       const successPath = window.location.pathname.replace(/checkout\.html$/i, "checkout-success.html");
       const redirectUrl = `${window.location.origin}${successPath}?orderId=${encodeURIComponent(orderId)}&status=pending_manual_review&emailStatus=submitted&source=formsubmit`;
-      const formData = new FormData();
-      formData.append("_replyto", orderPayload.shipping.email);
-      formData.append("_subject", `KTY Order Payment Proof - ${orderId}`);
-      formData.append("_captcha", "false");
-      formData.append("_next", redirectUrl);
-      formData.append("orderId", orderId);
-      formData.append("orderData", JSON.stringify(orderPayload));
-      formData.append("message", buildOrderSummaryText(orderPayload, orderId));
-      formData.append("shippingAddressCard", [
+      const submitEndpoint = FORMSUBMIT_AJAX_ENDPOINT.replace("/ajax/", "/");
+      const frame = getOrCreateFormSubmitFrame();
+      const proofInput = form.paymentProof;
+      if (!proofInput) throw new Error("Payment proof input is missing.");
+
+      form.method = "POST";
+      form.action = submitEndpoint;
+      form.enctype = "multipart/form-data";
+      form.target = frame.name;
+      proofInput.name = "attachment";
+      proofInput.multiple = false;
+
+      const existingPdfInput = form.querySelector('input[data-kty-fallback-file="shipping-pdf"]');
+      if (existingPdfInput) existingPdfInput.remove();
+      const pdfInput = document.createElement("input");
+      pdfInput.type = "file";
+      pdfInput.name = "attachment";
+      pdfInput.style.display = "none";
+      pdfInput.setAttribute("data-kty-fallback-file", "shipping-pdf");
+      setSingleFileInput(pdfInput, [shippingPdfFile]);
+      form.appendChild(pdfInput);
+
+      upsertHiddenField(form, "_replyto", orderPayload.shipping.email);
+      upsertHiddenField(form, "_subject", `KTY Order Payment Proof - ${orderId}`);
+      upsertHiddenField(form, "_captcha", "false");
+      upsertHiddenField(form, "_next", redirectUrl);
+      upsertHiddenField(form, "orderId", orderId);
+      upsertHiddenField(form, "orderData", JSON.stringify(orderPayload));
+      upsertHiddenField(form, "message", buildOrderSummaryText(orderPayload, orderId));
+      upsertHiddenField(form, "shippingAddressCard", [
         "<h2>Shipping Details</h2>",
         `<p><strong>Name:</strong> ${escapeHtml(orderPayload.shipping.name)}</p>`,
         `<p><strong>Phone:</strong> ${escapeHtml(orderPayload.shipping.phone)}</p>`,
@@ -644,29 +718,12 @@
         `<p><strong>Province:</strong> ${escapeHtml(orderPayload.shipping.state)}</p>`,
         `<p><strong>Postcode:</strong> ${escapeHtml(orderPayload.shipping.postcode)}</p>`
       ].join(""));
-      formData.append("proofFileName", proofFile.name || "payment-proof.jpg");
-      formData.append("proofFileType", proofFile.type || "image/*");
-      formData.append("attachment", proofFile, proofFile.name || "payment-proof.jpg");
-      formData.append("attachment", shippingPdfFile, shippingPdfFile.name || `${orderId}-shipping-slip.pdf`);
+      upsertHiddenField(form, "proofFileName", proofFile.name || "payment-proof.jpg");
+      upsertHiddenField(form, "proofFileType", proofFile.type || "image/*");
 
-      let response;
-      try {
-        response = await fetch(FORMSUBMIT_AJAX_ENDPOINT, {
-          method: "POST",
-          body: formData,
-          headers: { Accept: "application/json" }
-        });
-      } catch (_error) {
-        throw new Error("Unable to reach email service. Please try again in a moment.");
-      }
-
-      let responseData = null;
-      try { responseData = await response.json(); } catch (_error) {}
-      if (!response.ok || responseData?.success === "false") {
-        const status = response.status || 500;
-        throw new Error(responseData?.message || `Failed to submit payment proof (${status}). Please try again.`);
-      }
-
+      const waitForSuccess = waitForFormSubmitRedirect(frame, successPath);
+      form.submit();
+      await waitForSuccess;
       clearCart();
       window.location.href = redirectUrl;
 
