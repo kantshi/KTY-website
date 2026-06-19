@@ -559,84 +559,66 @@ img { display: block; max-width: 100%; }
 .about-hero .hero-actions { justify-content: center; margin-top: 20px; }
 .about-highlights {
   display: grid;
-  grid-template-columns: repeat(3, minmax(240px, 1fr));
+  grid-template-columns: repeat(3, minmax(260px, 1fr));
   gap: 46px;
   margin: 40px auto 0;
   width: min(100%, 1120px);
 }
 .about-pill {
   position: relative;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  align-items: center;
+  gap: 18px;
   background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
   border: 1px solid #e7ecf2;
-  border-radius: 18px;
-  padding: 20px 20px 20px 86px;
-  font-size: 0.9rem;
+  border-radius: 20px;
+  padding: 18px 20px;
+  font-size: 0.92rem;
   font-weight: 600;
   color: var(--ink-soft);
-  line-height: 1.45;
+  line-height: 1.44;
   min-height: 122px;
   text-align: left;
   box-shadow: 0 12px 26px rgba(18, 32, 61, 0.08);
-  transition: transform 0.26s ease, box-shadow 0.26s ease;
-  will-change: transform;
-}
-.about-pill::before {
-  content: "";
-  position: absolute;
-  left: 56px;
-  top: 18px;
-  bottom: 18px;
-  width: 1px;
-  background: linear-gradient(180deg, rgba(219, 228, 239, 0.1), rgba(219, 228, 239, 0.9), rgba(219, 228, 239, 0.1));
+  transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
 }
 .about-pill-ico {
-  position: absolute;
-  top: 50%;
-  left: -18px;
-  transform: translateY(-50%);
+  position: relative;
   display: grid;
   place-items: center;
-  width: 74px;
-  height: 74px;
+  width: 88px;
+  height: 88px;
   border-radius: 22px;
-  background: #fff1e6;
-  color: var(--brand-dark);
-  font-size: 2.1rem;
-  line-height: 1;
-  border: 2px solid #ffd1b0;
+  background: linear-gradient(145deg, #fff8f2, #fff0e0);
+  border: 1px solid #ffd6ba;
   flex: 0 0 auto;
-  box-shadow: 0 14px 24px rgba(249, 142, 56, 0.24);
+  box-shadow: 0 12px 22px rgba(239, 156, 88, 0.22);
+  overflow: hidden;
+}
+.about-pill-ico-img {
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
 }
 .about-pill-label {
   display: block;
   width: 100%;
 }
-.about-pill:nth-child(1) { animation: about-float 6.2s ease-in-out infinite; }
 .about-pill:nth-child(2) .about-pill-ico {
-  background: #edf6ff;
-  border-color: #c9e3ff;
-  color: #1f5fa8;
-  box-shadow: 0 12px 22px rgba(40, 122, 217, 0.2);
+  background: linear-gradient(145deg, #f3f9ff, #e8f3ff);
+  border-color: #cde4fb;
+  box-shadow: 0 12px 22px rgba(78, 144, 216, 0.2);
 }
-.about-pill:nth-child(2) { animation: about-float 6.2s ease-in-out 0.7s infinite; }
 .about-pill:nth-child(3) .about-pill-ico {
-  background: #eefbf3;
-  border-color: #c7edd4;
-  color: #2b8450;
-  box-shadow: 0 12px 22px rgba(45, 160, 96, 0.2);
+  background: linear-gradient(145deg, #f2fbf5, #e8f8ee);
+  border-color: #ccebd8;
+  box-shadow: 0 12px 22px rgba(70, 164, 114, 0.2);
 }
-.about-pill:nth-child(3) { animation: about-float 6.2s ease-in-out 1.4s infinite; }
 .about-pill:hover {
-  animation: none;
-  transform: translateY(-6px);
+  transform: translateY(-4px);
   box-shadow: 0 18px 30px rgba(18, 32, 61, 0.12);
-}
-@keyframes about-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+  border-color: #d8e0ea;
 }
 .about-layout { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: clamp(16px, 3vw, 26px); }
 .about-story { max-width: 78ch; margin: 0 auto; }
@@ -676,7 +658,6 @@ img { display: block; max-width: 100%; }
   .summary { position: static; }
   .about-highlights { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
   .footer-inner { grid-template-columns: 1fr 1fr; }
-  .about-pill { animation: none !important; }
 }
 @media (max-width: 600px) {
   .header-inner { height: 68px; gap: 10px; }
@@ -704,13 +685,14 @@ img { display: block; max-width: 100%; }
   .about-layout { grid-template-columns: 1fr; }
   .about-highlights { grid-template-columns: 1fr; gap: 18px; width: 100%; }
   .about-pill {
-    min-height: 98px;
-    padding: 14px 14px 14px 62px;
+    grid-template-columns: 70px 1fr;
+    min-height: 100px;
+    padding: 14px;
     font-size: 0.84rem;
     line-height: 1.42;
   }
-  .about-pill::before { left: 42px; }
-  .about-pill-ico { width: 62px; height: 62px; left: -14px; font-size: 1.8rem; border-radius: 18px; }
+  .about-pill-ico { width: 70px; height: 70px; border-radius: 18px; }
+  .about-pill-ico-img { width: 42px; height: 42px; }
   .footer-inner { grid-template-columns: 1fr; }
   .cart-item { grid-template-columns: 64px 1fr; }
   .cart-item img { width: 64px; height: 64px; }
