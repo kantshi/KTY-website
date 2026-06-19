@@ -591,9 +591,11 @@
       field.value = String(value ?? "");
     }
 
-    function setSingleFileInput(input, file) {
+    function setSingleFileInput(input, files) {
       const dataTransfer = new DataTransfer();
-      dataTransfer.items.add(file);
+      for (const file of files) {
+        if (file) dataTransfer.items.add(file);
+      }
       input.files = dataTransfer.files;
     }
 
@@ -618,20 +620,12 @@
       form.enctype = "multipart/form-data";
       form.target = "_self";
       proofInput.name = "attachment";
-      proofInput.multiple = false;
-
-      const existingPdfInput = form.querySelector('input[data-kty-fallback-file="shipping-pdf"]');
-      if (existingPdfInput) existingPdfInput.remove();
-      const pdfInput = document.createElement("input");
-      pdfInput.type = "file";
-      pdfInput.name = "shippingSlipPdf";
-      pdfInput.style.display = "none";
-      pdfInput.setAttribute("data-kty-fallback-file", "shipping-pdf");
-      setSingleFileInput(pdfInput, shippingPdfFile);
-      form.appendChild(pdfInput);
+      proofInput.multiple = true;
+      setSingleFileInput(proofInput, [proofFile, shippingPdfFile]);
 
       upsertHiddenField(form, "_replyto", orderPayload.shipping.email);
       upsertHiddenField(form, "_subject", `KTY Order Payment Proof - ${orderId}`);
+      upsertHiddenField(form, "_captcha", "false");
       upsertHiddenField(form, "_next", redirectUrl);
       upsertHiddenField(form, "orderId", orderId);
       upsertHiddenField(form, "orderData", JSON.stringify(orderPayload));
@@ -649,7 +643,6 @@
       upsertHiddenField(form, "proofFileName", proofFile.name || "payment-proof.jpg");
       upsertHiddenField(form, "proofFileType", proofFile.type || "image/*");
 
-      clearCart();
       form.submit();
 
       return {
@@ -722,6 +715,9 @@
       if (!form.paymentProof.files || form.paymentProof.files.length === 0) {
         showError("Please upload your payment proof image.");
         form.paymentProof.focus();
+        return;
+      }
+      if (!window.confirm("Confirm submission of payment proof and shipping details?")) {
         return;
       }
       document.getElementById("form-error").style.display = "none";

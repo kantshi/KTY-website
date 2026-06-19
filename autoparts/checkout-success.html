@@ -124,6 +124,8 @@
       }
 
       if (statusFromQuery || source === "formsubmit") {
+        clearCart();
+        updateCartCount();
         updateView(orderId, statusFromQuery || "pending_manual_review", emailStatusFromQuery || "submitted");
         document.querySelector(".confirm h1").textContent = "Proof submitted successfully";
         document.querySelector(".confirm p").textContent = "Your payment proof was submitted successfully. Your order is now being processed.";
