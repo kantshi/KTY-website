@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260619-2">
+  <link rel="stylesheet" href="styles.css?v=20260619-3">
 </head>
 <body>
   <header class="header">
@@ -146,13 +146,13 @@
     <div class="footer-bottom">© 2025 KTY Autoparts. All Rights Reserved.</div>
   </footer>
 
-  <script src="products.js?v=20260619-2"></script>
-  <script src="cart.js?v=20260619-2"></script>
+  <script src="products.js?v=20260619-3"></script>
+  <script src="cart.js?v=20260619-3"></script>
   <script>
     const SHIPPING_FLAT = 12.00;
     const FREE_SHIP_OVER = 300.00;
     const SUBMIT_QR_PROOF_ENDPOINT = window.SUBMIT_QR_PROOF_ENDPOINT || "/api/orders/submit-proof";
-    const FORMSUBMIT_ENDPOINT = window.FORMSUBMIT_ENDPOINT || "https://formsubmit.co/ktyautopart@gmail.com";
+    const FORMSUBMIT_AJAX_ENDPOINT = window.FORMSUBMIT_AJAX_ENDPOINT || "https://formsubmit.co/ajax/ktyautopart@gmail.com";
     const STATIC_CHECKOUT_HOSTS = new Set(["ktyautopart.com", "www.ktyautopart.com"]);
 
     function getTotals() {
@@ -203,20 +203,6 @@
       return sameOriginApi && isLikelyStaticDeploymentHost();
     }
 
-    function upsertHiddenField(form, name, value) {
-      const existing = Array.from(form.querySelectorAll('input[type="hidden"]')).find((input) => input.name === name);
-      if (existing) {
-        existing.value = String(value);
-        return;
-      }
-      const hidden = document.createElement("input");
-      hidden.type = "hidden";
-      hidden.name = name;
-      hidden.value = String(value);
-      hidden.setAttribute("data-generated", "checkout-fallback");
-      form.appendChild(hidden);
-    }
-
     function buildOrderSummaryText(orderPayload, orderId) {
       const lines = [];
       lines.push(`Order ID: ${orderId}`);
@@ -243,24 +229,51 @@
       return lines.join("\n");
     }
 
-    function submitViaFormSubmit(form, orderPayload) {
+    function buildFormSubmitData(orderPayload, proofFile, orderId) {
+      const formData = new FormData();
+      formData.append("name", orderPayload.shipping.name);
+      formData.append("email", orderPayload.shipping.email);
+      formData.append("phone", orderPayload.shipping.phone);
+      formData.append("_replyto", orderPayload.shipping.email);
+      formData.append("_subject", `QR Payment Proof Submitted - ${orderId}`);
+      formData.append("_captcha", "false");
+      formData.append("_template", "table");
+      formData.append("orderId", orderId);
+      formData.append("orderData", JSON.stringify(orderPayload));
+      formData.append("message", buildOrderSummaryText(orderPayload, orderId));
+      formData.append("attachment", proofFile, proofFile.name || "payment-proof.jpg");
+      return formData;
+    }
+
+    async function submitViaFormSubmit(orderPayload, proofFile) {
       const orderId = generateOrderId();
-      const nextUrl = `${window.location.origin}/autoparts/checkout-success.html?orderId=${encodeURIComponent(orderId)}&status=pending_manual_review&emailStatus=submitted&source=formsubmit`;
-      const subject = `QR Payment Proof Submitted - ${orderId}`;
-      const summary = buildOrderSummaryText(orderPayload, orderId);
+      const formData = buildFormSubmitData(orderPayload, proofFile, orderId);
+      const response = await fetch(FORMSUBMIT_AJAX_ENDPOINT, {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        body: formData
+      });
 
-      upsertHiddenField(form, "_subject", subject);
-      upsertHiddenField(form, "_captcha", "false");
-      upsertHiddenField(form, "_template", "table");
-      upsertHiddenField(form, "_next", nextUrl);
-      upsertHiddenField(form, "orderId", orderId);
-      upsertHiddenField(form, "orderData", JSON.stringify(orderPayload));
-      upsertHiddenField(form, "message", summary);
+      let payload = null;
+      try {
+        payload = await response.json();
+      } catch (_error) {}
 
-      form.method = "POST";
-      form.action = FORMSUBMIT_ENDPOINT;
-      form.enctype = "multipart/form-data";
-      form.submit();
+      if (!response.ok) {
+        const message = payload && payload.message ? payload.message : `Fallback submit failed (${response.status})`;
+        throw new Error(message);
+      }
+
+      const message = String((payload && payload.message) || "");
+      if (/activate\\s+form/i.test(message)) {
+        throw new Error("Payment proof inbox is not activated yet. Please contact admin to activate form receiver.");
+      }
+
+      return {
+        ok: true,
+        orderId,
+        redirectUrl: `checkout-success.html?orderId=${encodeURIComponent(orderId)}&status=pending_manual_review&emailStatus=submitted&source=formsubmit`
+      };
     }
 
     function buildCheckoutPayload(form) {
@@ -339,9 +352,10 @@
 
       if (shouldUseFormSubmitFallback()) {
         try {
-          payBtn.textContent = "Redirecting to submit...";
+          payBtn.textContent = "Submitting proof...";
+          const checkout = await submitViaFormSubmit(orderPayload, proofFile);
           clearCart();
-          submitViaFormSubmit(form, orderPayload);
+          window.location.href = checkout.redirectUrl;
           return;
         } catch (error) {
           showError(error.message || "Fallback submission failed. Please try again.");
