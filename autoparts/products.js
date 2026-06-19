@@ -1938,7 +1938,7 @@ const products = [
     sku: "MS-4023",
     stock: 50,
     description: "***สินค้าที่ได้รับ จะเป็นของใหม่ทั้งหมด***\n\nท่อยางอากาศ Mitsubishi มิราจ แอททราจ\n(รหัส : MS-4023)\n\n- ท่ออากาศรถยนต์ ใช้ต่อเข้าไอดี\n- สินค้าทำจากยางคุณภาพดี ผลิตในประเทศไทย",
-    images: [],
+    images: [IMG + "MS-4023.jpeg", IMG + "MS-4023_2.jpeg"],
     shopee: "https://shopee.co.th/%E0%B8%97%E0%B9%88%E0%B8%AD%E0%B8%A2%E0%B8%B2%E0%B8%87%E0%B8%AD%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A8%E0%B8%A3%E0%B8%96%E0%B8%A2%E0%B8%99%E0%B8%95%E0%B9%8C-Mitsubishi-%E0%B8%A1%E0%B8%B4%E0%B8%A3%E0%B8%B2%E0%B8%88-%E0%B9%81%E0%B8%AD%E0%B8%97%E0%B8%97%E0%B8%A3%E0%B8%B2%E0%B8%88-i.1501857.46712450827?extraParams=%7B%22display_model_id%22%3A421076959716%2C%22model_selection_logic%22%3A3%7D&sp_atk=fa18d8fb-fa86-4ebd-abeb-a928299a67df&xptdk=fa18d8fb-fa86-4ebd-abeb-a928299a67df",
     tiktok: "https://vt.tiktok.com/ZS9js6UyGmc5x-5YfqO/",
   },
