@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260618-1">
+  <link rel="stylesheet" href="styles.css?v=20260619-1">
 </head>
 <body>
   <header class="header">
@@ -39,21 +39,42 @@
         <div class="form-card">
           <h3>Shipping details</h3>
           <div class="field-grid">
-            <div class="field"><label>Full name *</label><input name="name" required placeholder="Ahmad bin Ali"></div>
-            <div class="field"><label>Phone *</label><input name="phone" required placeholder="012-345 6789"></div>
+            <div class="field"><label>Full name *</label><input name="name" required placeholder="Somchai Prasert"></div>
+            <div class="field"><label>Phone *</label><input name="phone" required placeholder="08x-xxx-xxxx"></div>
             <div class="field full"><label>Email *</label><input type="email" name="email" required placeholder="you@email.com"></div>
             <div class="field full"><label>Address *</label><input name="address" required placeholder="Street address"></div>
-            <div class="field"><label>City *</label><input name="city" required placeholder="Kuala Lumpur"></div>
-            <div class="field"><label>Postcode *</label><input name="postcode" required placeholder="50000"></div>
+            <div class="field"><label>District / City *</label><input name="city" required placeholder="Bangkok"></div>
+            <div class="field"><label>Postcode *</label><input name="postcode" required placeholder="10110"></div>
             <div class="field full">
-              <label>State *</label>
+              <label>Province *</label>
               <select name="state" required>
-                <option value="">Select state</option>
-                <option>Johor</option><option>Kedah</option><option>Kelantan</option>
-                <option>Melaka</option><option>Negeri Sembilan</option><option>Pahang</option>
-                <option>Perak</option><option>Perlis</option><option>Pulau Pinang</option>
-                <option>Sabah</option><option>Sarawak</option><option>Selangor</option>
-                <option>Terengganu</option><option>Kuala Lumpur</option><option>Labuan</option><option>Putrajaya</option>
+                <option value="">Select province</option>
+                <option>Amnat Charoen</option><option>Ang Thong</option><option>Bangkok</option>
+                <option>Bueng Kan</option><option>Buriram</option><option>Chachoengsao</option>
+                <option>Chai Nat</option><option>Chaiyaphum</option><option>Chanthaburi</option>
+                <option>Chiang Mai</option><option>Chiang Rai</option><option>Chonburi</option>
+                <option>Chumphon</option><option>Kalasin</option><option>Kamphaeng Phet</option>
+                <option>Kanchanaburi</option><option>Khon Kaen</option><option>Krabi</option>
+                <option>Lampang</option><option>Lamphun</option><option>Loei</option>
+                <option>Lopburi</option><option>Mae Hong Son</option><option>Maha Sarakham</option>
+                <option>Mukdahan</option><option>Nakhon Nayok</option><option>Nakhon Pathom</option>
+                <option>Nakhon Phanom</option><option>Nakhon Ratchasima</option><option>Nakhon Sawan</option>
+                <option>Nakhon Si Thammarat</option><option>Nan</option><option>Narathiwat</option>
+                <option>Nong Bua Lamphu</option><option>Nong Khai</option><option>Nonthaburi</option>
+                <option>Pathum Thani</option><option>Pattani</option><option>Phang Nga</option>
+                <option>Phatthalung</option><option>Phayao</option><option>Phetchabun</option>
+                <option>Phetchaburi</option><option>Phichit</option><option>Phitsanulok</option>
+                <option>Phra Nakhon Si Ayutthaya</option><option>Phrae</option><option>Phuket</option>
+                <option>Prachinburi</option><option>Prachuap Khiri Khan</option><option>Ranong</option>
+                <option>Ratchaburi</option><option>Rayong</option><option>Roi Et</option>
+                <option>Sa Kaeo</option><option>Sakon Nakhon</option><option>Samut Prakan</option>
+                <option>Samut Sakhon</option><option>Samut Songkhram</option><option>Saraburi</option>
+                <option>Satun</option><option>Sing Buri</option><option>Sisaket</option>
+                <option>Songkhla</option><option>Sukhothai</option><option>Suphan Buri</option>
+                <option>Surat Thani</option><option>Surin</option><option>Tak</option>
+                <option>Trang</option><option>Trat</option><option>Ubon Ratchathani</option>
+                <option>Udon Thani</option><option>Uthai Thani</option><option>Uttaradit</option>
+                <option>Yala</option><option>Yasothon</option>
               </select>
             </div>
           </div>
@@ -65,10 +86,7 @@
           <div class="qr-payment-card">
             <img id="payment-qr-image" src="images/promptpay-0827401051.png" alt="PromptPay QR code">
             <div>
-              <p style="margin:0 0 8px"><strong>Method:</strong> PromptPay</p>
-              <p style="margin:0 0 8px"><strong>PromptPay:</strong> <span id="payment-account">082-740-1051</span></p>
-              <p style="margin:0 0 8px"><strong>Siam Commercial Bank account:</strong> 407-050112-9</p>
-              <p style="margin:0 0 8px"><strong>Amount:</strong> <span id="payment-amount">฿0.00</span></p>
+              <p class="payment-amount-highlight"><strong>Amount to transfer</strong><span id="payment-amount">฿0.00</span></p>
               <p style="margin:0 0 8px"><strong>Step 1:</strong> Scan this PromptPay QR and transfer the exact total shown.</p>
               <p style="margin:0"><strong>Step 2:</strong> Upload payment proof below. We will email your proof image and shipping/inventory PDF to admin for processing.</p>
               <p id="payment-qr-status" class="muted-note" style="text-align:left;margin-top:10px">Fixed PromptPay QR ready.</p>
@@ -128,8 +146,8 @@
     <div class="footer-bottom">© 2025 KTY Autoparts. All Rights Reserved.</div>
   </footer>
 
-  <script src="products.js?v=20260618-1"></script>
-  <script src="cart.js?v=20260618-1"></script>
+  <script src="products.js?v=20260619-1"></script>
+  <script src="cart.js?v=20260619-1"></script>
   <script>
     const SHIPPING_FLAT = 12.00;
     const FREE_SHIP_OVER = 300.00;

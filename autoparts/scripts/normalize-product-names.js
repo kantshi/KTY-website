@@ -135,17 +135,22 @@ function resolveProductImages(sku, existingImages, imageFiles) {
 function matchImagesForSku(sku, imageFiles) {
   const skuLower = String(sku || "").trim().toLowerCase();
   if (!skuLower) return [];
+  const skuHyphen = skuLower.replace(/\//g, "-");
+  const skuCandidates = Array.from(new Set([skuLower, skuHyphen].filter(Boolean)));
 
   const matches = imageFiles.filter((file) => {
     const basename = path.parse(file).name.toLowerCase();
-    return (
-      basename === skuLower ||
-      basename.startsWith(`${skuLower}_`) ||
-      new RegExp(`^${escapeRegExp(skuLower)}-\\d+(?:_|$)`).test(basename)
-    );
+    return skuCandidates.some((candidate) => {
+      return (
+        basename === candidate ||
+        basename.startsWith(`${candidate}_`) ||
+        basename.startsWith(`${candidate}(`) ||
+        new RegExp(`^${escapeRegExp(candidate)}-\\d+(?:_|$)`).test(basename)
+      );
+    });
   });
 
-  matches.sort((a, b) => compareImageNamesForSku(skuLower, a, b));
+  matches.sort((a, b) => compareImageNamesForSku(skuHyphen || skuLower, a, b));
   return matches;
 }
 

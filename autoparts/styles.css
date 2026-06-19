@@ -489,6 +489,24 @@ img { display: block; max-width: 100%; }
   image-rendering: pixelated;
 }
 
+.payment-amount-highlight {
+  margin: 0 0 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #ffd7a8;
+  background: #fff2e2;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.payment-amount-highlight span {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--danger);
+}
+
 .pay-methods { display: grid; gap: 12px; }
 .pay-option { display: flex; align-items: center; gap: 14px; border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 14px 16px; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
 .pay-option:hover { border-color: var(--brand); }
