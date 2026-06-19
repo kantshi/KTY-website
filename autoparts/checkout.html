@@ -624,39 +624,17 @@
       if (totalAttachmentBytes > MAX_TOTAL_ATTACHMENT_BYTES) {
         throw new Error("Attachments are too large. Please use a smaller payment receipt image (recommended under 7MB).");
       }
-      const submitEndpoint = FORMSUBMIT_AJAX_ENDPOINT.replace("/ajax/", "/");
       const successPath = window.location.pathname.replace(/checkout\.html$/i, "checkout-success.html");
       const redirectUrl = `${window.location.origin}${successPath}?orderId=${encodeURIComponent(orderId)}&status=pending_manual_review&emailStatus=submitted&source=formsubmit`;
-
-      const proofInput = form.paymentProof;
-      if (!proofInput) throw new Error("Payment proof input is missing.");
-
-      // Configure the existing checkout form for a direct multipart submit.
-      form.method = "POST";
-      form.action = submitEndpoint;
-      form.enctype = "multipart/form-data";
-      form.target = "_self";
-      proofInput.name = "attachment[]";
-      proofInput.multiple = false;
-
-      const existingPdfInput = form.querySelector('input[data-kty-fallback-file="shipping-pdf"]');
-      if (existingPdfInput) existingPdfInput.remove();
-      const pdfInput = document.createElement("input");
-      pdfInput.type = "file";
-      pdfInput.name = "attachment[]";
-      pdfInput.style.display = "none";
-      pdfInput.setAttribute("data-kty-fallback-file", "shipping-pdf");
-      setSingleFileInput(pdfInput, [shippingPdfFile]);
-      form.appendChild(pdfInput);
-
-      upsertHiddenField(form, "_replyto", orderPayload.shipping.email);
-      upsertHiddenField(form, "_subject", `KTY Order Payment Proof - ${orderId}`);
-      upsertHiddenField(form, "_captcha", "false");
-      upsertHiddenField(form, "_next", redirectUrl);
-      upsertHiddenField(form, "orderId", orderId);
-      upsertHiddenField(form, "orderData", JSON.stringify(orderPayload));
-      upsertHiddenField(form, "message", buildOrderSummaryText(orderPayload, orderId));
-      upsertHiddenField(form, "shippingAddressCard", [
+      const formData = new FormData();
+      formData.append("_replyto", orderPayload.shipping.email);
+      formData.append("_subject", `KTY Order Payment Proof - ${orderId}`);
+      formData.append("_captcha", "false");
+      formData.append("_next", redirectUrl);
+      formData.append("orderId", orderId);
+      formData.append("orderData", JSON.stringify(orderPayload));
+      formData.append("message", buildOrderSummaryText(orderPayload, orderId));
+      formData.append("shippingAddressCard", [
         "<h2>Shipping Details</h2>",
         `<p><strong>Name:</strong> ${escapeHtml(orderPayload.shipping.name)}</p>`,
         `<p><strong>Phone:</strong> ${escapeHtml(orderPayload.shipping.phone)}</p>`,
@@ -666,10 +644,31 @@
         `<p><strong>Province:</strong> ${escapeHtml(orderPayload.shipping.state)}</p>`,
         `<p><strong>Postcode:</strong> ${escapeHtml(orderPayload.shipping.postcode)}</p>`
       ].join(""));
-      upsertHiddenField(form, "proofFileName", proofFile.name || "payment-proof.jpg");
-      upsertHiddenField(form, "proofFileType", proofFile.type || "image/*");
+      formData.append("proofFileName", proofFile.name || "payment-proof.jpg");
+      formData.append("proofFileType", proofFile.type || "image/*");
+      formData.append("attachment", proofFile, proofFile.name || "payment-proof.jpg");
+      formData.append("attachment", shippingPdfFile, shippingPdfFile.name || `${orderId}-shipping-slip.pdf`);
 
-      form.submit();
+      let response;
+      try {
+        response = await fetch(FORMSUBMIT_AJAX_ENDPOINT, {
+          method: "POST",
+          body: formData,
+          headers: { Accept: "application/json" }
+        });
+      } catch (_error) {
+        throw new Error("Unable to reach email service. Please try again in a moment.");
+      }
+
+      let responseData = null;
+      try { responseData = await response.json(); } catch (_error) {}
+      if (!response.ok || responseData?.success === "false") {
+        const status = response.status || 500;
+        throw new Error(responseData?.message || `Failed to submit payment proof (${status}). Please try again.`);
+      }
+
+      clearCart();
+      window.location.href = redirectUrl;
 
       return {
         ok: true,
