@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Cart — AutoParts Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/autoparts/styles.css?v=20260619-3">
+</head>
+<body>
+  <header class="header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <img src="/autoparts/images/logo.PNG" alt="KTY AUTO PARTS logo" class="logo-image" onerror="this.style.display='none'">
+        <span class="logo-text">KTY AUTO PARTS<small>อะไหล่ยางรถยนต์</small></span>
+      </a>
+      <nav class="main-tabs" id="main-tabs">
+        <a href="index.html">Catalog</a>
+        <a href="about.html">About us</a>
+      </nav>
+      <div class="header-right">
+        <a href="cart.html" class="cart-link" aria-label="View cart">🛒<span class="cart-count">0</span></a>
+        <button class="menu-toggle" aria-label="Toggle menu" onclick="document.getElementById('main-tabs').classList.toggle('open')">&#9776;</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="section-head" style="margin-top:32px;">
+      <h2>Your Cart</h2>
+      <p>Review your parts before checkout.</p>
+    </div>
+
+    <div id="cart-root"></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>
+        <a href="index.html" class="logo"><img src="/autoparts/images/logo.PNG" alt="KTY AUTO PARTS logo" class="logo-image" onerror="this.style.display='none'"><span class="logo-text">KTY AUTO PARTS<small>อะไหล่ยางรถยนต์</small></span></a>
+        <p>Quality car parts by brand, delivered with care across Thailand. Shop online or on your favourite marketplaces.</p>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="index.html">Catalog</a></li>
+          <li><a href="cart.html">Cart</a></li>
+          <li><a href="about.html">About us</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:ktyautopart@gmail.com">ktyautopart@gmail.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2025 KTY Autoparts. All Rights Reserved.</div>
+  </footer>
+
+  <script src="/autoparts/products.js?v=20260619-3"></script>
+  <script src="/autoparts/cart.js?v=20260619-3"></script>
+  <script>
+    const SHIPPING_FLAT = 12.00;
+    const FREE_SHIP_OVER = 300.00;
+
+    function render() {
+      const root = document.getElementById("cart-root");
+      const cart = getCart();
+
+      if (cart.length === 0) {
+        root.innerHTML = `<div class="empty-state">
+          <p>Your cart is empty.</p>
+          <a class="btn btn-primary" href="index.html">Browse parts</a>
+        </div>`;
+        return;
+      }
+
+      const subtotal = cartTotal();
+      const shipping = subtotal >= FREE_SHIP_OVER ? 0 : SHIPPING_FLAT;
+      const total = subtotal + shipping;
+
+      root.innerHTML = `
+        <div class="cart-layout">
+          <div class="cart-items">
+            ${cart.map(item => `
+              <div class="cart-item">
+                <img src="${item.image}" alt="${item.name}" onerror="this.onerror=null;this.src='/autoparts/images/product-placeholder.svg'">
+                <div>
+                  <div class="ci-brand">${item.brand}</div>
+                  <a class="ci-name" href="product.html?id=${item.id}">${item.name}</a>
+                  <div class="ci-price">${formatPrice(item.price)} each</div>
+                  <div class="qty-stepper" style="margin-top:10px">
+                    <button type="button" onclick="setQty(${item.id}, ${item.qty - 1})" aria-label="Decrease">−</button>
+                    <input type="text" value="${item.qty}" onchange="setQty(${item.id}, this.value)">
+                    <button type="button" onclick="setQty(${item.id}, ${item.qty + 1})" aria-label="Increase">+</button>
+                  </div>
+                </div>
+                <div class="ci-right">
+                  <span class="ci-subtotal">${formatPrice(item.price * item.qty)}</span>
+                  <button class="link-danger" onclick="remove(${item.id})">Remove</button>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+
+          <aside class="summary">
+            <h3>Order Summary</h3>
+            <div class="summary-row"><span>Subtotal</span><span>${formatPrice(subtotal)}</span></div>
+            <div class="summary-row"><span>Shipping</span><span>${shipping === 0 ? "FREE" : formatPrice(shipping)}</span></div>
+            <div class="summary-row total"><span>Total</span><span>${formatPrice(total)}</span></div>
+            <a class="btn btn-primary btn-block btn-lg" href="checkout.html">Proceed to checkout</a>
+            <a class="btn btn-ghost btn-block" href="index.html" style="margin-top:10px">Continue shopping</a>
+            <p class="muted-note">${shipping === 0 ? "🎉 You qualify for free shipping!" : `Free shipping over ${formatPrice(FREE_SHIP_OVER)}`}</p>
+          </aside>
+        </div>`;
+    }
+
+    function setQty(id, qty) {
+      qty = parseInt(qty) || 1;
+      updateQty(id, qty);
+      render();
+    }
+    function remove(id) {
+      removeFromCart(id);
+      render();
+    }
+
+    document.addEventListener("DOMContentLoaded", render);
+  </script>
+</body>
+</html>

@@ -3,19 +3,96 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KTY AUTO PARTS</title>
-  <link rel="canonical" href="https://ktyautopart.com/">
-  <style>
-    html, body { margin: 0; height: 100%; background: #fff; }
-    iframe { width: 100%; height: 100%; border: 0; display: block; }
-  </style>
+  <title>AutoParts Hub — Genuine Car Parts by Brand</title>
+  <meta name="description" content="Shop quality car parts by brand: Toyota, Mazda, Isuzu, Honda, Mitsubishi, Nissan, Suzuki, Chevrolet and Hino. Add to cart, pay online, or buy on Shopee & TikTok Shop.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/autoparts/styles.css?v=20260619-3">
 </head>
 <body>
-  <iframe src="/autoparts/index.html" title="KTY AUTO PARTS"></iframe>
-  <noscript>
-    <p style="padding:12px;font-family:Arial,sans-serif">
-      Open <a href="/autoparts/index.html">KTY AUTO PARTS catalog</a>.
-    </p>
-  </noscript>
+  <header class="header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <img src="/autoparts/images/logo.PNG" alt="KTY AUTO PARTS logo" class="logo-image" onerror="this.style.display='none'">
+        <span class="logo-text">KTY AUTO PARTS<small>อะไหล่ยางรถยนต์</small></span>
+      </a>
+      <nav class="main-tabs" id="main-tabs">
+        <a href="index.html" class="active">Catalog</a>
+        <a href="about.html">About us</a>
+      </nav>
+      <div class="header-right">
+        <a href="cart.html" class="cart-link" aria-label="View cart">🛒<span class="cart-count">0</span></a>
+        <button class="menu-toggle" aria-label="Toggle menu" onclick="document.getElementById('main-tabs').classList.toggle('open')">&#9776;</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <span class="eyebrow" id="brand-count-eyebrow">⚙ Parts for 11 major brands</span>
+      <h1>The right part for your <span>ride</span>.</h1>
+      <p>Genuine and OEM-grade car parts for Toyota, Mazda, Isuzu, Honda, Mitsubishi, Nissan, Suzuki, Chevrolet and Hino — add to cart and pay online, or buy on Shopee & TikTok Shop.</p>
+      <div class="hero-actions">
+        <a href="#catalog" class="btn btn-primary btn-lg">Shop by brand</a>
+        <a href="about.html" class="btn btn-ghost btn-lg" style="background:transparent;color:#fff;border-color:rgba(255,255,255,0.35)">About us</a>
+      </div>
+      <div class="hero-trust">
+        <div>✓ Quality guaranteed</div>
+        <div>🚚 Fast nationwide delivery</div>
+        <div>🔒 Secure checkout</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Catalog -->
+  <main id="catalog" class="container section">
+    <div class="section-head">
+      <h2>Browse Parts</h2>
+      <p>Filter by brand or search for a specific part.</p>
+    </div>
+
+    <div class="catalog-head">
+      <div class="search-box">
+        <input type="text" id="search" placeholder="Search parts, e.g. brake pads, Honda..." oninput="searchProducts()">
+      </div>
+      <span class="result-count" id="result-count"></span>
+    </div>
+
+    <div class="brand-filters" id="brand-filters"></div>
+    <div class="product-grid" id="product-grid"></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>
+        <a href="index.html" class="logo">
+          <img src="/autoparts/images/logo.PNG" alt="KTY AUTO PARTS logo" class="logo-image" onerror="this.style.display='none'">
+          <span class="logo-text">KTY AUTO PARTS<small>อะไหล่ยางรถยนต์</small></span>
+        </a>
+        <p>Quality car parts by brand, delivered with care across Thailand. Shop online or on your favourite marketplaces.</p>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="index.html">Catalog</a></li>
+          <li><a href="cart.html">Cart</a></li>
+          <li><a href="about.html">About us</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:ktyautopart@gmail.com">ktyautopart@gmail.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2025 KTY Autoparts. All Rights Reserved.</div>
+  </footer>
+
+  <script src="/autoparts/products.js?v=20260619-3"></script>
+  <script src="/autoparts/cart.js?v=20260619-3"></script>
+  <script src="/autoparts/app.js?v=20260619-3"></script>
 </body>
 </html>

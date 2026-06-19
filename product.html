@@ -3,25 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Product Detail — My Shop</title>
+  <title>Product Detail — AutoParts Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/autoparts/styles.css?v=20260619-3">
 </head>
 <body>
-  <!-- Top tabs / header -->
   <header class="header">
     <div class="container header-inner">
       <a href="index.html" class="logo">
-        <span class="logo-mark">MS</span>
-        <span>My Shop</span>
+        <img src="/autoparts/images/logo.PNG" alt="KTY AUTO PARTS logo" class="logo-image" onerror="this.style.display='none'">
+        <span class="logo-text">KTY AUTO PARTS<small>อะไหล่ยางรถยนต์</small></span>
       </a>
       <nav class="main-tabs" id="main-tabs">
         <a href="index.html">Catalog</a>
-        <a href="about.html">Company Info</a>
+        <a href="about.html">About us</a>
       </nav>
-      <button class="menu-toggle" aria-label="Toggle menu" onclick="document.getElementById('main-tabs').classList.toggle('open')">&#9776;</button>
+      <div class="header-right">
+        <a href="cart.html" class="cart-link" aria-label="View cart">🛒<span class="cart-count">0</span></a>
+        <button class="menu-toggle" aria-label="Toggle menu" onclick="document.getElementById('main-tabs').classList.toggle('open')">&#9776;</button>
+      </div>
     </div>
   </header>
 
@@ -29,125 +31,234 @@
     <nav class="breadcrumb">
       <a href="index.html">Catalog</a>
       <span>/</span>
+      <a id="crumb-brand" href="index.html">Brand</a>
+      <span>/</span>
       <span id="crumb-name">Product</span>
     </nav>
   </div>
 
-  <!-- Product Detail -->
-  <main class="container product-detail">
-    <div class="gallery">
-      <button class="gallery-btn left" onclick="prevImage()" aria-label="Previous image">&#10094;</button>
-      <img id="main-image" src="" alt="Product Image" onerror="this.style.opacity=0">
-      <button class="gallery-btn right" onclick="nextImage()" aria-label="Next image">&#10095;</button>
+  <main class="container product-detail" id="detail-root">
+    <div>
+      <div class="gallery-main">
+        <button class="gallery-btn left" onclick="prevImage()" aria-label="Previous image">&#10094;</button>
+        <img id="main-image" src="" alt="Product image" onerror="this.onerror=null;this.src='/autoparts/images/product-placeholder.svg'">
+        <button class="gallery-btn right" onclick="nextImage()" aria-label="Next image">&#10095;</button>
+      </div>
+      <div class="thumbs" id="thumbs"></div>
     </div>
 
     <div class="details">
+      <div class="brand-line">
+        <span class="product-tag" id="product-brand">Brand</span>
+        <span class="sku" id="product-sku">SKU</span>
+      </div>
       <h1 id="product-name">Product Name</h1>
-      <p id="product-price" class="product-price">$0.00</p>
-      <p id="product-description" class="desc">Product description goes here...</p>
+      <p class="detail-price product-price" id="product-price">RM 0.00</p>
+      <p class="stock-line in" id="stock-line">In stock</p>
+      <p class="desc" id="product-description">Description...</p>
 
-      <p class="buy-label">Buy this product on</p>
+      <table class="specs" id="product-specs"></table>
+
+      <div class="qty-row">
+        <div class="qty-stepper">
+          <button type="button" onclick="changeQty(-1)" aria-label="Decrease">−</button>
+          <input type="text" id="qty" value="1" inputmode="numeric" onchange="normalizeQty()">
+          <button type="button" onclick="changeQty(1)" aria-label="Increase">+</button>
+        </div>
+        <span class="result-count" id="line-total"></span>
+      </div>
+
+      <div class="cart-actions">
+        <button class="btn btn-primary btn-lg" onclick="addCurrentToCart()">Add to cart</button>
+        <button class="btn btn-dark btn-lg" onclick="buyNow()">Buy now</button>
+      </div>
+
+      <p class="buy-label">Or buy on marketplace</p>
       <div class="shop-links" id="shop-links"></div>
     </div>
   </main>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="container footer-inner">
       <div>
-        <a href="index.html" class="logo">
-          <span class="logo-mark">MS</span>
-          <span>My Shop</span>
-        </a>
-        <p>Quality products, delivered with care. Shop with us on your favourite platforms.</p>
+        <a href="index.html" class="logo"><img src="/autoparts/images/logo.PNG" alt="KTY AUTO PARTS logo" class="logo-image" onerror="this.style.display='none'"><span class="logo-text">KTY AUTO PARTS<small>อะไหล่ยางรถยนต์</small></span></a>
+        <p>Quality car parts by brand, delivered with care across Thailand. Shop online or on your favourite marketplaces.</p>
       </div>
       <div>
-        <h4>Explore</h4>
+        <h4>Shop</h4>
         <ul>
           <li><a href="index.html">Catalog</a></li>
-          <li><a href="about.html">Company Info</a></li>
+          <li><a href="cart.html">Cart</a></li>
+          <li><a href="about.html">About us</a></li>
         </ul>
       </div>
       <div>
         <h4>Contact</h4>
         <ul>
-          <li><a href="mailto:support@myshop.com">support@myshop.com</a></li>
-          <li><a href="tel:1234567890">123-456-7890</a></li>
+          <li><a href="mailto:ktyautopart@gmail.com">ktyautopart@gmail.com</a></li>
         </ul>
       </div>
     </div>
-    <div class="footer-bottom">© 2025 My Shop. All Rights Reserved.</div>
+    <div class="footer-bottom">© 2025 KTY Autoparts. All Rights Reserved.</div>
   </footer>
 
-  <!-- External product data -->
-  <script src="products.js"></script>
-
+  <script src="/autoparts/products.js?v=20260619-3"></script>
+  <script src="/autoparts/cart.js?v=20260619-3"></script>
   <script>
     let currentIndex = 0;
     let currentProduct = null;
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const productId = parseInt(urlParams.get("id"));
+    const productId = parseInt(new URLSearchParams(window.location.search).get("id"));
+
+    function normalizeMarketplaceUrl(url) {
+      return String(url || "").trim().replace(/\/+$/, "");
+    }
+
+    function isSpecificShopeeUrl(url) {
+      const raw = String(url || "").trim();
+      if (!raw) return false;
+      if (!/^https?:\/\//i.test(raw)) return false;
+      try {
+        const parsed = new URL(raw);
+        const host = parsed.hostname.toLowerCase();
+        if (!host.includes("shopee.co.th")) return false;
+        const href = raw.toLowerCase();
+        return href.includes("i.1501857.") || href.includes("/product/1501857/");
+      } catch (error) {
+        return false;
+      }
+    }
+
+    function isSpecificTikTokUrl(url) {
+      const raw = String(url || "").trim();
+      if (!raw) return false;
+      if (!/^https?:\/\//i.test(raw)) return false;
+      try {
+        const parsed = new URL(raw);
+        const host = parsed.hostname.toLowerCase();
+        const path = parsed.pathname.toLowerCase();
+        if (host === "vt.tiktok.com") return true;
+        if (host === "shop.tiktok.com") return path.includes("/pdp/");
+        if (!host.includes("tiktok.com")) return false;
+        if (!path.includes("@kty.autopart")) return false;
+        return path.includes("/product/") || path.includes("/shop/product/") || path.includes("/view/product/");
+      } catch (error) {
+        return false;
+      }
+    }
+
+    function resolveMarketplaceUrl(kind, rawUrl) {
+      const normalized = normalizeMarketplaceUrl(rawUrl);
+      if (kind === "shopee") {
+        return isSpecificShopeeUrl(normalized) ? String(rawUrl || "").trim() : "";
+      }
+      if (kind === "tiktok") {
+        return isSpecificTikTokUrl(normalized) ? String(rawUrl || "").trim() : "";
+      }
+      return String(rawUrl || "").trim();
+    }
+
+    function showImage(i) {
+      if (!currentProduct) return;
+      currentIndex = (i + currentProduct.images.length) % currentProduct.images.length;
+      document.getElementById("main-image").src = currentProduct.images[currentIndex];
+      document.getElementById("main-image").style.opacity = 1;
+      document.querySelectorAll("#thumbs img").forEach((t, idx) =>
+        t.classList.toggle("active", idx === currentIndex));
+    }
+    function prevImage() { showImage(currentIndex - 1); }
+    function nextImage() { showImage(currentIndex + 1); }
+
+    function changeQty(delta) {
+      const input = document.getElementById("qty");
+      let v = parseInt(input.value) || 1;
+      v = Math.max(1, v + delta);
+      if (currentProduct) v = Math.min(v, currentProduct.stock);
+      input.value = v;
+      updateLineTotal();
+    }
+    function normalizeQty() {
+      const input = document.getElementById("qty");
+      let v = parseInt(input.value) || 1;
+      v = Math.max(1, v);
+      if (currentProduct) v = Math.min(v, currentProduct.stock);
+      input.value = v;
+      updateLineTotal();
+    }
+    function updateLineTotal() {
+      if (!currentProduct) return;
+      const qty = parseInt(document.getElementById("qty").value) || 1;
+      document.getElementById("line-total").textContent =
+        `Subtotal: ${formatPrice(currentProduct.price * qty)}`;
+    }
+
+    function addCurrentToCart() {
+      const qty = parseInt(document.getElementById("qty").value) || 1;
+      addToCart(currentProduct.id, qty);
+    }
+    function buyNow() {
+      addCurrentToCart();
+      window.location.href = "cart.html";
+    }
 
     function renderShopLinks(product) {
-      const wrap = document.getElementById("shop-links");
       const links = [
-        {
-          key: "shopee",
-          label: "Buy on Shopee",
-          icon: "🛒",
-          url: product.shopee
-        },
-        {
-          key: "tiktok",
-          label: "Buy on TikTok Shop",
-          icon: "🎵",
-          url: product.tiktok
-        }
+        { key: "shopee", label: "Buy on Shopee", icon: "🛒", url: resolveMarketplaceUrl("shopee", product.shopee) },
+        { key: "tiktok", label: "Buy on TikTok Shop", icon: "🎵", url: resolveMarketplaceUrl("tiktok", product.tiktok) }
       ];
-
-      wrap.innerHTML = links.map(l => {
-        if (l.url) {
-          return `<a class="shop-btn ${l.key}" href="${l.url}" target="_blank" rel="noopener">
-            <span class="shop-icon">${l.icon}</span>
-            <span>${l.label}</span>
-            <span class="shop-arrow">&rarr;</span>
-          </a>`;
-        }
-        return `<span class="shop-btn disabled">
-          <span class="shop-icon">${l.icon}</span>
-          <span>${l.label} — coming soon</span>
-        </span>`;
-      }).join("");
+      document.getElementById("shop-links").innerHTML = links.map(l => l.url
+        ? `<a class="shop-btn ${l.key}" href="${l.url}" target="_blank" rel="noopener">
+             <span class="shop-icon">${l.icon}</span><span>${l.label}</span><span class="shop-arrow">&rarr;</span>
+           </a>`
+        : `<span class="shop-btn disabled"><span class="shop-icon">${l.icon}</span><span>${l.label} — coming soon</span></span>`
+      ).join("");
     }
 
     function loadProduct() {
       currentProduct = products.find(p => p.id === productId);
       if (!currentProduct) {
-        document.querySelector(".product-detail").innerHTML =
-          '<p class="empty-state">Product not found. <a href="index.html">Back to catalog</a></p>';
+        document.getElementById("detail-root").innerHTML =
+          '<p class="empty-state">Product not found.<br><a class="btn btn-primary" href="index.html">Back to catalog</a></p>';
         return;
       }
-      document.title = `${currentProduct.name} — My Shop`;
-      document.getElementById("crumb-name").textContent = currentProduct.name;
-      document.getElementById("product-name").textContent = currentProduct.name;
-      document.getElementById("product-price").textContent = `$${currentProduct.price.toFixed(2)}`;
-      document.getElementById("product-description").textContent = currentProduct.description;
-      document.getElementById("main-image").src = currentProduct.images[0];
-      document.getElementById("main-image").style.opacity = 1;
-      currentIndex = 0;
-      renderShopLinks(currentProduct);
-    }
+      const p = currentProduct;
+      document.title = `${p.name} — AutoParts Hub`;
+      document.getElementById("crumb-brand").textContent = p.brand;
+      document.getElementById("crumb-brand").href = `index.html?brand=${encodeURIComponent(p.brand)}`;
+      document.getElementById("crumb-name").textContent = p.name;
+      document.getElementById("product-brand").textContent = p.brand;
+      document.getElementById("product-sku").textContent = "SKU: " + p.sku;
+      document.getElementById("product-name").textContent = p.name;
+      document.getElementById("product-price").textContent = formatPrice(p.price);
+      document.getElementById("product-description").textContent = p.description;
 
-    function prevImage() {
-      if (!currentProduct) return;
-      currentIndex = (currentIndex - 1 + currentProduct.images.length) % currentProduct.images.length;
-      document.getElementById("main-image").src = currentProduct.images[currentIndex];
-    }
-    function nextImage() {
-      if (!currentProduct) return;
-      currentIndex = (currentIndex + 1) % currentProduct.images.length;
-      document.getElementById("main-image").src = currentProduct.images[currentIndex];
+      const stockEl = document.getElementById("stock-line");
+      if (p.stock <= 8) {
+        stockEl.className = "stock-line low";
+        stockEl.textContent = `Only ${p.stock} left in stock`;
+      } else {
+        stockEl.className = "stock-line in";
+        stockEl.textContent = `In stock (${p.stock} available)`;
+      }
+
+      const specsTable = document.getElementById("product-specs");
+      if (p.specs && Object.keys(p.specs).length) {
+        specsTable.style.display = "";
+        specsTable.innerHTML = Object.entries(p.specs)
+          .map(([k, v]) => `<tr><th>${k}</th><td>${v}</td></tr>`).join("");
+      } else {
+        specsTable.style.display = "none";
+        specsTable.innerHTML = "";
+      }
+
+      const galleryImages = Array.isArray(p.images) && p.images.length ? p.images : ["/autoparts/images/product-placeholder.svg"];
+      currentProduct.images = galleryImages;
+      document.getElementById("thumbs").innerHTML = galleryImages
+        .map((src, i) => `<img src="${src}" alt="View ${i + 1}" onclick="showImage(${i})" onerror="this.onerror=null;this.src='/autoparts/images/product-placeholder.svg'">`).join("");
+
+      showImage(0);
+      updateLineTotal();
+      renderShopLinks(p);
     }
 
     document.addEventListener("DOMContentLoaded", loadProduct);

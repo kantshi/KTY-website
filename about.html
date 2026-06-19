@@ -3,139 +3,107 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Company Info — My Shop</title>
-  <meta name="description" content="Learn about My Shop — our story, our values, and how to reach us.">
+  <title>About Us — KTY AUTO PARTS</title>
+  <meta name="description" content="KTY AUTO PARTS is an OEM automotive parts manufacturer in Thailand serving both wholesale and retail customers with reliable quality and long-term support.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/autoparts/styles.css?v=20260619-3">
 </head>
 <body>
-  <!-- Top tabs / header -->
   <header class="header">
     <div class="container header-inner">
       <a href="index.html" class="logo">
-        <span class="logo-mark">MS</span>
-        <span>My Shop</span>
+        <img src="/autoparts/images/logo.PNG" alt="KTY AUTO PARTS logo" class="logo-image" onerror="this.style.display='none'">
+        <span class="logo-text">KTY AUTO PARTS<small>อะไหล่ยางรถยนต์</small></span>
       </a>
       <nav class="main-tabs" id="main-tabs">
         <a href="index.html">Catalog</a>
-        <a href="about.html" class="active">Company Info</a>
+        <a href="about.html" class="active">About us</a>
       </nav>
-      <button class="menu-toggle" aria-label="Toggle menu" onclick="document.getElementById('main-tabs').classList.toggle('open')">&#9776;</button>
+      <div class="header-right">
+        <a href="cart.html" class="cart-link" aria-label="View cart">🛒<span class="cart-count">0</span></a>
+        <button class="menu-toggle" aria-label="Toggle menu" onclick="document.getElementById('main-tabs').classList.toggle('open')">&#9776;</button>
+      </div>
     </div>
   </header>
 
-  <!-- Page hero -->
-  <section class="page-hero">
+  <section class="page-hero about-hero">
     <div class="container">
-      <h1>About My Shop</h1>
-      <p>We're a small team passionate about bringing you quality products at fair prices — made easy to buy on the platforms you already love.</p>
-    </div>
-  </section>
-
-  <!-- Story / values -->
-  <section class="container section">
-    <div class="section-head">
-      <h2>What we stand for</h2>
-      <p>Everything we do is guided by a few simple principles.</p>
-    </div>
-    <div class="about-grid">
-      <div class="info-card">
-        <div class="ico">🎯</div>
-        <h3>Our Mission</h3>
-        <p>To make great products accessible to everyone with a smooth, trustworthy shopping experience.</p>
+      <span class="eyebrow">OEM Manufacturing • Wholesale & Retail</span>
+      <h1>KTY AUTO PARTS</h1>
+      <p>OEM automotive parts manufacturing in Thailand, built on precision, reliability, and long-term partnership for both wholesale and retail customers.</p>
+      <div class="hero-actions">
+        <a href="index.html#catalog" class="btn btn-primary btn-lg">Buy retail on our website</a>
+        <a href="#contact-us" class="btn btn-ghost btn-lg">Request wholesale pricing</a>
       </div>
-      <div class="info-card">
-        <div class="ico">💎</div>
-        <h3>Quality First</h3>
-        <p>Every item in our catalog is carefully selected and tested to meet our standards.</p>
-      </div>
-      <div class="info-card">
-        <div class="ico">🤝</div>
-        <h3>Customer Care</h3>
-        <p>Friendly support and hassle-free service, before and after your purchase.</p>
-      </div>
-      <div class="info-card">
-        <div class="ico">🌱</div>
-        <h3>Responsible</h3>
-        <p>We work with partners who share our commitment to fair and sustainable practices.</p>
+      <div class="about-highlights">
+        <span class="about-pill">Precision-focused OEM production</span>
+        <span class="about-pill">Retail and wholesale supply</span>
+        <span class="about-pill">Reliable long-term partnership</span>
       </div>
     </div>
   </section>
 
-  <!-- Stats -->
-  <section class="container section" style="padding-top:0;">
-    <div class="stats">
-      <div class="stat">
-        <div class="num">10K+</div>
-        <div class="label">Happy customers</div>
+  <section class="container section section-tight">
+    <div class="about-layout">
+      <div class="info-card">
+        <h3>Wholesale and retail support</h3>
+        <p>We serve both retail and wholesale customers across Thailand and the region.</p>
+        <p>If you need wholesale pricing, contact us directly and our team will provide the right quote based on your order volume and requirements.</p>
+        <div class="about-callout">
+          Looking for wholesale prices? Contact us with your product list and quantities for a tailored quotation.
+        </div>
+        <div class="about-cta-row">
+          <a href="mailto:ktyautopart@gmail.com" class="btn btn-primary">Contact for wholesale quote</a>
+        </div>
       </div>
-      <div class="stat">
-        <div class="num">500+</div>
-        <div class="label">Products curated</div>
-      </div>
-      <div class="stat">
-        <div class="num">4.9★</div>
-        <div class="label">Average rating</div>
-      </div>
-      <div class="stat">
-        <div class="num">24/7</div>
-        <div class="label">Customer support</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Contact -->
-  <section class="container section" style="padding-top:0;">
-    <div class="contact-card">
-      <div>
-        <h2>Get in touch</h2>
-        <p>Questions about an order or a product? We're here to help — reach out any time and we'll get back to you quickly.</p>
-      </div>
-      <div class="contact-list">
-        <a href="mailto:support@myshop.com">
-          <span class="ico">✉️</span>
-          <span>support@myshop.com</span>
-        </a>
-        <a href="tel:1234567890">
-          <span class="ico">📞</span>
-          <span>123-456-7890</span>
-        </a>
-        <span>
-          <span class="ico">📍</span>
-          <span>Kuala Lumpur, Malaysia</span>
-        </span>
+      <div class="info-card" id="contact-us">
+        <h3>Get in touch</h3>
+        <ul class="about-list">
+          <li>✉️ <a href="mailto:ktyautopart@gmail.com">ktyautopart@gmail.com</a></li>
+          <li>🕒 Mon–Sat, 9am–6pm</li>
+          <li>📌 For wholesale pricing, please include quantity and SKU details in your message.</li>
+        </ul>
       </div>
     </div>
   </section>
 
-  <!-- Footer -->
+  <section class="container section section-tight">
+    <div class="info-card about-story">
+      <h3>Our story</h3>
+      <p>KTY is an OEM automotive parts manufacturer based in Thailand, built on precision, reliability, and long-term partnership.</p>
+      <p>We produce quality autoparts for customers who value consistency, durability, and dependable manufacturing support. With attention to detail in every process, from production to inspection, KTY is committed to delivering parts that meet customer requirements and support business growth.</p>
+      <p>Our story is driven by one belief: strong products begin with strong partnerships.</p>
+      <p class="signature">KTY — Made with precision. Built on trust.</p>
+      <p>Buy directly on our site with secure checkout, or shop us on Shopee and TikTok Shop — whichever you prefer.</p>
+    </div>
+  </section>
+
   <footer class="footer">
     <div class="container footer-inner">
       <div>
-        <a href="index.html" class="logo">
-          <span class="logo-mark">MS</span>
-          <span>My Shop</span>
-        </a>
-        <p>Quality products, delivered with care. Shop with us on your favourite platforms.</p>
+        <a href="index.html" class="logo"><img src="/autoparts/images/logo.PNG" alt="KTY AUTO PARTS logo" class="logo-image" onerror="this.style.display='none'"><span class="logo-text">KTY AUTO PARTS<small>อะไหล่ยางรถยนต์</small></span></a>
+        <p>Quality car parts by brand, delivered with care across Thailand. Shop online or on your favourite marketplaces.</p>
       </div>
       <div>
-        <h4>Explore</h4>
+        <h4>Shop</h4>
         <ul>
           <li><a href="index.html">Catalog</a></li>
-          <li><a href="about.html">Company Info</a></li>
+          <li><a href="cart.html">Cart</a></li>
+          <li><a href="about.html">About us</a></li>
         </ul>
       </div>
       <div>
         <h4>Contact</h4>
         <ul>
-          <li><a href="mailto:support@myshop.com">support@myshop.com</a></li>
-          <li><a href="tel:1234567890">123-456-7890</a></li>
+          <li><a href="mailto:ktyautopart@gmail.com">ktyautopart@gmail.com</a></li>
         </ul>
       </div>
     </div>
-    <div class="footer-bottom">© 2025 My Shop. All Rights Reserved.</div>
+    <div class="footer-bottom">© 2025 KTY Autoparts. All Rights Reserved.</div>
   </footer>
+
+  <script src="/autoparts/cart.js?v=20260619-3"></script>
 </body>
 </html>

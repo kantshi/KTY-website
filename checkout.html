@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout — AutoParts Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/autoparts/styles.css?v=20260619-3">
+</head>
+<body>
+  <header class="header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <img src="/autoparts/images/logo.PNG" alt="KTY AUTO PARTS logo" class="logo-image" onerror="this.style.display='none'">
+        <span class="logo-text">KTY AUTO PARTS<small>อะไหล่ยางรถยนต์</small></span>
+      </a>
+      <nav class="main-tabs" id="main-tabs">
+        <a href="index.html">Catalog</a>
+        <a href="about.html">About us</a>
+      </nav>
+      <div class="header-right">
+        <a href="cart.html" class="cart-link" aria-label="View cart">🛒<span class="cart-count">0</span></a>
+        <button class="menu-toggle" aria-label="Toggle menu" onclick="document.getElementById('main-tabs').classList.toggle('open')">&#9776;</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" id="checkout-root">
+    <div class="section-head" style="margin-top:32px;">
+      <h2>Checkout</h2>
+      <p>Pay by QR transfer, then upload your payment proof.</p>
+    </div>
+
+    <form id="checkout-form" class="checkout-layout" novalidate>
+      <div>
+        <!-- Shipping details -->
+        <div class="form-card">
+          <h3>Shipping details</h3>
+          <div class="field-grid">
+            <div class="field"><label>Full name *</label><input name="name" required placeholder="Somchai Prasert"></div>
+            <div class="field"><label>Phone *</label><input name="phone" required placeholder="08x-xxx-xxxx"></div>
+            <div class="field full"><label>Email *</label><input type="email" name="email" required placeholder="you@email.com"></div>
+            <div class="field full"><label>Address *</label><input name="address" required placeholder="Street address"></div>
+            <div class="field"><label>District / City *</label><input name="city" required placeholder="Bangkok"></div>
+            <div class="field"><label>Postcode *</label><input name="postcode" required placeholder="10110"></div>
+            <div class="field full">
+              <label>Province *</label>
+              <select name="state" required>
+                <option value="">Select province</option>
+                <option>Amnat Charoen</option><option>Ang Thong</option><option>Bangkok</option>
+                <option>Bueng Kan</option><option>Buriram</option><option>Chachoengsao</option>
+                <option>Chai Nat</option><option>Chaiyaphum</option><option>Chanthaburi</option>
+                <option>Chiang Mai</option><option>Chiang Rai</option><option>Chonburi</option>
+                <option>Chumphon</option><option>Kalasin</option><option>Kamphaeng Phet</option>
+                <option>Kanchanaburi</option><option>Khon Kaen</option><option>Krabi</option>
+                <option>Lampang</option><option>Lamphun</option><option>Loei</option>
+                <option>Lopburi</option><option>Mae Hong Son</option><option>Maha Sarakham</option>
+                <option>Mukdahan</option><option>Nakhon Nayok</option><option>Nakhon Pathom</option>
+                <option>Nakhon Phanom</option><option>Nakhon Ratchasima</option><option>Nakhon Sawan</option>
+                <option>Nakhon Si Thammarat</option><option>Nan</option><option>Narathiwat</option>
+                <option>Nong Bua Lamphu</option><option>Nong Khai</option><option>Nonthaburi</option>
+                <option>Pathum Thani</option><option>Pattani</option><option>Phang Nga</option>
+                <option>Phatthalung</option><option>Phayao</option><option>Phetchabun</option>
+                <option>Phetchaburi</option><option>Phichit</option><option>Phitsanulok</option>
+                <option>Phra Nakhon Si Ayutthaya</option><option>Phrae</option><option>Phuket</option>
+                <option>Prachinburi</option><option>Prachuap Khiri Khan</option><option>Ranong</option>
+                <option>Ratchaburi</option><option>Rayong</option><option>Roi Et</option>
+                <option>Sa Kaeo</option><option>Sakon Nakhon</option><option>Samut Prakan</option>
+                <option>Samut Sakhon</option><option>Samut Songkhram</option><option>Saraburi</option>
+                <option>Satun</option><option>Sing Buri</option><option>Sisaket</option>
+                <option>Songkhla</option><option>Sukhothai</option><option>Suphan Buri</option>
+                <option>Surat Thani</option><option>Surin</option><option>Tak</option>
+                <option>Trang</option><option>Trat</option><option>Ubon Ratchathani</option>
+                <option>Udon Thani</option><option>Uthai Thani</option><option>Uttaradit</option>
+                <option>Yala</option><option>Yasothon</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- QR Payment -->
+        <div class="form-card">
+          <h3>QR payment</h3>
+          <div class="qr-payment-card">
+            <img id="payment-qr-image" src="/autoparts/images/promptpay-0827401051.png" alt="PromptPay QR code">
+            <div>
+              <p class="payment-amount-highlight"><strong>Amount to transfer</strong><span id="payment-amount">฿0.00</span></p>
+              <p style="margin:0 0 8px"><strong>Step 1:</strong> Scan this PromptPay QR and transfer the exact total shown.</p>
+              <p style="margin:0"><strong>Step 2:</strong> Upload payment proof below. We will email your proof image and shipping/inventory PDF to admin for processing.</p>
+              <p id="payment-qr-status" class="muted-note" style="text-align:left;margin-top:10px">Fixed PromptPay QR ready.</p>
+              <p style="margin:8px 0 0"><a id="payment-qr-download" href="/autoparts/images/promptpay-0827401051.png" target="_blank" rel="noopener">Open full-size QR</a></p>
+            </div>
+          </div>
+          <div class="field-grid" style="margin-top:16px">
+            <div class="field full">
+              <label>Transaction reference (optional)</label>
+              <input name="transactionReference" placeholder="e.g. bank transfer reference">
+            </div>
+            <div class="field full">
+              <label>Payment proof image *</label>
+              <input type="file" name="paymentProof" accept="image/*" required>
+              <p class="muted-note" style="text-align:left;margin-top:6px">Accepted formats: JPG, PNG, WEBP, HEIC. Max size: 8MB.</p>
+            </div>
+          </div>
+
+          <p class="error-msg" id="form-error" style="color:var(--danger);font-size:0.88rem;margin-top:14px;display:none"></p>
+        </div>
+      </div>
+
+      <!-- Order summary -->
+      <aside class="summary checkout-summary">
+        <h3>Your order</h3>
+        <div id="summary-items"></div>
+        <div class="summary-row"><span>Subtotal</span><span id="sum-subtotal">RM 0.00</span></div>
+        <div class="summary-row"><span>Shipping</span><span id="sum-shipping">RM 0.00</span></div>
+        <div class="summary-row total"><span>Total</span><span id="sum-total">RM 0.00</span></div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg" id="pay-btn">Submit payment proof</button>
+        <p class="muted-note">Your payment proof and order details will be sent to admin email for manual review and shipping processing.</p>
+      </aside>
+    </form>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>
+        <a href="index.html" class="logo"><img src="/autoparts/images/logo.PNG" alt="KTY AUTO PARTS logo" class="logo-image" onerror="this.style.display='none'"><span class="logo-text">KTY AUTO PARTS<small>อะไหล่ยางรถยนต์</small></span></a>
+        <p>Quality car parts by brand, delivered with care across Thailand. Shop online or on your favourite marketplaces.</p>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="index.html">Catalog</a></li>
+          <li><a href="cart.html">Cart</a></li>
+          <li><a href="about.html">About us</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:ktyautopart@gmail.com">ktyautopart@gmail.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2025 KTY Autoparts. All Rights Reserved.</div>
+  </footer>
+
+  <script src="/autoparts/products.js?v=20260619-3"></script>
+  <script src="/autoparts/cart.js?v=20260619-3"></script>
+  <script>
+    const SHIPPING_FLAT = 12.00;
+    const FREE_SHIP_OVER = 300.00;
+    const SUBMIT_QR_PROOF_ENDPOINT = window.SUBMIT_QR_PROOF_ENDPOINT || "/api/orders/submit-proof";
+    const FORMSUBMIT_AJAX_ENDPOINT = window.FORMSUBMIT_AJAX_ENDPOINT || "https://formsubmit.co/ajax/ktyautopart@gmail.com";
+    const STATIC_CHECKOUT_HOSTS = new Set(["ktyautopart.com", "www.ktyautopart.com"]);
+
+    function getTotals() {
+      const subtotal = cartTotal();
+      const shipping = subtotal >= FREE_SHIP_OVER ? 0 : SHIPPING_FLAT;
+      return { subtotal, shipping, total: subtotal + shipping };
+    }
+
+    function renderSummary() {
+      const cart = getCart();
+      const root = document.getElementById("checkout-root");
+      if (cart.length === 0) {
+        root.innerHTML = `<div class="empty-state" style="padding-top:60px">
+          <p>Your cart is empty.</p>
+          <a class="btn btn-primary" href="index.html">Browse parts</a></div>`;
+        return false;
+      }
+      document.getElementById("summary-items").innerHTML = cart.map(i =>
+        `<div class="summary-item"><span>${i.qty} × ${i.name}</span><span>${formatPrice(i.price * i.qty)}</span></div>`
+      ).join("");
+      const t = getTotals();
+      document.getElementById("sum-subtotal").textContent = formatPrice(t.subtotal);
+      document.getElementById("sum-shipping").textContent = t.shipping === 0 ? "FREE" : formatPrice(t.shipping);
+      document.getElementById("sum-total").textContent = formatPrice(t.total);
+      document.getElementById("payment-amount").textContent = formatPrice(t.total);
+      return true;
+    }
+
+    function showError(msg) {
+      const el = document.getElementById("form-error");
+      el.textContent = msg;
+      el.style.display = "block";
+    }
+
+    function generateOrderId() {
+      return `AP${Date.now().toString().slice(-8)}${Math.floor(Math.random() * 90 + 10)}`;
+    }
+
+    function isLikelyStaticDeploymentHost() {
+      const host = String(window.location.hostname || "").toLowerCase();
+      return host.endsWith(".github.io") || STATIC_CHECKOUT_HOSTS.has(host);
+    }
+
+    function shouldUseFormSubmitFallback() {
+      if (window.FORCE_FORMSUBMIT_FALLBACK === true) return true;
+      const endpoint = String(SUBMIT_QR_PROOF_ENDPOINT || "").trim();
+      const sameOriginApi = endpoint.startsWith("/api/");
+      return sameOriginApi && isLikelyStaticDeploymentHost();
+    }
+
+    function buildOrderSummaryText(orderPayload, orderId) {
+      const lines = [];
+      lines.push(`Order ID: ${orderId}`);
+      lines.push(`Payment Method: ${orderPayload.paymentMethod || "qr_transfer"}`);
+      lines.push(`Transaction Reference: ${orderPayload.transactionReference || "N/A"}`);
+      lines.push("");
+      lines.push("Shipping:");
+      lines.push(`- Name: ${orderPayload.shipping.name}`);
+      lines.push(`- Phone: ${orderPayload.shipping.phone}`);
+      lines.push(`- Email: ${orderPayload.shipping.email}`);
+      lines.push(`- Address: ${orderPayload.shipping.address}`);
+      lines.push(`- District/City: ${orderPayload.shipping.city}`);
+      lines.push(`- Province: ${orderPayload.shipping.state}`);
+      lines.push(`- Postcode: ${orderPayload.shipping.postcode}`);
+      lines.push("");
+      lines.push("Items:");
+      for (const item of orderPayload.items) {
+        lines.push(`- ${item.sku || "N/A"} | ${item.name} | qty ${item.qty} | ${formatPrice(item.lineTotal)}`);
+      }
+      lines.push("");
+      lines.push(`Subtotal: ${formatPrice(orderPayload.totals.subtotal)}`);
+      lines.push(`Shipping: ${orderPayload.totals.shipping === 0 ? "FREE" : formatPrice(orderPayload.totals.shipping)}`);
+      lines.push(`Total: ${formatPrice(orderPayload.totals.total)}`);
+      return lines.join("\n");
+    }
+
+    function buildFormSubmitData(orderPayload, proofFile, orderId) {
+      const formData = new FormData();
+      formData.append("name", orderPayload.shipping.name);
+      formData.append("email", orderPayload.shipping.email);
+      formData.append("phone", orderPayload.shipping.phone);
+      formData.append("_replyto", orderPayload.shipping.email);
+      formData.append("_subject", `QR Payment Proof Submitted - ${orderId}`);
+      formData.append("_captcha", "false");
+      formData.append("_template", "table");
+      formData.append("orderId", orderId);
+      formData.append("orderData", JSON.stringify(orderPayload));
+      formData.append("message", buildOrderSummaryText(orderPayload, orderId));
+      formData.append("attachment", proofFile, proofFile.name || "payment-proof.jpg");
+      return formData;
+    }
+
+    async function submitViaFormSubmit(orderPayload, proofFile) {
+      const orderId = generateOrderId();
+      const formData = buildFormSubmitData(orderPayload, proofFile, orderId);
+      const response = await fetch(FORMSUBMIT_AJAX_ENDPOINT, {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        body: formData
+      });
+
+      let payload = null;
+      try {
+        payload = await response.json();
+      } catch (_error) {}
+
+      if (!response.ok) {
+        const message = payload && payload.message ? payload.message : `Fallback submit failed (${response.status})`;
+        throw new Error(message);
+      }
+
+      const message = String((payload && payload.message) || "");
+      if (/activate\\s+form/i.test(message)) {
+        throw new Error("Payment proof inbox is not activated yet. Please contact admin to activate form receiver.");
+      }
+
+      return {
+        ok: true,
+        orderId,
+        redirectUrl: `checkout-success.html?orderId=${encodeURIComponent(orderId)}&status=pending_manual_review&emailStatus=submitted&source=formsubmit`
+      };
+    }
+
+    function buildCheckoutPayload(form) {
+      const t = getTotals();
+      const shipping = {
+        name: form.name.value.trim(),
+        phone: form.phone.value.trim(),
+        email: form.email.value.trim(),
+        address: form.address.value.trim(),
+        city: form.city.value.trim(),
+        postcode: form.postcode.value.trim(),
+        state: form.state.value.trim()
+      };
+      const items = getCart().map(item => ({
+        id: item.id,
+        sku: item.sku || "",
+        name: item.name,
+        qty: item.qty,
+        price: item.price,
+        lineTotal: item.price * item.qty
+      }));
+
+      return {
+        paymentMethod: "qr_transfer",
+        transactionReference: form.transactionReference.value.trim(),
+        shipping,
+        items,
+        totals: {
+          subtotal: t.subtotal,
+          shipping: t.shipping,
+          total: t.total
+        }
+      };
+    }
+
+    async function submitQrProof(orderPayload, proofFile) {
+      const formData = new FormData();
+      formData.append("orderData", JSON.stringify(orderPayload));
+      formData.append("paymentProof", proofFile);
+
+      const res = await fetch(SUBMIT_QR_PROOF_ENDPOINT, {
+        method: "POST",
+        body: formData
+      });
+      if (!res.ok) {
+        let errMsg = `Failed to submit payment proof (${res.status})`;
+        try {
+          const data = await res.json();
+          if (data?.error) errMsg = data.error;
+        } catch (_) {}
+        throw new Error(errMsg);
+      }
+      return res.json();
+    }
+
+    async function placeOrder(e) {
+      e.preventDefault();
+      const form = e.target;
+      const required = ["name", "phone", "email", "address", "city", "postcode", "state"];
+      for (const f of required) {
+        if (!form[f].value.trim()) { showError("Please complete all required shipping fields."); form[f].focus(); return; }
+      }
+      if (!form.paymentProof.files || form.paymentProof.files.length === 0) {
+        showError("Please upload your payment proof image.");
+        form.paymentProof.focus();
+        return;
+      }
+      document.getElementById("form-error").style.display = "none";
+
+      const payBtn = document.getElementById("pay-btn");
+      payBtn.disabled = true;
+      payBtn.textContent = "Submitting proof...";
+
+      const orderPayload = buildCheckoutPayload(form);
+      const proofFile = form.paymentProof.files[0];
+
+      if (shouldUseFormSubmitFallback()) {
+        try {
+          payBtn.textContent = "Submitting proof...";
+          const checkout = await submitViaFormSubmit(orderPayload, proofFile);
+          clearCart();
+          window.location.href = checkout.redirectUrl;
+          return;
+        } catch (error) {
+          showError(error.message || "Fallback submission failed. Please try again.");
+          payBtn.disabled = false;
+          payBtn.textContent = "Submit payment proof";
+          return;
+        }
+      }
+
+      try {
+        const checkout = await submitQrProof(orderPayload, proofFile);
+        clearCart();
+        const redirectUrl = checkout.checkoutUrl || checkout.redirectUrl;
+        window.location.href = redirectUrl || `checkout-success.html?orderId=${encodeURIComponent(checkout.orderId)}`;
+      } catch (err) {
+        showError(err.message || "Payment proof submission failed. Please try again.");
+        payBtn.disabled = false;
+        payBtn.textContent = "Submit payment proof";
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      if (renderSummary()) {
+        document.getElementById("checkout-form").addEventListener("submit", placeOrder);
+      }
+    });
+  </script>
+</body>
+</html>
