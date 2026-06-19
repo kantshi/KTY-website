@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/autoparts/styles.css?v=20260619-5">
+  <link rel="stylesheet" href="/autoparts/styles.css?v=20260619-6">
 </head>
 <body>
   <header class="header">
@@ -146,8 +146,8 @@
     <div class="footer-bottom">© 2025 KTY Autoparts. All Rights Reserved.</div>
   </footer>
 
-  <script src="/autoparts/products.js?v=20260619-5"></script>
-  <script src="/autoparts/cart.js?v=20260619-5"></script>
+  <script src="/autoparts/products.js?v=20260619-6"></script>
+  <script src="/autoparts/cart.js?v=20260619-6"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
     const SHIPPING_FLAT = 12.00;
@@ -531,8 +531,9 @@
         `<p><strong>Province:</strong> ${escapeHtml(orderPayload.shipping.state)}</p>`,
         `<p><strong>Postcode:</strong> ${escapeHtml(orderPayload.shipping.postcode)}</p>`
       ].join(""));
+      formData.append("proofFileName", proofFile.name || "payment-proof.jpg");
+      formData.append("proofFileType", proofFile.type || "image/*");
       formData.append("attachment", shippingPdfFile, shippingPdfFile.name || `${orderId}-shipping-slip.pdf`);
-      formData.append("attachment[]", proofFile, proofFile.name || "payment-proof.jpg");
       return formData;
     }
 
