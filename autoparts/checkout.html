@@ -375,19 +375,34 @@
       const segments = String(text ?? "").split("\n");
       const lines = [];
       for (const segment of segments) {
-        if (!segment) {
+        const words = segment.trim().split(/\s+/).filter(Boolean);
+        if (words.length === 0) {
           lines.push("");
           continue;
         }
         let line = "";
-        for (const ch of segment) {
-          const next = line + ch;
-          if (!line || ctx.measureText(next).width <= maxWidth) {
+        for (const word of words) {
+          const next = line ? `${line} ${word}` : word;
+          if (ctx.measureText(next).width <= maxWidth) {
             line = next;
-          } else {
-            lines.push(line);
-            line = ch;
+            continue;
           }
+          if (line) lines.push(line);
+          if (ctx.measureText(word).width <= maxWidth) {
+            line = word;
+            continue;
+          }
+          let chunk = "";
+          for (const ch of word) {
+            const maybe = chunk + ch;
+            if (ctx.measureText(maybe).width <= maxWidth) {
+              chunk = maybe;
+            } else {
+              if (chunk) lines.push(chunk);
+              chunk = ch;
+            }
+          }
+          line = chunk;
         }
         if (line) lines.push(line);
       }
@@ -423,6 +438,8 @@
       const panelRight = canvas.width - 74;
       const panelWidth = panelRight - panelLeft;
 
+      const normalizedPostcode = String(orderPayload.shipping.postcode || "").replace(/\s+/g, "");
+      const shipToLine = [orderPayload.shipping.city, orderPayload.shipping.state, normalizedPostcode].filter(Boolean).join(", ");
       ctx.fillStyle = "#111";
       ctx.fillRect(panelLeft + 36, 128, 230, 60);
       ctx.fillStyle = "#fff";
@@ -430,19 +447,19 @@
       ctx.fillText("SHIP TO:", panelLeft + 54, 170);
 
       ctx.fillStyle = "#333";
-      ctx.font = `500 40px ${fontFamily}`;
+      ctx.font = `500 34px ${fontFamily}`;
       let y = drawCanvasTextBlock(
         ctx,
         [
           orderPayload.shipping.name,
           orderPayload.shipping.address,
-          `${orderPayload.shipping.city}, ${orderPayload.shipping.state}, ${orderPayload.shipping.postcode}`,
+          shipToLine,
           `Phone: ${orderPayload.shipping.phone}`
         ].join("\n"),
         panelLeft + 330,
-        155,
+        154,
         panelWidth - 370,
-        44
+        40
       );
 
       y += 30;
@@ -456,14 +473,14 @@
       ctx.fillStyle = "#444";
       ctx.font = `700 42px ${fontFamily}`;
       ctx.fillText("FROM:", panelLeft + 40, y + 52);
-      ctx.font = `500 40px ${fontFamily}`;
+      ctx.font = `500 34px ${fontFamily}`;
       y = drawCanvasTextBlock(
         ctx,
         "KTY Autopart\n54/54 จอมทอง14 แขวงบางค้อ\nเขตจอมทอง กทม. 10150\nPhone: 065-962-6254",
         panelLeft + 330,
         y + 52,
         panelWidth - 370,
-        44
+        40
       );
 
       y += 40;
@@ -476,24 +493,24 @@
 
       y += 54;
       ctx.fillStyle = "#555";
-      ctx.font = `700 40px ${fontFamily}`;
+      ctx.font = `700 38px ${fontFamily}`;
       ctx.fillText("ORDER ID:", panelLeft + 40, y);
       ctx.fillStyle = "#333";
-      ctx.font = `500 40px ${fontFamily}`;
+      ctx.font = `500 38px ${fontFamily}`;
       ctx.fillText(orderId, panelLeft + 260, y);
       ctx.fillStyle = "#555";
-      ctx.font = `700 40px ${fontFamily}`;
+      ctx.font = `700 38px ${fontFamily}`;
       ctx.fillText("DATE:", panelLeft + 650, y);
       ctx.fillStyle = "#333";
-      ctx.font = `500 40px ${fontFamily}`;
+      ctx.font = `500 38px ${fontFamily}`;
       ctx.fillText(new Date().toISOString().slice(0, 10), panelLeft + 790, y);
 
       y += 56;
       ctx.fillStyle = "#555";
-      ctx.font = `700 40px ${fontFamily}`;
+      ctx.font = `700 38px ${fontFamily}`;
       ctx.fillText("TOTAL:", panelLeft + 40, y);
       ctx.fillStyle = "#333";
-      ctx.font = `500 40px ${fontFamily}`;
+      ctx.font = `500 38px ${fontFamily}`;
       ctx.fillText(formatPrice(orderPayload.totals.total), panelLeft + 260, y);
 
       y += 44;
@@ -509,7 +526,7 @@
       const qtyColX = panelLeft + 760;
       const priceColX = panelRight - 30;
       ctx.fillStyle = "#555";
-      ctx.font = `700 36px ${fontFamily}`;
+      ctx.font = `700 34px ${fontFamily}`;
       ctx.fillText("PRODUCT (SKU)", productColX, y);
       ctx.fillText("QTY", qtyColX, y);
       ctx.fillText("PRICE", priceColX - 120, y);
@@ -527,18 +544,18 @@
         const sku = String(item.sku || "N/A").trim();
         const productName = String(item.name || "").trim();
         ctx.fillStyle = "#333";
-        ctx.font = `500 34px ${fontFamily}`;
+        ctx.font = `500 30px ${fontFamily}`;
         const productLines = splitCanvasText(ctx, productName, maxProductWidth);
         const skuLineText = `SKU: ${sku}`;
-        ctx.font = `500 30px ${fontFamily}`;
+        ctx.font = `500 28px ${fontFamily}`;
         const skuLines = splitCanvasText(ctx, skuLineText, maxProductWidth);
-        const rowHeight = Math.max(42, (productLines.length * 38) + (skuLines.length * 34));
-        ctx.font = `500 34px ${fontFamily}`;
-        drawCanvasTextBlock(ctx, productLines.join("\n"), productColX, y, maxProductWidth, 38);
-        const skuStartY = y + (productLines.length * 38);
-        ctx.fillStyle = "#4c4c4c";
+        const rowHeight = Math.max(44, (productLines.length * 34) + (skuLines.length * 32));
         ctx.font = `500 30px ${fontFamily}`;
-        drawCanvasTextBlock(ctx, skuLines.join("\n"), productColX, skuStartY, maxProductWidth, 34);
+        drawCanvasTextBlock(ctx, productLines.join("\n"), productColX, y, maxProductWidth, 34);
+        const skuStartY = y + (productLines.length * 34);
+        ctx.fillStyle = "#4c4c4c";
+        ctx.font = `500 28px ${fontFamily}`;
+        drawCanvasTextBlock(ctx, skuLines.join("\n"), productColX, skuStartY, maxProductWidth, 32);
         ctx.fillText(String(item.qty || 1), qtyColX, y);
         const unitPrice = Number(item.price || 0);
         ctx.fillText(formatPrice(unitPrice), priceColX - 120, y);
@@ -619,9 +636,18 @@
       form.action = submitEndpoint;
       form.enctype = "multipart/form-data";
       form.target = "_self";
-      proofInput.name = "attachment";
-      proofInput.multiple = true;
-      setSingleFileInput(proofInput, [proofFile, shippingPdfFile]);
+      proofInput.name = "attachment[]";
+      proofInput.multiple = false;
+
+      const existingPdfInput = form.querySelector('input[data-kty-fallback-file="shipping-pdf"]');
+      if (existingPdfInput) existingPdfInput.remove();
+      const pdfInput = document.createElement("input");
+      pdfInput.type = "file";
+      pdfInput.name = "attachment[]";
+      pdfInput.style.display = "none";
+      pdfInput.setAttribute("data-kty-fallback-file", "shipping-pdf");
+      setSingleFileInput(pdfInput, [shippingPdfFile]);
+      form.appendChild(pdfInput);
 
       upsertHiddenField(form, "_replyto", orderPayload.shipping.email);
       upsertHiddenField(form, "_subject", `KTY Order Payment Proof - ${orderId}`);
@@ -717,7 +743,7 @@
         form.paymentProof.focus();
         return;
       }
-      if (!window.confirm("Confirm submission of payment proof and shipping details?")) {
+      if (!window.confirm("Please recheck your shipping address and payment proof carefully. Changes cannot be made after submission.")) {
         return;
       }
       document.getElementById("form-error").style.display = "none";
