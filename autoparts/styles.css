@@ -553,6 +553,9 @@ img { display: block; max-width: 100%; }
   margin-top: 20px;
 }
 .about-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   background: #fff;
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -560,6 +563,18 @@ img { display: block; max-width: 100%; }
   font-size: 0.82rem;
   font-weight: 600;
   color: var(--ink-soft);
+}
+.about-pill-ico {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: #fff6f0;
+  color: var(--brand-dark);
+  font-size: 0.72rem;
+  line-height: 1;
+  border: 1px solid #ffd8bf;
 }
 .about-layout { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: clamp(16px, 3vw, 26px); }
 .about-story { max-width: 78ch; margin: 0 auto; }
