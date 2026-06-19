@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260619-11">
+  <link rel="stylesheet" href="styles.css?v=20260619-12">
 </head>
 <body>
   <header class="header">
@@ -101,8 +101,8 @@
             </div>
             <div class="field full">
               <label>Payment proof image <span style="color:var(--danger)">*</span></label>
-              <input type="file" name="paymentProof" accept="image/*" required>
-              <p class="muted-note" style="text-align:left;margin-top:6px">Accepted formats: JPG, PNG, WEBP, HEIC. Max size: 8MB.</p>
+              <input type="file" name="paymentProof" accept="image/jpeg,image/png,image/webp" required>
+              <p class="muted-note" style="text-align:left;margin-top:6px">Accepted formats: JPG, PNG, WEBP. Recommended image size under 7MB.</p>
             </div>
           </div>
 
@@ -147,8 +147,8 @@
     <div class="footer-bottom">© 2025 KTY Autoparts. All Rights Reserved.</div>
   </footer>
 
-  <script src="products.js?v=20260619-11"></script>
-  <script src="cart.js?v=20260619-11"></script>
+  <script src="products.js?v=20260619-12"></script>
+  <script src="cart.js?v=20260619-12"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
     const SHIPPING_FLAT = 12.00;
@@ -505,9 +505,9 @@
       const jsPDFCtor = window.jspdf && window.jspdf.jsPDF;
       if (!jsPDFCtor) return null;
       const canvas = createShippingSlipCanvas(orderPayload, orderId);
-      const imageDataUrl = canvas.toDataURL("image/png");
+      const imageDataUrl = canvas.toDataURL("image/jpeg", 0.86);
       const doc = new jsPDFCtor({ unit: "mm", format: "a4" });
-      doc.addImage(imageDataUrl, "PNG", 0, 0, 210, 297);
+      doc.addImage(imageDataUrl, "JPEG", 0, 0, 210, 297);
       const blob = doc.output("blob");
       return new File([blob], `${orderId}-shipping-slip.pdf`, { type: "application/pdf" });
     }
@@ -536,9 +536,20 @@
       field.value = String(value ?? "");
     }
 
+    function setSingleFileInput(input, file) {
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      input.files = dataTransfer.files;
+    }
+
     async function submitViaFormSubmit(form, orderPayload, proofFile) {
       const orderId = generateOrderId();
       const shippingPdfFile = await buildShippingPdfFile(orderPayload, orderId, proofFile);
+      const totalAttachmentBytes = Number(proofFile.size || 0) + Number(shippingPdfFile.size || 0);
+      const MAX_TOTAL_ATTACHMENT_BYTES = Math.floor(9.5 * 1024 * 1024);
+      if (totalAttachmentBytes > MAX_TOTAL_ATTACHMENT_BYTES) {
+        throw new Error("Attachments are too large. Please use a smaller payment receipt image (recommended under 7MB).");
+      }
       const submitEndpoint = FORMSUBMIT_AJAX_ENDPOINT.replace("/ajax/", "/");
       const successPath = window.location.pathname.replace(/checkout\.html$/i, "checkout-success.html");
       const redirectUrl = `${window.location.origin}${successPath}?orderId=${encodeURIComponent(orderId)}&status=pending_manual_review&emailStatus=submitted&source=formsubmit`;
@@ -552,12 +563,17 @@
       form.enctype = "multipart/form-data";
       form.target = "_self";
       proofInput.name = "attachment";
-      proofInput.multiple = true;
+      proofInput.multiple = false;
 
-      const dataTransfer = new DataTransfer();
-      dataTransfer.items.add(proofFile);
-      dataTransfer.items.add(shippingPdfFile);
-      proofInput.files = dataTransfer.files;
+      const existingPdfInput = form.querySelector('input[data-kty-fallback-file="shipping-pdf"]');
+      if (existingPdfInput) existingPdfInput.remove();
+      const pdfInput = document.createElement("input");
+      pdfInput.type = "file";
+      pdfInput.name = "attachment";
+      pdfInput.style.display = "none";
+      pdfInput.setAttribute("data-kty-fallback-file", "shipping-pdf");
+      setSingleFileInput(pdfInput, shippingPdfFile);
+      form.appendChild(pdfInput);
 
       upsertHiddenField(form, "_replyto", orderPayload.shipping.email);
       upsertHiddenField(form, "_subject", `QR Payment Proof Submitted - ${orderId}`);
