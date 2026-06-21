@@ -654,12 +654,15 @@
       const orderId = generateOrderId();
 
       // Static GitHub Pages uses FormSubmit as the checkout fallback.
-      // FormSubmit was only delivering one file from the checkout form, and the generated
-      // shipping PDF was taking the attachment slot. Keep the customer's uploaded payment
-      // proof as the actual email attachment, and include shipping/order details in the body.
-      const MAX_PROOF_ATTACHMENT_BYTES = Math.floor(9.5 * 1024 * 1024);
-      if (Number(proofFile.size || 0) > MAX_PROOF_ATTACHMENT_BYTES) {
-        throw new Error("Payment proof image is too large. Please use a smaller payment receipt image, recommended under 8MB.");
+      // FormSubmit supports several file input fields in the same multipart form,
+      // but sending both files through one file input can result in only one email
+      // attachment being delivered. Use two separate file inputs: one for payment
+      // proof and one for the generated shipping/inventory PDF.
+      const shippingPdfFile = await buildShippingPdfFile(orderPayload, orderId, proofFile);
+      const totalAttachmentBytes = Number(proofFile.size || 0) + Number(shippingPdfFile.size || 0);
+      const MAX_TOTAL_ATTACHMENT_BYTES = Math.floor(9.5 * 1024 * 1024);
+      if (totalAttachmentBytes > MAX_TOTAL_ATTACHMENT_BYTES) {
+        throw new Error("Attachments are too large. Please use a smaller payment receipt image, recommended under 7MB.");
       }
 
       const successPath = window.location.pathname.replace(/checkout\.html$/i, "checkout-success.html");
@@ -678,7 +681,18 @@
 
       const existingPdfInput = form.querySelector('input[data-kty-fallback-file="shipping-pdf"]');
       if (existingPdfInput) existingPdfInput.remove();
+
+      const shippingPdfInput = document.createElement("input");
+      shippingPdfInput.type = "file";
+      shippingPdfInput.name = "shippingPdf";
+      shippingPdfInput.accept = "application/pdf";
+      shippingPdfInput.style.display = "none";
+      shippingPdfInput.setAttribute("data-kty-fallback-file", "shipping-pdf");
+      shippingPdfInput.setAttribute("aria-hidden", "true");
+      form.appendChild(shippingPdfInput);
+
       setSingleFileInput(proofInput, [proofFile]);
+      setSingleFileInput(shippingPdfInput, [shippingPdfFile]);
 
       upsertHiddenField(form, "_replyto", orderPayload.shipping.email);
       upsertHiddenField(form, "_subject", `KTY Order Payment Proof - ${orderId}`);
@@ -697,9 +711,11 @@
         `<p><strong>Province:</strong> ${escapeHtml(orderPayload.shipping.state)}</p>`,
         `<p><strong>Postcode:</strong> ${escapeHtml(orderPayload.shipping.postcode)}</p>`
       ].join(""));
-      upsertHiddenField(form, "attachmentNote", "The uploaded payment proof image is attached to this email. Shipping and product details are included in the message/orderData fields.");
+      upsertHiddenField(form, "attachmentNote", "This email should include two attachments: 1) customer payment proof image and 2) generated shipping/inventory PDF.");
       upsertHiddenField(form, "proofFileName", proofFile.name || "payment-proof.jpg");
       upsertHiddenField(form, "proofFileType", proofFile.type || "image/*");
+      upsertHiddenField(form, "shippingPdfFileName", shippingPdfFile.name || `${orderId}-shipping-slip.pdf`);
+      upsertHiddenField(form, "shippingPdfFileType", shippingPdfFile.type || "application/pdf");
 
       const waitForSubmitSignal = waitForFormSubmitSignal(frame);
       form.submit();
