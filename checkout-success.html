@@ -84,7 +84,7 @@
       const heading = document.querySelector(".confirm h1");
       const body = document.querySelector(".confirm p");
       if (status === "pending_manual_review") {
-        heading.textContent = "Proof submitted successfully";
+        heading.textContent = "✓";
         body.textContent = "Your payment proof image has been submitted successfully. Your order is now being processed for shipping.";
       } else if (status === "proof_submitted_email_failed") {
         heading.textContent = "Proof received, notification issue";
@@ -127,7 +127,7 @@
         clearCart();
         updateCartCount();
         updateView(orderId, statusFromQuery || "pending_manual_review", emailStatusFromQuery || "submitted");
-        document.querySelector(".confirm h1").textContent = "Proof submitted successfully";
+        document.querySelector(".confirm h1").textContent = "Thank you for shopping with us!";
         document.querySelector(".confirm p").textContent = "Your payment proof was submitted successfully. Your order is now being processed.";
         return;
       }
