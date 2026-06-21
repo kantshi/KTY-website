@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="robots" content="index, follow">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Product Detail — AutoParts Hub</title>
+  <title>Product Detail — KTY AUTO PARTS</title>
+  <meta name="description" content="View KTY AUTO PARTS product details, OEM-grade automotive rubber parts, air hoses, brake parts and car parts in Thailand.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -214,6 +216,28 @@
       ).join("");
     }
 
+
+    function updateProductSeo(product) {
+      const pageUrl = `https://ktyautopart.com/product.html?id=${encodeURIComponent(product.id)}`;
+      document.title = `${product.name} | ${product.sku} — KTY AUTO PARTS`;
+
+      let descriptionMeta = document.querySelector('meta[name="description"]');
+      if (!descriptionMeta) {
+        descriptionMeta = document.createElement('meta');
+        descriptionMeta.setAttribute('name', 'description');
+        document.head.appendChild(descriptionMeta);
+      }
+      descriptionMeta.setAttribute('content', `${product.name} (${product.sku}) from KTY AUTO PARTS. OEM-grade automotive parts in Thailand.`);
+
+      let canonicalLink = document.querySelector('link[rel="canonical"]');
+      if (!canonicalLink) {
+        canonicalLink = document.createElement('link');
+        canonicalLink.setAttribute('rel', 'canonical');
+        document.head.appendChild(canonicalLink);
+      }
+      canonicalLink.setAttribute('href', pageUrl);
+    }
+
     function loadProduct() {
       currentProduct = products.find(p => p.id === productId);
       if (!currentProduct) {
@@ -222,7 +246,7 @@
         return;
       }
       const p = currentProduct;
-      document.title = `${p.name} — AutoParts Hub`;
+      updateProductSeo(p);
       document.getElementById("crumb-brand").textContent = p.brand;
       document.getElementById("crumb-brand").href = `index.html?brand=${encodeURIComponent(p.brand)}`;
       document.getElementById("crumb-name").textContent = p.name;
